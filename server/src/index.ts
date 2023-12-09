@@ -18,10 +18,10 @@ app.use(apiTracker);
 const port = process.env.API_PORT;
 const server = createServer(app);
 
-server.listen(8080, () => {
+server.listen(port, () => {
 	console.log(
 		chalk.yellow.bold("Server ") +
 			chalk.bold.green("is running ") +
-			chalk.blue.bold("at http://localhost:8080")
+			chalk.blue.bold(`at http://localhost:${port}`)
 	);
 });
