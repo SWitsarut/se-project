@@ -1,3 +1,4 @@
+import { theme } from "@/theme/theme"
 import { MantineProvider } from "@mantine/core"
 
 interface ProviderWrapperProps {
@@ -6,7 +7,7 @@ interface ProviderWrapperProps {
 
 export default function ProviderWrapper({ children }: ProviderWrapperProps) {
   return (
-    <MantineProvider>
+    <MantineProvider theme={theme}>
       {children}
     </MantineProvider>
   )

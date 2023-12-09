@@ -13,7 +13,7 @@ const config: Config = {
     extend: {
       colors: {
         light: "#f8f9fa",
-        dark: "#343a40",
+        dark: "#2e2e2e",
       }
     },
   },
