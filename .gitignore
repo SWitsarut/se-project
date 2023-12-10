@@ -1,3 +1,9 @@
 node_modules
 package-lock.json
 .env
+.vscode*
+.exe
+*.exe~
+*.dll
+*.so
+*.dylib
