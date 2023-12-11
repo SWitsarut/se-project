@@ -4,37 +4,39 @@ import { Button, Text, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
-export default function Chat() {
+interface ChatProps {
+	serverId: string
+	roomId: string
+}
+
+export default function Chat({ serverId, roomId }: ChatProps) {
 	const [socket, setSocket] = useState<any>();
 	const [message, setMessage] = useState<string>("");
 	const [inbox, setInbox] = useState<string[]>([]);
-	const [room, setRoom] = useState<string>("100");
 
 	useEffect(() => {
 		const socket = io("http://localhost:8080/",{auth:{
-			token:"mark"
+			token:"mark",
 		}});
 		setSocket(socket);
 
-		const sendMsg = (message: string) => {
-			setInbox((prevInbox) => [...prevInbox, message]);
-		};
-
-		const getMsg = (msg: string) => {
-			console.log(msg);
-		};
-
-		socket.on("message", sendMsg);
-		socket.on("receive-message", getMsg);
+		socket.emit("join-room", { serverId, roomId });
+		socket.on("message", sendMessage);
+		socket.on("receive-message", receiveMessage);
 
 		return () => {
-			socket.off("message", sendMsg);
-			socket.off("receive-message", getMsg);
+			socket.off("message", sendMessage);
+			socket.off("receive-message", receiveMessage);
 		};
 	}, []);
 
+	const receiveMessage = (msg: string) => {
+		console.log(msg)
+		setInbox((prevInbox) => [...prevInbox, msg]);
+	}
+
 	const sendMessage = () => {
-		socket.emit("message", { room, message });
+		socket.emit("message", { serverId, roomId, message });
 		setMessage("");
 	};
 
@@ -48,24 +50,7 @@ export default function Chat() {
 				/>
 				<Button onClick={sendMessage}>Send</Button>
 			</div>
-			<form
-				onSubmit={(e) => {
-					e.preventDefault();
-					socket.emit("join-room", room);
-				}}
-			>
-				<div className="flex gap-3">
-					<div id="at-room"></div>
-					<TextInput
-						placeholder="room"
-						value={room}
-						onChange={(e) => {
-							setRoom(e.target.value);
-						}}
-					/>
-					<Button type="submit">join room</Button>
-				</div>
-			</form>
+			
 			<div>
 				{inbox.map((msg, index) => (
 					<div key={index} className="border rounded-md">

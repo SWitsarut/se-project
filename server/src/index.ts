@@ -7,7 +7,6 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import chalk from "chalk";
 import apiTracker from "./middle ware/apiTracker";
-import { RoomMsg } from "./type/Room";
 
 dotenv.config();
 const app = express();
@@ -30,17 +29,17 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-	console.log(socket.handshake.auth.token);
+	console.log(socket.handshake.auth);
 
-	socket.on("join-room", (roomString: string) => {
-		socket.join(roomString);
-		console.log(socket.id, " has join ", roomString);
+	socket.on("join-room", ({serverId, roomId}: { serverId: string, roomId: string}) => {
+		socket.join(`${serverId}/${roomId}`);
+		console.log(socket.id, " has join ", `${serverId}/${roomId}`);
 	});
 
-	socket.on("message", (message: RoomMsg) => {
-		io.to(message.room).emit("receive-message", message);
-		console.log("msg", message);
-	});
+	socket.on("message", ({ serverId, roomId, message }: { serverId: string, roomId: string, message: string }) => {
+		io.to(`${serverId}/${roomId}`).emit("receive-message", message)
+		console.log(`${message} to server: ${serverId} room: ${roomId}`)
+	})
 
 	socket.on("disconnect", (reason: DisconnectReason, description: any) => {
 		console.log(reason);
