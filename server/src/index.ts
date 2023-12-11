@@ -31,11 +31,9 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
 	console.log("a user connected ");
 
-	socket.emit("msg", "welcome to ws");
-
 	socket.on("message", (message) => {
-		io.emit("message :", message);
-		console.log(message);
+		io.emit("receive-message", message);
+		console.log("msg", message);
 	});
 
 	socket.on("join-room", (data: string) => {
