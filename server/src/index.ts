@@ -32,10 +32,11 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
 	console.log("a user connected ");
 
+	socket.emit("msg", "welcome to ws");
+
 	socket.on("join-room", (data: string) => {
 		console.log(data);
 	});
-
 });
 
 server.listen(port, () => {
