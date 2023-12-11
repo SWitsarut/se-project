@@ -1,12 +1,13 @@
 import express from "express";
 import { createServer } from "http";
-import { Server } from "socket.io";
+import { DisconnectReason, Server } from "socket.io";
 import cors from "cors";
 
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import chalk from "chalk";
 import apiTracker from "./middle ware/apiTracker";
+import { RoomMsg } from "./type/Room";
 
 dotenv.config();
 const app = express();
@@ -29,15 +30,20 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-	console.log("a user connected ");
+	console.log(socket.handshake.auth.token);
 
-	socket.on("message", (message) => {
-		io.emit("receive-message", message);
+	socket.on("join-room", (roomString: string) => {
+		socket.join(roomString);
+		console.log(socket.id, " has join ", roomString);
+	});
+
+	socket.on("message", (message: RoomMsg) => {
+		io.to(message.room).emit("receive-message", message);
 		console.log("msg", message);
 	});
 
-	socket.on("join-room", (data: string) => {
-		console.log(data);
+	socket.on("disconnect", (reason: DisconnectReason, description: any) => {
+		console.log(reason);
 	});
 });
 
