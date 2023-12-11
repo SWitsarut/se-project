@@ -21,7 +21,6 @@ const port = process.env.API_PORT;
 const server = createServer(app);
 
 // app.get
-
 const io = new Server(server, {
 	cors: {
 		origin: ["http://localhost:5173", "http://localhost:3000"],
@@ -33,6 +32,11 @@ io.on("connection", (socket) => {
 	console.log("a user connected ");
 
 	socket.emit("msg", "welcome to ws");
+
+	socket.on("message", (message) => {
+		io.emit("message :", message);
+		console.log(message);
+	});
 
 	socket.on("join-room", (data: string) => {
 		console.log(data);
