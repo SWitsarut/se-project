@@ -1,8 +1,9 @@
 "use client";
 
-import { Button, Text, TextInput } from "@mantine/core";
+import { socket } from "@/libs/scoket";
+import { Button, TextInput } from "@mantine/core";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
 
 interface ChatProps {
 	serverId: string
@@ -10,16 +11,10 @@ interface ChatProps {
 }
 
 export default function Chat({ serverId, roomId }: ChatProps) {
-	const [socket, setSocket] = useState<any>();
 	const [message, setMessage] = useState<string>("");
-	const [inbox, setInbox] = useState<string[]>([]);
+	const router = useRouter();
 
 	useEffect(() => {
-		const socket = io("http://localhost:8080/",{auth:{
-			token:"mark",
-		}});
-		setSocket(socket);
-
 		socket.emit("join-room", { serverId, roomId });
 		socket.on("message", sendMessage);
 		socket.on("receive-message", receiveMessage);
@@ -30,14 +25,28 @@ export default function Chat({ serverId, roomId }: ChatProps) {
 		};
 	}, []);
 
-	const receiveMessage = (msg: string) => {
-		console.log(msg)
-		setInbox((prevInbox) => [...prevInbox, msg]);
+	const receiveMessage = () => {
+		router.refresh();
 	}
 
-	const sendMessage = () => {
-		socket.emit("message", { serverId, roomId, message });
-		setMessage("");
+	const sendMessage = async () => {
+		try {
+			const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/send-message`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({message, serverId, roomId})
+			})
+			
+			if(res.ok) {
+				socket.emit("message", { serverId, roomId, message });
+			}
+		} catch (error) {
+			console.log(error)
+		} finally {
+			setMessage("");
+		}
 	};
 
 	return (
@@ -49,14 +58,6 @@ export default function Chat({ serverId, roomId }: ChatProps) {
 					onChange={(e) => setMessage(e.target.value)}
 				/>
 				<Button onClick={sendMessage}>Send</Button>
-			</div>
-			
-			<div>
-				{inbox.map((msg, index) => (
-					<div key={index} className="border rounded-md">
-						<Text>{msg}</Text>
-					</div>
-				))}
 			</div>
 		</div>
 	);

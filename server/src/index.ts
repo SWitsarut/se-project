@@ -41,6 +41,11 @@ io.on("connection", (socket) => {
 		console.log(`${message} to server: ${serverId} room: ${roomId}`)
 	})
 
+	socket.on("create-room", ({ serverId }: { serverId: string }) => {
+		io.emit("updated-room")
+		console.log(`create new room in server: ${serverId}`)
+	})
+
 	socket.on("disconnect", (reason: DisconnectReason, description: any) => {
 		console.log(reason);
 	});
