@@ -23,9 +23,8 @@ export default async function RoomPage({ params }: { params: { serverId: string,
 
   return (
     <>
-      <Chat serverId={params.serverId} roomId={params.roomId}/>
-
       <div className="flex flex-col gap-2">
+        <Chat serverId={params.serverId} roomId={params.roomId}/>
         {dataMsg.messages.map((data, index) => (
           <div key={index} className="bg-slate-200 rounded-xl px-6 py-2">
             <Text>{data.message}</Text>

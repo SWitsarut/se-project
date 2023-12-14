@@ -1,14 +1,10 @@
-import { theme } from "@/theme/theme"
-import { MantineProvider } from "@mantine/core"
+import { theme } from "@/theme/theme";
+import { MantineProvider } from "@mantine/core";
 
 interface ProviderWrapperProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export default function ProviderWrapper({ children }: ProviderWrapperProps) {
-  return (
-    <MantineProvider theme={theme}>
-      {children}
-    </MantineProvider>
-  )
+  return <MantineProvider theme={theme}>{children}</MantineProvider>;
 }

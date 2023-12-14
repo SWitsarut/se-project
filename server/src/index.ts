@@ -29,19 +29,19 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-	console.log(socket.handshake.auth);
+	console.log("New socket connected " + socket.id);
 
 	socket.on("join-room", ({serverId, roomId}: { serverId: string, roomId: string}) => {
 		socket.join(`${serverId}/${roomId}`);
 		console.log(socket.id, " has join ", `${serverId}/${roomId}`);
 	});
 
-	socket.on("message", ({ serverId, roomId, message }: { serverId: string, roomId: string, message: string }) => {
-		io.to(`${serverId}/${roomId}`).emit("receive-message", message)
-		console.log(`${message} to server: ${serverId} room: ${roomId}`)
+	socket.on("message", ({ serverId, roomId, msg }: { serverId: string, roomId: string, msg: string }) => {
+		io.to(`${serverId}/${roomId}`).emit("receive-message", msg)
+		console.log(`${msg} to server: ${serverId} room: ${roomId}`)
 	})
 
-	socket.on("create-room", ({ serverId }: { serverId: string }) => {
+	socket.on("create-room", (serverId: string) => {
 		io.emit("updated-room")
 		console.log(`create new room in server: ${serverId}`)
 	})

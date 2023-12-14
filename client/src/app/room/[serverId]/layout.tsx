@@ -1,5 +1,6 @@
 import RoomList from "@/components/RoomList";
 import SideBar from "@/components/SideBar";
+import SocketProvider from "@/components/SocketProvider";
 import { authOptions } from "@/libs/authOptions";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -50,7 +51,7 @@ export default async function ServerLayout({ children, params: { serverId } }: S
   }
 
   return (
-    <>
+    <SocketProvider>
       <div className="flex">
         <SideBar data={data}/>
         <div className="flex flex-col gap-4 mr-4">
@@ -60,6 +61,6 @@ export default async function ServerLayout({ children, params: { serverId } }: S
         </div>
         <div>{children}</div>
       </div>
-    </>
+    </SocketProvider>
   )
 }

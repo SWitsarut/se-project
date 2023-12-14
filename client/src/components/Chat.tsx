@@ -1,9 +1,8 @@
 "use client";
 
-import { socket } from "@/libs/scoket";
 import { Button, TextInput } from "@mantine/core";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useSocket } from "./SocketProvider";
 
 interface ChatProps {
 	serverId: string
@@ -12,24 +11,9 @@ interface ChatProps {
 
 export default function Chat({ serverId, roomId }: ChatProps) {
 	const [message, setMessage] = useState<string>("");
-	const router = useRouter();
+	const { sendMessage, socket } = useSocket();
 
-	useEffect(() => {
-		socket.emit("join-room", { serverId, roomId });
-		socket.on("message", sendMessage);
-		socket.on("receive-message", receiveMessage);
-
-		return () => {
-			socket.off("message", sendMessage);
-			socket.off("receive-message", receiveMessage);
-		};
-	}, []);
-
-	const receiveMessage = () => {
-		router.refresh();
-	}
-
-	const sendMessage = async () => {
+	const send = async () => {
 		try {
 			const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/send-message`, {
 				method: "POST",
@@ -40,7 +24,7 @@ export default function Chat({ serverId, roomId }: ChatProps) {
 			})
 			
 			if(res.ok) {
-				socket.emit("message", { serverId, roomId, message });
+				sendMessage(serverId, roomId, message);
 			}
 		} catch (error) {
 			console.log(error)
@@ -48,6 +32,10 @@ export default function Chat({ serverId, roomId }: ChatProps) {
 			setMessage("");
 		}
 	};
+
+	useEffect(() => {
+		socket.emit("join-room", {serverId, roomId})
+	}, [])
 
 	return (
 		<div className="mx-auto container my-16 flex flex-col gap-4">
@@ -57,7 +45,7 @@ export default function Chat({ serverId, roomId }: ChatProps) {
 					value={message}
 					onChange={(e) => setMessage(e.target.value)}
 				/>
-				<Button onClick={sendMessage}>Send</Button>
+				<Button onClick={send}>Send</Button>
 			</div>
 		</div>
 	);
