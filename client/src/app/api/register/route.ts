@@ -26,9 +26,9 @@ export const POST = async (req: Request) => {
         password: hashedPassword,
       }
     })
-
-    return NextResponse.json("Register Successfully", { status: 201 })
-
+    
+    return NextResponse.json("Register successful", { status: 201 })
+    
   } catch (error) {
     console.log(error)
     return NextResponse.json("Internal Server", { status: 500 })

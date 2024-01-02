@@ -29,16 +29,10 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-	console.log(socket.handshake.auth);
+	console.log("New socket connected " + socket.id);
 
-	socket.on("join-room", ({serverId, roomId}: { serverId: string, roomId: string}) => {
-		socket.join(`${serverId}/${roomId}`);
-		console.log(socket.id, " has join ", `${serverId}/${roomId}`);
-	});
-
-	socket.on("message", ({ serverId, roomId, message }: { serverId: string, roomId: string, message: string }) => {
-		io.to(`${serverId}/${roomId}`).emit("receive-message", message)
-		console.log(`${message} to server: ${serverId} room: ${roomId}`)
+	socket.on("message", () => {
+		io.to(``).emit("receive-message")
 	})
 
 	socket.on("disconnect", (reason: DisconnectReason, description: any) => {

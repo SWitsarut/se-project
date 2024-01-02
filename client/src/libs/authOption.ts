@@ -1,0 +1,65 @@
+import { NextAuthOptions } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import prisma from "./prisma";
+import { compare } from "bcrypt";
+
+export const authOption: NextAuthOptions = {
+  session: {
+    strategy: "jwt",
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+  providers: [
+    Credentials({
+      name: "credentials",
+      credentials: {},
+      async authorize(credentials, req) {
+        const { email, password } = credentials as {
+          email: string,
+          password: string,
+        }
+
+        const user = await prisma.user.findUnique({
+          where: {
+            email
+          }
+        });
+
+        if(!user) throw new Error("Login Failed: Your email or password is incorrect.");
+
+        const isValidPassword =  await compare(password, user.password);
+        if(!isValidPassword) throw new Error("Login Failed: Your email or password is incorrect.");
+
+        return {
+          id: user.id,
+          email: user.email,
+          displayName: user.displayName,
+          avatar: user.avatar,
+          role: user.role,
+        }
+      },
+    }),
+  ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if(user) {
+        token.id = user.id;
+        token.email = user.email;
+        token.displayName = user.displayName;
+        token.role = user.role;
+      }
+
+      return token;
+    },
+    async session({ session, token }) {
+      if(token) {
+        session.user.id = token.id;
+        session.user.email = token.email;
+        session.user.displayName = token.displayName;
+        session.user.image = token.avatar;
+        session.user.role = token.role;
+      }
+
+      return session;
+    }
+  }
+}

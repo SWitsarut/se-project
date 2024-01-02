@@ -26,6 +26,7 @@ export default function RegisterForm() {
       acceptTermsOfUse: isNotEmpty("please accept terms of use")
     },
   });
+  const [registerError, setRegisterError] = useState("");
   const router = useRouter();
 
   const registerSubmit = async (userData: typeof form.values) => {
@@ -41,6 +42,8 @@ export default function RegisterForm() {
       
       if(res.ok) {
         router.push("/login");
+      } else {
+        setRegisterError(await res.json())
       }
     } catch (error) {
       console.log(error)
@@ -86,6 +89,7 @@ export default function RegisterForm() {
           label="Accept terms of use"
           {...form.getInputProps("acceptTermsOfUse", { type: "checkbox" })}
         />
+        <Text c={"red"}>{registerError}</Text>
         <Button loading={isLoading} type="submit" variant="filled">Register</Button>
       </div>
       <Text>{`Already have an account?`} <Link className="text-primary hover:underline font-bold" href="/login">Login</Link></Text>
