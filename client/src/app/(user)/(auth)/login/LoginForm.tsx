@@ -19,9 +19,11 @@ export default function LoginForm() {
     },
   });
   const router = useRouter();
-  const [loginError, setLoginError] = useState("");
+  const [loginError, setLoginError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const loginSubmit = async (userData: typeof form.values) => {
+    setIsLoading(true);
     const res = await signIn("credentials", {
       ...userData,
       redirect: false,
@@ -29,11 +31,12 @@ export default function LoginForm() {
 
     if(res?.error) {
       setLoginError(res.error)
+    } else {
+      setLoginError("");
+      router.push("/");
     }
-    
-    if(res?.ok) {
-      router.push("/")
-    }
+
+    setIsLoading(false);
   }
 
   return (
@@ -56,7 +59,7 @@ export default function LoginForm() {
           {...form.getInputProps("password")}
         />
         <Text c="red">{loginError}</Text>
-        <Button type="submit" variant="filled">Login</Button>
+        <Button loading={isLoading} type="submit" variant="filled">Login</Button>
       </div>
       <Text>{`Don't have an account?`} <Link className="text-primary hover:underline font-bold" href="/register">register</Link></Text>
     </form>

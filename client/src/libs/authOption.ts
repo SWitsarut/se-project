@@ -2,7 +2,7 @@ import { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prisma from "./prisma";
 import { compare } from "bcrypt";
-import { PrismaClientInitializationError } from "@prisma/client/runtime/library";
+import { PrismaClientKnownRequestError} from "@prisma/client/runtime/library";
 
 export const authOption: NextAuthOptions = {
   session: {
@@ -13,37 +13,37 @@ export const authOption: NextAuthOptions = {
     Credentials({
       name: "credentials",
       credentials: {},
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         const { email, password } = credentials as {
           email: string,
           password: string,
         }
+        let user;
         try {
-          const user = await prisma.user.findUnique({
+          user = await prisma.user.findUnique({
             where: {
-              email
+              email: email.toLocaleLowerCase()
             }
           });
-  
-          if(!user) throw Error("Login Failed");
-  
-          const isValidPassword =  await compare(password, user.password);
-          if(!isValidPassword) throw Error("Login Failed");
-  
-          return {
-            id: user.id,
-            email: user.email,
-            displayName: user.displayName,
-            avatar: user.avatar,
-            role: user.role,
-          }  
-        } catch (error: any) {
-          if(error instanceof PrismaClientInitializationError) {
-            throw new Error("Database server is down.")
+        } catch(error) {
+          console.log(error)
+          if(error instanceof PrismaClientKnownRequestError) {
+            throw new Error("Database is down");
           }
-          throw Error("Login Failed: Your email or password is incorrect.")
         }
-        
+  
+        if(!user) throw new Error("Login Failed: Your email or password is incorrect.");
+
+        const isValidPassword =  await compare(password, user.password);
+        if(!isValidPassword) throw Error("Login Failed: Your email or password is incorrect.");
+
+        return {
+          id: user.id,
+          email: user.email,
+          displayName: user.displayName,
+          avatar: user.avatar,
+          role: user.role,
+        }
       },
     }),
   ],
