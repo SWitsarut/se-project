@@ -13,6 +13,7 @@
     "@mantine/form": "^7.3.2",
     "@mantine/hooks": "^7.3.1",
     "@prisma/client": "^5.7.1",
+    "@tabler/icons-react": "^2.45.0",
     "@types/bcrypt": "^5.0.2",
     "bcrypt": "^5.1.1",
     "next": "14.0.4",

@@ -1,9 +1,12 @@
 "use client"
 
+import { adminMenu } from "@/libs/menu";
 import { Avatar, Button, Divider, Drawer, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks"
+import { IconLogout } from "@tabler/icons-react";
 import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 
 interface ProfileDrawerProps {
   session: Session
@@ -20,18 +23,34 @@ export default function ProfileDrawer({ session }: ProfileDrawerProps) {
         onClose={close}
       >
         <div className="flex flex-col gap-8">
-          <Group gap={28} justify="center">
+          <Group>
             <Avatar
               src={session.user.image}
               size="xl"
             />
             <div className="flex flex-col gap-2">
-              <Text lineClamp={1}>Email: {session.user.email}</Text>
-              <Text c="dark" lineClamp={1}>Display name: {session.user.displayName}</Text>
+              <Text fw={700} lineClamp={1}>Email: <Text span>{session.user.email}</Text></Text>
+              <Text c="dark" fw={700} lineClamp={1}>Display name: <Text span fw={400}>{session.user.displayName}</Text></Text>
+              <Text c="dark" fw={700} lineClamp={1}>Role: <Text span fw={400}>{session.user.role}</Text></Text>
             </div>
           </Group>
+          {session.user.role === "ADMIN" && (
+            <>
+              <Divider />
+              <Group>
+              {adminMenu.map((data, index) => (
+                <Link className="w-full flex" key={index} href={data.link}>
+                  <Button leftSection={<data.icon />} classNames={{ root: "w-full"}} variant="subtle">
+                    {data.label}
+                  </Button>
+                </Link>
+              ))}
+              </Group>
+            </>
+          )}
           <Divider />
           <Button
+            leftSection={<IconLogout />}
             variant="outline"
             color="red"
             onClick={() => signOut({ redirect: true })}
