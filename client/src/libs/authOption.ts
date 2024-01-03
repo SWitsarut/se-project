@@ -2,6 +2,7 @@ import { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prisma from "./prisma";
 import { compare } from "bcrypt";
+import { PrismaClientInitializationError } from "@prisma/client/runtime/library";
 
 export const authOption: NextAuthOptions = {
   session: {
@@ -17,25 +18,32 @@ export const authOption: NextAuthOptions = {
           email: string,
           password: string,
         }
-
-        const user = await prisma.user.findUnique({
-          where: {
-            email
+        try {
+          const user = await prisma.user.findUnique({
+            where: {
+              email
+            }
+          });
+  
+          if(!user) throw Error("Login Failed");
+  
+          const isValidPassword =  await compare(password, user.password);
+          if(!isValidPassword) throw Error("Login Failed");
+  
+          return {
+            id: user.id,
+            email: user.email,
+            displayName: user.displayName,
+            avatar: user.avatar,
+            role: user.role,
+          }  
+        } catch (error: any) {
+          if(error instanceof PrismaClientInitializationError) {
+            throw new Error("Database server is down.")
           }
-        });
-
-        if(!user) throw new Error("Login Failed: Your email or password is incorrect.");
-
-        const isValidPassword =  await compare(password, user.password);
-        if(!isValidPassword) throw new Error("Login Failed: Your email or password is incorrect.");
-
-        return {
-          id: user.id,
-          email: user.email,
-          displayName: user.displayName,
-          avatar: user.avatar,
-          role: user.role,
+          throw Error("Login Failed: Your email or password is incorrect.")
         }
+        
       },
     }),
   ],
