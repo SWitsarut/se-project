@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import chalk from "chalk";
 import apiTracker from "./middle ware/apiTracker";
+import { createTransport } from "nodemailer";
 
 dotenv.config();
 const app = express();
@@ -27,6 +28,32 @@ const io = new Server(server, {
 		methods: ["GET", "POST"],
 	},
 });
+
+app.get("/mail",(req,res)=>{
+
+	 const transport = createTransport({
+		service:"gmail",
+		auth:{
+			user:"",
+			pass:""
+		}
+	 })
+
+	 const mailOptions = {
+			from: "",
+			to: "",
+			subject: "",
+			text: "",
+		};
+		transport.sendMail(mailOptions,(err,info)=>{
+			if(err){
+				res.status(300).send(err)
+			}
+			else{
+				res.send(info)
+			}
+		})
+})
 
 io.on("connection", (socket) => {
 	console.log("New socket connected " + socket.id);
