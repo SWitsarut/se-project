@@ -53,7 +53,7 @@ export default function ProfileDrawer({ session }: ProfileDrawerProps) {
             leftSection={<IconLogout />}
             variant="outline"
             color="red"
-            onClick={() => signOut({ redirect: true })}
+            onClick={() => signOut()}
           >
             Logout
           </Button>

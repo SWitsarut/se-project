@@ -29,6 +29,8 @@ export const authOption: NextAuthOptions = {
           console.log(error)
           if(error instanceof PrismaClientKnownRequestError) {
             throw new Error("Database is down");
+          } else {
+            throw new Error("Internal server")
           }
         }
   
