@@ -6,9 +6,9 @@ export default function MainLayout({ children }: {
   return (
     <>
       <Navbar />
-      <main className="py-16">
+      <div className="py-16 px-0 md:px-24 w-full">
         {children}
-      </main>
+      </div>
     </>
   )
 }

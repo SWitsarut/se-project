@@ -5,7 +5,7 @@ import "./globals.css";
 import { ColorSchemeScript } from "@mantine/core";
 
 import ProviderWrapper from "@/components/ProviderWrapper";
-import SessionProvider from "@/components/SessionProvider"
+import SessionProvider from "@/components/SessionProvider";
 
 import { authOption } from "@/libs/authOption";
 import { getServerSession } from "next-auth";
@@ -24,11 +24,15 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
-        <ColorSchemeScript/>
+        <ColorSchemeScript />
       </head>
-      <body className="min-h-screen">
+      <body>
         <SessionProvider session={session}>
-          <ProviderWrapper>{children}</ProviderWrapper>
+          <ProviderWrapper>
+            <main className="min-h-screen bg-light">
+              {children}
+            </main>
+          </ProviderWrapper>
         </SessionProvider>
       </body>
     </html>

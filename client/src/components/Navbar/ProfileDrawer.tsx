@@ -40,7 +40,7 @@ export default function ProfileDrawer({ session }: ProfileDrawerProps) {
               <Group>
               {adminMenu.map((data, index) => (
                 <Link className="w-full flex" key={index} href={data.link}>
-                  <Button leftSection={<data.icon />} classNames={{ root: "w-full"}} variant="subtle">
+                  <Button fullWidth leftSection={<data.icon />} variant="subtle">
                     {data.label}
                   </Button>
                 </Link>
