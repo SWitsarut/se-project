@@ -1,6 +1,6 @@
 "use client"
 
-import { adminMenu } from "@/libs/menu";
+import { adminMenu, userMenu } from "@/libs/menu";
 import { Avatar, Button, Divider, Drawer, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks"
 import { IconLogout } from "@tabler/icons-react";
@@ -19,6 +19,7 @@ export default function ProfileDrawer({ session }: ProfileDrawerProps) {
     <>
       <Drawer
         position="right"
+        size={"xs"}
         opened={opened}
         onClose={close}
       >
@@ -34,13 +35,23 @@ export default function ProfileDrawer({ session }: ProfileDrawerProps) {
               <Text c="dark" fw={700} lineClamp={1}>Role: <Text span fw={400}>{session.user.role}</Text></Text>
             </div>
           </Group>
+          <Divider />
+          <Group>
+            {userMenu.map((data, index) => (
+              <Link className="w-full flex" key={index} href={data.link}>
+              <Button onClick={close} justify="left" fullWidth leftSection={<data.icon />} variant="subtle">
+                {data.label}
+              </Button>
+            </Link>
+            ))}
+          </Group>
           {session.user.role === "ADMIN" && (
             <>
               <Divider />
               <Group>
               {adminMenu.map((data, index) => (
                 <Link className="w-full flex" key={index} href={data.link}>
-                  <Button fullWidth leftSection={<data.icon />} variant="subtle">
+                  <Button onClick={close} justify="left" fullWidth leftSection={<data.icon />} variant="subtle">
                     {data.label}
                   </Button>
                 </Link>
