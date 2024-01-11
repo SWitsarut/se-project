@@ -8,15 +8,25 @@ datasource db {
 }
 
 model User {
-  id          String  @id @unique @default(uuid())
-  email       String  @unique
-  displayName String
-  password    String
-  avatar      String?
-  role        Role    @default(USER)
-  isActive    Boolean @default(true)
+  id            String    @id @unique @default(uuid())
+  email         String    @unique
+  displayName   String
+  password      String
+  avatar        String?
+  role          Role      @default(USER)
+  isActive      Boolean   @default(true)
+  emailVerified DateTime?
 
   createdAt DateTime @default(now())
+}
+
+model VerificationToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
 }
 
 enum Role {

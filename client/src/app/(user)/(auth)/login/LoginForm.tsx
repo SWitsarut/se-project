@@ -42,7 +42,7 @@ export default function LoginForm() {
   return (
     <form
       onSubmit={form.onSubmit((value) => loginSubmit(value))}
-      className="bg-light w-full sm:max-w-[28rem] flex flex-col gap-4 mx-auto px-8 py-4 rounded-xl border shadow-lg"
+      className="animate-fade-up bg-light w-full sm:max-w-[28rem] flex flex-col gap-4 mx-auto px-8 py-4 rounded-xl border shadow-lg"
     >
       <div className="text-center">
         <Title c="primary">Login</Title>

@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function RegisterForm() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm({
     initialValues: {
       email: "",
@@ -26,13 +25,15 @@ export default function RegisterForm() {
       acceptTermsOfUse: isNotEmpty("please accept terms of use")
     },
   });
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [registerError, setRegisterError] = useState("");
   const router = useRouter();
 
   const registerSubmit = async (userData: typeof form.values) => {
     try {
       setIsLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/register`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -55,7 +56,7 @@ export default function RegisterForm() {
   return (
     <form
       onSubmit={form.onSubmit((value) => registerSubmit(value))}
-      className="w-full sm:max-w-[28rem] flex flex-col gap-4 mx-auto bg-light px-8 py-4 rounded-xl border shadow-lg"
+      className="animate-fade-up bg-light w-full sm:max-w-[28rem] flex flex-col gap-4 mx-auto px-8 py-4 rounded-xl border shadow-lg"
     >
       <div className="text-center">
         <Title c="primary">Register</Title>

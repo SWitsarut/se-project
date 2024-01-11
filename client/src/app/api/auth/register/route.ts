@@ -1,4 +1,6 @@
+import { sendVerificationEmail } from "@/libs/mail";
 import prisma from "@/libs/prisma";
+import { generateVerificationToken } from "@/libs/tokens";
 import { hash } from "bcrypt";
 import { NextResponse } from "next/server";
 
@@ -26,6 +28,10 @@ export const POST = async (req: Request) => {
         password: hashedPassword,
       }
     })
+
+    const verificationToken = await generateVerificationToken(email);
+
+    await sendVerificationEmail(verificationToken.email, verificationToken.token)
     
     return NextResponse.json("Register successful", { status: 201 })
     

@@ -12,12 +12,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        light: "#f8f9fa",
-        dark: "#2e2e2e",
-        primary: "#0969FF",
+        primary: "var(--mantine-color-primary-6)",
+        light: "f8f9fa",
+        dark: "var(--mantine-color-dark-6)",
       }
     },
   },
-  plugins: [],
+  plugins: [
+    require('tailwindcss-animated'),
+    require('@tailwindcss/typography'),
+  ],
 }
 export default config

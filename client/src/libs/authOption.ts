@@ -3,6 +3,8 @@ import Credentials from "next-auth/providers/credentials";
 import prisma from "./prisma";
 import { compare } from "bcrypt";
 import { PrismaClientKnownRequestError} from "@prisma/client/runtime/library";
+import { generateVerificationToken } from "./tokens";
+import { sendVerificationEmail } from "./mail";
 
 export const authOption: NextAuthOptions = {
   session: {
@@ -14,10 +16,12 @@ export const authOption: NextAuthOptions = {
       name: "credentials",
       credentials: {},
       async authorize(credentials) {
+
         const { email, password } = credentials as {
           email: string,
           password: string,
         }
+        
         let user;
         try {
           user = await prisma.user.findUnique({
@@ -42,6 +46,14 @@ export const authOption: NextAuthOptions = {
 
         const isValidPassword =  await compare(password, user.password);
         if(!isValidPassword) throw Error("Login Failed: Your email or password is incorrect.");
+
+        if(!user.emailVerified) {
+          const verificationToken = await generateVerificationToken(user.email);
+
+          await sendVerificationEmail(verificationToken.email, verificationToken.token);
+
+          throw new Error("Confirmation email sent")
+        }
 
         return {
           id: user.id,

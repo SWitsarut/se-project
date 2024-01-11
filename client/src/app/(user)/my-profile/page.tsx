@@ -6,6 +6,7 @@ import Profile from "./Profile"
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOption)
+
   if(!session) {
     return (
       <>
@@ -13,6 +14,7 @@ export default async function ProfilePage() {
       </>
     )
   }
+  
   return (
     <Profile session={session} />
   )

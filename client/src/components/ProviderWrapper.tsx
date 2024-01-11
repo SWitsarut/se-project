@@ -1,5 +1,5 @@
-import { theme } from "@/theme/theme"
-import { MantineProvider } from "@mantine/core"
+import { theme } from "@/theme";
+import { MantineProvider } from "@mantine/core";
 
 interface ProviderWrapperProps {
   children: React.ReactNode
