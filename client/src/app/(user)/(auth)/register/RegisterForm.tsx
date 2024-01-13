@@ -1,14 +1,14 @@
 "use client";
 
-import { Button, Checkbox, PasswordInput, Text, TextInput, Title } from "@mantine/core";
+import { Button, Checkbox, PasswordInput, Text, TextInput } from "@mantine/core";
 import { hasLength, isEmail, isNotEmpty, matchesField, useForm } from "@mantine/form";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function RegisterForm() {
   const form = useForm({
     initialValues: {
+      username: "",
       email: "",
       displayName: "",
       password: "",
@@ -16,13 +16,14 @@ export default function RegisterForm() {
       acceptTermsOfUse: false,
     },
     validate: {
+      username: isNotEmpty("Please enter your username"),
       email: isEmail("Invalid email"),
       password: hasLength({ min: 8}, "Password must be at least 8 character"),
       confirmPassword: matchesField(
         "password",
         "Passwords are not the same",
       ),
-      acceptTermsOfUse: isNotEmpty("please accept terms of use")
+      acceptTermsOfUse: isNotEmpty("Please accept terms of use")
     },
   });
 
@@ -56,44 +57,38 @@ export default function RegisterForm() {
   return (
     <form
       onSubmit={form.onSubmit((value) => registerSubmit(value))}
-      className="animate-fade-up bg-light w-full sm:max-w-[28rem] flex flex-col gap-4 mx-auto px-8 py-4 rounded-xl border shadow-lg"
+      className="flex flex-col gap-4"
     >
-      <div className="text-center">
-        <Title c="primary">Register</Title>
-      </div>
-      <div className="flex flex-col gap-4 my-2">
-        <TextInput
-          label="Email:"
-          withAsterisk
-          name="email"
-          {...form.getInputProps("email")}
-        />
-        <TextInput
-          label="Display name:"
-          withAsterisk
-          name="displayName"
-          {...form.getInputProps("displayName")}
-        />
-        <PasswordInput
-          label="Password:"
-          withAsterisk
-          name="password"
-          {...form.getInputProps("password")}
-        />
-        <PasswordInput
-          label="Confirm password:"
-          withAsterisk
-          name="confirmPassword"
-          {...form.getInputProps("confirmPassword")}
-        />
-        <Checkbox
-          label="Accept terms of use"
-          {...form.getInputProps("acceptTermsOfUse", { type: "checkbox" })}
-        />
-        <Text c={"red"}>{registerError}</Text>
-        <Button loading={isLoading} type="submit" variant="filled">Register</Button>
-      </div>
-      <Text>{`Already have an account?`} <Link className="text-primary hover:underline font-bold" href="/login">Login</Link></Text>
+      <TextInput
+        label="Email:"
+        withAsterisk
+        name="email"
+        {...form.getInputProps("email")}
+      />
+      <TextInput
+        label="Display name:"
+        withAsterisk
+        name="displayName"
+        {...form.getInputProps("displayName")}
+      />
+      <PasswordInput
+        label="Password:"
+        withAsterisk
+        name="password"
+        {...form.getInputProps("password")}
+      />
+      <PasswordInput
+        label="Confirm password:"
+        withAsterisk
+        name="confirmPassword"
+        {...form.getInputProps("confirmPassword")}
+      />
+      <Checkbox
+        label="Accept terms of use"
+        {...form.getInputProps("acceptTermsOfUse", { type: "checkbox" })}
+      />
+      <Text c={"red"}>{registerError}</Text>
+      <Button loading={isLoading} type="submit" variant="filled">Register</Button>
     </form>
   );
 }

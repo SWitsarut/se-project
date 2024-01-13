@@ -6,7 +6,7 @@ export async function sendVerificationEmail(email: string, token: string) {
   const confirmLink = `${process.env.NEXT_PUBLIC_URL}/new-verification?token=${token}`
 
   await resend.emails.send({
-    from: "onboarding@resend.dev",
+    from: "e-book-store.noreply <onboarding@resend.dev>",
     to: email,
     subject: "Confirm your email",
     html: `<p>Click <a href="${confirmLink}">here</a> to confirm email.</p>`
