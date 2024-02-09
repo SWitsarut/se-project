@@ -2,8 +2,19 @@
 const nextConfig = {
   reactStrictMode: false,
   images: {
-    domains: [`cdn-local.mebmarket.com`, `img.freepik.com`]
-  }
-}
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "files.edgestore.dev",
+        pathname: "/*/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn-local.mebmarket.com",
+        pathname: "/*/**",
+      },
+    ],
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

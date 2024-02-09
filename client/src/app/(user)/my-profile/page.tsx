@@ -1,11 +1,12 @@
-import { authOption } from "@/libs/authOption"
-import { Button } from "@mantine/core"
-import { getServerSession } from "next-auth"
-import Link from "next/link"
-import Profile from "./Profile"
+"use client";
 
-export default async function ProfilePage() {
-  const session = await getServerSession(authOption)
+import { Button } from "@mantine/core";
+import Profile from "./Profile";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+
+export default function ProfilePage() {
+  const { data: session } = useSession();
 
   if(!session) {
     return (

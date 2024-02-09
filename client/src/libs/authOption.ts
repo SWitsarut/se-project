@@ -1,8 +1,8 @@
-import { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { NextAuthOptions } from "next-auth";
 import prisma from "./prisma";
+import { PrismaClientKnownRequestError} from "@prisma/client/runtime/library.js";
 import { compare } from "bcrypt";
-import { PrismaClientKnownRequestError} from "@prisma/client/runtime/library";
 import { generateVerificationToken } from "./tokens";
 import { sendVerificationEmail } from "./mail";
 
@@ -16,9 +16,8 @@ export const authOption: NextAuthOptions = {
       name: "credentials",
       credentials: {},
       async authorize(credentials) {
-
-        const { email, password } = credentials as {
-          email: string,
+        const { username, password } = credentials as {
+          username: string,
           password: string,
         }
         
@@ -26,8 +25,8 @@ export const authOption: NextAuthOptions = {
         try {
           user = await prisma.user.findUnique({
             where: {
-              email: email.toLocaleLowerCase()
-            }
+              username: username.toLowerCase(),
+            },
           });
         } catch(error) {
           console.log(error)
@@ -40,9 +39,7 @@ export const authOption: NextAuthOptions = {
   
         if(!user) throw new Error("Login Failed: Your email or password is incorrect.");
 
-        if(!user.isActive) {
-          throw new Error("Login Failed: Your email or password is incorrect")
-        }
+        if(!user.isActive) throw new Error("Login Failed: Your email or password is incorrect");
 
         const isValidPassword =  await compare(password, user.password);
         if(!isValidPassword) throw Error("Login Failed: Your email or password is incorrect.");
@@ -57,6 +54,7 @@ export const authOption: NextAuthOptions = {
 
         return {
           id: user.id,
+          username: user.username,
           email: user.email,
           displayName: user.displayName,
           avatar: user.avatar,
@@ -69,9 +67,25 @@ export const authOption: NextAuthOptions = {
     async jwt({ token, user }) {
       if(user) {
         token.id = user.id;
+        token.username = user.username;
         token.email = user.email;
         token.displayName = user.displayName;
         token.role = user.role;
+        if(user.role === "PUBLISHER") {
+          const publisher = await prisma.publisher.findFirst({
+            where: {
+              manager: {
+                some: {
+                  username: user.username,
+                }
+              }
+            }
+          })
+          
+          if(publisher) {
+            token.publisher = publisher.publisherName;
+          }
+        }
       }
 
       return token;
@@ -79,10 +93,12 @@ export const authOption: NextAuthOptions = {
     async session({ session, token }) {
       if(token) {
         session.user.id = token.id;
+        session.user.username = token.username;
         session.user.email = token.email;
         session.user.displayName = token.displayName;
         session.user.image = token.avatar;
         session.user.role = token.role;
+        session.user.publisher = token.publisher;
       }
 
       return session;

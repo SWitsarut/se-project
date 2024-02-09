@@ -8,27 +8,27 @@ import { useState } from "react";
 export default function RegisterForm() {
   const form = useForm({
     initialValues: {
-      username: "",
       email: "",
+      username: "",
       displayName: "",
       password: "",
       confirmPassword: "",
       acceptTermsOfUse: false,
     },
     validate: {
-      username: isNotEmpty("Please enter your username"),
       email: isEmail("Invalid email"),
-      password: hasLength({ min: 8}, "Password must be at least 8 character"),
+      username: isNotEmpty("Username is required."),
+      displayName: isNotEmpty("Display name is required."),
+      password: hasLength({ min: 8 }, "Password must be at least 8 character"),
       confirmPassword: matchesField(
         "password",
         "Passwords are not the same",
       ),
-      acceptTermsOfUse: isNotEmpty("Please accept terms of use")
+      acceptTermsOfUse: isNotEmpty("Please accept terms of use"),
     },
   });
-
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [registerError, setRegisterError] = useState("");
+  const [registerError, setRegisterError] = useState<string>("");
   const router = useRouter();
 
   const registerSubmit = async (userData: typeof form.values) => {
@@ -41,11 +41,12 @@ export default function RegisterForm() {
         },
         body: JSON.stringify(userData)
       })
-      
+      const data = await res.json();
+
       if(res.ok) {
         router.push("/login");
       } else {
-        setRegisterError(await res.json())
+        setRegisterError(data)
       }
     } catch (error) {
       console.log(error)
@@ -66,10 +67,10 @@ export default function RegisterForm() {
         {...form.getInputProps("email")}
       />
       <TextInput
-        label="Display name:"
+        label="Username:"
         withAsterisk
-        name="displayName"
-        {...form.getInputProps("displayName")}
+        name="username"
+        {...form.getInputProps("username")}
       />
       <PasswordInput
         label="Password:"
@@ -82,6 +83,12 @@ export default function RegisterForm() {
         withAsterisk
         name="confirmPassword"
         {...form.getInputProps("confirmPassword")}
+      />
+      <TextInput
+        label="Display name:"
+        withAsterisk
+        name="displayName"
+        {...form.getInputProps("displayName")}
       />
       <Checkbox
         label="Accept terms of use"

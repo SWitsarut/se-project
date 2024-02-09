@@ -9,6 +9,7 @@ datasource db {
 
 model User {
   id            String    @id @unique @default(uuid())
+  username      String    @unique
   email         String    @unique
   displayName   String
   password      String
@@ -17,7 +18,9 @@ model User {
   isActive      Boolean   @default(true)
   emailVerified DateTime?
 
-  createdAt DateTime @default(now())
+  createdAt   DateTime   @default(now())
+  publisher   Publisher? @relation(fields: [publisherId], references: [id])
+  publisherId String?
 }
 
 model VerificationToken {
@@ -29,7 +32,57 @@ model VerificationToken {
   @@unique([email, token])
 }
 
+model Publisher {
+  id            String @id @default(cuid())
+  publisherName String @unique
+
+  book    Book[]
+  manager User[]
+}
+
+model Book {
+  isbn        String  @id @unique
+  title       String  @unique
+  price       Float
+  cover       String
+  pdfUrl      String
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isSelling Boolean  @default(true)
+
+  publisher   Publisher @relation(fields: [publisherId], references: [id])
+  publisherId String
+  category    Category  @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  genres      Genre[]   @relation("BookGenres")
+  authors     Author[]  @relation("BookAuthors")
+}
+
+model Category {
+  id           Int    @id @default(autoincrement())
+  categoryName String @unique
+
+  books Book[]
+}
+
+model Genre {
+  id        Int    @id @default(autoincrement())
+  genreName String @unique
+
+  books Book[] @relation("BookGenres")
+}
+
+model Author {
+  id         Int    @id @default(autoincrement())
+  authorName String @unique
+
+  boos Book[] @relation("BookAuthors")
+}
+
 enum Role {
   USER
   ADMIN
+  PUBLISHER
 }

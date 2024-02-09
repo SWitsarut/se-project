@@ -9,20 +9,21 @@ import { useState } from "react";
 export default function LoginForm() {
   const form = useForm({
     initialValues: {
-      email: "",
+      username: "",
       password: "",
     },
     validate: {
-      email: isNotEmpty(),
+      username: isNotEmpty(),
       password: isNotEmpty(),
     },
   });
-  const router = useRouter();
   const [loginError, setLoginError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const router = useRouter();
 
   const loginSubmit = async (userData: typeof form.values) => {
     setIsLoading(true);
+
     const res = await signIn("credentials", {
       ...userData,
       redirect: false,
@@ -44,9 +45,9 @@ export default function LoginForm() {
       className="flex flex-col gap-4"
     >
       <TextInput
-        label="Email:"
-        name="email"
-        {...form.getInputProps("email")}
+        label="Username:"
+        name="username"
+        {...form.getInputProps("username")}
       />
       <PasswordInput
         label="Password:"
