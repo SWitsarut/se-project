@@ -38,6 +38,7 @@
     "postcss-preset-mantine": "^1.13.0",
     "postcss-simple-vars": "^7.0.1",
     "prisma": "^5.9.1",
+    "prettier": "3.2.5",
     "tailwindcss": "^3.4.1",
     "tailwindcss-animated": "^1.0.1",
     "typescript": "^5.3.3"

@@ -18,12 +18,14 @@ app.use(bodyParser.json());
 app.use(apiTracker);
 
 const port = process.env.API_PORT;
+const public_url = process.env.PUBLIC_URL;
+const webapp_url = process.env.WEBAPP_URL;
+
 const server = createServer(app);
 
-// app.get
 const io = new Server(server, {
 	cors: {
-		origin: ["http://localhost:5173", "http://localhost:3000"],
+		origin: ["http://localhost:5173", `${webapp_url}`],
 		methods: ["GET", "POST"],
 	},
 });
@@ -32,18 +34,25 @@ io.on("connection", (socket) => {
 	console.log("New socket connected " + socket.id);
 
 	socket.on("message", () => {
-		io.to(``).emit("receive-message")
-	})
+		io.to(``).emit("receive-message");
+	});
 
 	socket.on("disconnect", (reason: DisconnectReason, description: any) => {
 		console.log(reason);
 	});
 });
 
+app.get("/", (_, res) => {
+	res.status(200).send("hello!");
+});
+app.get("*", (_, res) => {
+	res.status(404).send("not found");
+});
+
 server.listen(port, () => {
 	console.log(
 		chalk.yellow.bold("Server ") +
 			chalk.bold.green("is running ") +
-			chalk.blue.bold(`at http://localhost:${port}`)
+			chalk.blue.bold(`at ${public_url}:${port}`)
 	);
 });
