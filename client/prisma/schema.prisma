@@ -21,6 +21,7 @@ model User {
   createdAt   DateTime   @default(now())
   publisher   Publisher? @relation(fields: [publisherId], references: [id])
   publisherId String?
+  carts       CartItem[]
 }
 
 model VerificationToken {
@@ -58,6 +59,31 @@ model Book {
   categoryId  Int
   genres      Genre[]   @relation("BookGenres")
   authors     Author[]  @relation("BookAuthors")
+  carts       CartItem[]
+
+}
+
+model CartItem {
+  id         Int       @id @default(autoincrement())
+  user       User      @relation(fields: [userId], references: [id])
+  book       Book      @relation(fields: [bookId], references: [isbn])
+  userId     String
+  bookId     String
+  createTime DateTime  @default(now())
+}
+
+model Invoice {
+  id        Int     @id @default(autoincrement())
+  userOrders UserOrder[] @relation("InvoiceUserOrders")
+  createdAt DateTime   @default(now())
+}
+
+model UserOrder {
+  id       Int      @id @default(autoincrement())
+  invoice  Invoice @relation("InvoiceUserOrders", fields: [invoiceId], references: [id])
+  invoiceId Int
+
+  @@unique([id, invoiceId])
 }
 
 model Category {
@@ -78,7 +104,7 @@ model Author {
   id         Int    @id @default(autoincrement())
   authorName String @unique
 
-  boos Book[] @relation("BookAuthors")
+  books Book[] @relation("BookAuthors")
 }
 
 enum Role {
