@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@edgestore/react": "^0.1.6",
+    "@edgestore/server": "^0.1.6",
     "@mantine/core": "^7.5.2",
     "@mantine/form": "^7.5.2",
     "@mantine/hooks": "^7.5.1",
@@ -23,7 +25,8 @@
     "react-dom": "^18.2.0",
     "resend": "^2.1.0",
     "socket.io-client": "^4.7.4",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
@@ -37,8 +40,8 @@
     "postcss": "^8.4.35",
     "postcss-preset-mantine": "^1.13.0",
     "postcss-simple-vars": "^7.0.1",
-    "prisma": "^5.9.1",
     "prettier": "3.2.5",
+    "prisma": "^5.9.1",
     "tailwindcss": "^3.4.1",
     "tailwindcss-animated": "^1.0.1",
     "typescript": "^5.3.3"

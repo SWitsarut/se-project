@@ -27,7 +27,7 @@ export const POST = async (req: Request) => {
   }
 
   const { isbn, title, cover, price, categoryName, authorNames, genreNames, pdfUrl, description }: AddbookFormType = await req.json();
-
+  
   try {
     const existingBook = await prisma.book.findFirst({
       where: {

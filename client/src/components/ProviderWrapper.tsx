@@ -1,3 +1,4 @@
+import { EdgeStoreProvider } from "@/libs/edgestore";
 import { theme } from "@/theme";
 import { MantineProvider } from "@mantine/core";
 
@@ -8,7 +9,9 @@ interface ProviderWrapperProps {
 export default function ProviderWrapper({ children }: ProviderWrapperProps) {
   return (
     <MantineProvider theme={theme}>
-      {children}
+      <EdgeStoreProvider>
+        {children}
+      </EdgeStoreProvider>
     </MantineProvider>
   )
 }

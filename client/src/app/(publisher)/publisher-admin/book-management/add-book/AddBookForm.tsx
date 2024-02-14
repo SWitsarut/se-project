@@ -1,7 +1,8 @@
 "use client";
 
+import { useEdgeStore } from "@/libs/edgestore";
 import { AddbookFormType } from "@/types/book";
-import { Autocomplete, Button, NumberInput, TagsInput, TextInput, Textarea } from "@mantine/core";
+import { Autocomplete, Button, FileButton, NumberInput, TagsInput, TextInput, Textarea } from "@mantine/core";
 import Image from "next/image";
 import React, { useState } from "react";
 
@@ -19,20 +20,27 @@ const initialForm: AddbookFormType = {
 
 export default function AddBookForm() {
   const [form, setForm] = useState<AddbookFormType>(initialForm);
+  const [previewImg, setPreviewImage] = useState<string>();
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const { edgestore } = useEdgeStore();
 
   const handleAddbook = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if(!form.isbn || !form.title || !form.pdfUrl) {
+    
+    if(!form.isbn || !imageFile || !pdfFile || !form.title || !form.price) {
       return;
     }
+    
+    const cover = await edgestore.publicImages.upload({ file: imageFile }).then((res) => res.url);
+    const pdfUrl = await edgestore.publicFiles.upload({ file: pdfFile }).then((res) => res.url);
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/manage-book`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ ...form })
+      body: JSON.stringify({ ...form, cover, pdfUrl })
     });
 
     const data = await res.json();
@@ -40,6 +48,14 @@ export default function AddBookForm() {
       console.log(data);
     } else {
       console.log("Error", data)
+    }
+  }
+
+  const handleImageUpload = (imgFile: File | null) => {
+    if(imgFile) {
+      const imgUrl = URL.createObjectURL(imgFile);
+      setPreviewImage(imgUrl);
+      setImageFile(imgFile);
     }
   }
 
@@ -101,12 +117,20 @@ export default function AddBookForm() {
           value={form.description}
           onChange={(e) => setForm((prevState) => ({ ...prevState, description: e.target.value }))}
         />
+        <div className="flex gap-8">
+          <FileButton onChange={(e) => handleImageUpload(e) }>
+            {(props) => <Button {...props}>Upload Cover</Button>}
+          </FileButton>
+          <FileButton onChange={setPdfFile}>
+            {(props) => <Button {...props}>Upload PDF</Button>}
+          </FileButton>
+        </div>
       </div>
       <div className="flex items-center justify-center">
         <div className="w-[350px] shadow-2xl flex items-center">
           {/* Todo placeholder image */}
           <Image
-            src={""}
+            src={previewImg || "https://cdn-local.mebmarket.com/meb/server1/265529/Thumbnail/book_detail_large.gif?2"}
             alt="bookCover"
             width={0}
             height={0}
@@ -117,7 +141,7 @@ export default function AddBookForm() {
         </div>
       </div>
       <div className="flex w-full justify-center lg:justify-end col-span-1 lg:col-span-2">
-        <Button>Add book</Button>
+        <Button type="submit">Add book</Button>
       </div>
     </form>
   )

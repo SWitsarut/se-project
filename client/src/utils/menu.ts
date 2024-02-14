@@ -8,12 +8,13 @@ import {
 
 export const adminMenu = [
   { label: "Dashboard", link: "/admin", icon: IconLayoutDashboard },
+  { label: "Book management", link: "/admin/book-management", icon: IconBook2 },
   { label: "User management", link: "/admin/user-management", icon: IconUser },
 ];
 
 export const publisherMenu = [
   { label: "Dashboard", link: "/publisher-admin", icon: IconLayoutDashboard },
-  { label: "Manage books", link: "/publisher-admin/manage-books", icon: IconBook2 },
+  { label: "Book management", link: "/publisher-admin/book-management", icon: IconBook2 },
 ]
 
 export const userMenu = [
