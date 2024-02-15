@@ -8,15 +8,17 @@ export const POST = async (req: Request) => {
   const { username, email, displayName, password } = await req.json();
 
   try {
-    const userExisting = await prisma.user.findUnique({
+    const userExisting = await prisma.user.findFirst({
       where: {
-        email: email.toLowerCase(),
-        username: username.toLowerCase(),
+        OR: [
+          { email: email.toLowerCase() },
+          { username: username.toLowerCase() }
+        ]
       }
     });
   
     if(userExisting) {
-      return NextResponse.json("Username or Email already in use.", { status: 400 });
+      return NextResponse.json({ error: "Username or Email already in use" }, { status: 400 });
     }
   
     const salt = 10;
@@ -35,11 +37,10 @@ export const POST = async (req: Request) => {
 
     await sendVerificationEmail(verificationToken.email, verificationToken.token);
     
-    return NextResponse.json("Register successful", { status: 201 });
-    
+    return NextResponse.json({ message: "Register successful" }, { status: 201 });
   } catch (error) {
-    console.log(error);
-    return NextResponse.json("Internal Server", { status: 500 });
+    console.log("Error at /api/auth/register", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
   
 }

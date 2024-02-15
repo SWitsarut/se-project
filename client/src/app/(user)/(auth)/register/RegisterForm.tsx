@@ -1,7 +1,8 @@
 "use client";
 
-import { Button, Checkbox, PasswordInput, Text, TextInput } from "@mantine/core";
+import { Button, Checkbox, Modal, PasswordInput, Text, TextInput } from "@mantine/core";
 import { hasLength, isEmail, isNotEmpty, matchesField, useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -30,6 +31,8 @@ export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [registerError, setRegisterError] = useState<string>("");
   const router = useRouter();
+  const [successOpened, { open: successOpen, close: successClose }] = useDisclosure(false);
+  const [errorOpened, { open: errorOpen, close: errorClose }] = useDisclosure(false);
 
   const registerSubmit = async (userData: typeof form.values) => {
     try {
@@ -44,9 +47,10 @@ export default function RegisterForm() {
       const data = await res.json();
 
       if(res.ok) {
-        router.push("/login");
+        successOpen();
       } else {
-        setRegisterError(data)
+        setRegisterError(data.error);
+        errorOpen();
       }
     } catch (error) {
       console.log(error)
@@ -55,47 +59,86 @@ export default function RegisterForm() {
     }
   }
 
+  const navigateOnClose = () => {
+    successClose();
+    router.push("/login");
+  }
+
   return (
-    <form
-      onSubmit={form.onSubmit((value) => registerSubmit(value))}
-      className="flex flex-col gap-4"
-    >
-      <TextInput
-        label="Email:"
-        withAsterisk
-        name="email"
-        {...form.getInputProps("email")}
-      />
-      <TextInput
-        label="Username:"
-        withAsterisk
-        name="username"
-        {...form.getInputProps("username")}
-      />
-      <PasswordInput
-        label="Password:"
-        withAsterisk
-        name="password"
-        {...form.getInputProps("password")}
-      />
-      <PasswordInput
-        label="Confirm password:"
-        withAsterisk
-        name="confirmPassword"
-        {...form.getInputProps("confirmPassword")}
-      />
-      <TextInput
-        label="Display name:"
-        withAsterisk
-        name="displayName"
-        {...form.getInputProps("displayName")}
-      />
-      <Checkbox
-        label="Accept terms of use"
-        {...form.getInputProps("acceptTermsOfUse", { type: "checkbox" })}
-      />
-      <Text c={"red"}>{registerError}</Text>
-      <Button loading={isLoading} type="submit" variant="filled">Register</Button>
-    </form>
+    <>
+      <form
+        onSubmit={form.onSubmit((value) => registerSubmit(value))}
+        className="flex flex-col gap-4"
+      >
+        <TextInput
+          label="Email:"
+          withAsterisk
+          name="email"
+          {...form.getInputProps("email")}
+        />
+        <TextInput
+          label="Username:"
+          withAsterisk
+          name="username"
+          {...form.getInputProps("username")}
+        />
+        <PasswordInput
+          label="Password:"
+          withAsterisk
+          name="password"
+          {...form.getInputProps("password")}
+        />
+        <PasswordInput
+          label="Confirm password:"
+          withAsterisk
+          name="confirmPassword"
+          {...form.getInputProps("confirmPassword")}
+        />
+        <TextInput
+          label="Display name:"
+          withAsterisk
+          name="displayName"
+          {...form.getInputProps("displayName")}
+        />
+        <Checkbox
+          label="Accept terms of use"
+          {...form.getInputProps("acceptTermsOfUse", { type: "checkbox" })}
+        />
+        <Button loading={isLoading} type="submit" variant="filled">Register</Button>
+      </form>
+
+      {/* Successful Alert */}
+      <Modal
+        centered
+        opened={successOpened}
+        onClose={navigateOnClose}
+        title="Register Successful"
+        c={"green"}
+        fw="bolder"
+        classNames={{ title: "font-bold", body: "text-black"}}
+      >
+        <div className="flex flex-col gap-4 items-end">
+          <Text w="100%">Congratulations! You have successfully registered</Text>
+          <Text c="dimmed" size="sm" w="full">Check your email inbox for a confirmation link to complete the process.</Text>
+          <Button onClick={navigateOnClose}>Go to login</Button>
+        </div>
+      </Modal>
+      
+      {/* Error Alert */}
+      <Modal
+        centered
+        opened={errorOpened}
+        onClose={errorClose}
+        title="Register Error"
+        c={"red"}
+        fw="bolder"
+        classNames={{ title: "font-bold", body: "text-black"}}
+      >
+        <div className="flex flex-col gap-4 items-end">
+          <Text w="100%">{registerError}</Text>
+          <Button color="red" onClick={errorClose}>Close</Button>
+        </div>
+      </Modal>
+    </>
   );
 }

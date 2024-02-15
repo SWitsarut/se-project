@@ -9,26 +9,26 @@ export const POST = async (req: Request) => {
   const session = await getServerSession(authOption);
 
   if(!session || session.user.role !== "PUBLISHER") {
-    return NextResponse.json({ message: "Access denied" }, { status: 403 });
-  }
-  
-  const publisher = await prisma.publisher.findFirst({
-    where: {
-      manager: {
-        some: {
-          username: session.user.username,
-        }
-      }
-    }
-  })
-
-  if(!publisher || !publisher.publisherName) {
-    return NextResponse.json({ message: "Publisher is required" }, { status: 403 });
+    return NextResponse.json({ error: "Access denied" }, { status: 403 });
   }
 
   const { isbn, title, cover, price, categoryName, authorNames, genreNames, pdfUrl, description }: AddbookFormType = await req.json();
   
   try {
+    const publisher = await prisma.publisher.findFirst({
+      where: {
+        manager: {
+          some: {
+            username: session.user.username,
+          }
+        }
+      }
+    })
+  
+    if(!publisher || !publisher.publisherName) {
+      return NextResponse.json({ error: "Publisher is required" }, { status: 403 });
+    }
+
     const existingBook = await prisma.book.findFirst({
       where: {
         OR: [
@@ -39,7 +39,7 @@ export const POST = async (req: Request) => {
     })
 
     if(existingBook) {
-      return NextResponse.json({ message: "Already have a book." }, { status: 400 });
+      return NextResponse.json({ error: "Already have a book" }, { status: 400 });
     }
 
     await prisma.book.create({
@@ -78,7 +78,7 @@ export const POST = async (req: Request) => {
 
     return NextResponse.json({ message: "Add book successful" }, { status: 201 });
   } catch (error) {
-    console.log(error);
-    return NextResponse.json({ message: "Internal Server"}, { status: 500 })
+    console.log("Error at /api/publisher/manage-book POST", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
 }

@@ -31,18 +31,18 @@ export const authOption: NextAuthOptions = {
         } catch(error) {
           console.log(error)
           if(error instanceof PrismaClientKnownRequestError) {
-            throw new Error("Database is down");
+            throw new Error("Error Establishing a Database Connection");
           } else {
-            throw new Error("Internal server")
+            throw new Error("Internal Server Error");
           }
         }
   
-        if(!user) throw new Error("Login Failed: Your email or password is incorrect.");
+        if(!user) throw new Error("Login Failed: Your email or password is incorrect");
 
         if(!user.isActive) throw new Error("Login Failed: Your email or password is incorrect");
 
         const isValidPassword =  await compare(password, user.password);
-        if(!isValidPassword) throw Error("Login Failed: Your email or password is incorrect.");
+        if(!isValidPassword) throw Error("Login Failed: Your email or password is incorrect");
 
         if(!user.emailVerified) {
           const verificationToken = await generateVerificationToken(user.email);
