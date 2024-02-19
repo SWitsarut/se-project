@@ -7,9 +7,9 @@ export default function BookPage({
   params: { bookname: string };
 }) {
   return (
-    <div className="flex flex-col gap-16 px-4 w-full max-w-7xl">
-      <div className="w-full text-center">
-        <h1>{bookname}</h1>
+    <div className="flex flex-col gap-16 px-4 w-full max-w-7xl mx-auto">
+      <div className="prose mx-auto">
+        <h1 className="break-words text-center">{bookname}</h1>
       </div>
 
       <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -29,7 +29,8 @@ export default function BookPage({
             <Text fw={700}>publisher: <Text span>publisherName</Text></Text>
             <Text fw={700}>category: <Text span>categoryName</Text></Text>
           </div>
-          <div>
+          <div className="flex gap-4">
+            <Button variant="outline" size="lg" radius="xl">Preview</Button>
             <Button size="lg" radius="xl">฿ 123</Button>
           </div>
         </div>
