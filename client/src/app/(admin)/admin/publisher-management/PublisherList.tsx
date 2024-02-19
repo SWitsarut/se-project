@@ -1,21 +1,26 @@
-import { Publisher } from "@prisma/client";
+import { Book, Publisher } from "@prisma/client";
 import CustomPagination from "./CustomPagination";
 
-async function getPublisher(take: number, page: number): Promise<{publishers: Publisher[], totalPage: number}> {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-publisher?take=${take}&page=${page}`, {
-      cache: "no-store"
-    });
+export interface PublisherResponse {
+  publishers: { 
+    id: string; 
+    publisherName: string; 
+    book: Book[]; 
+  }[];
+  totalPage: number;
+}
 
-    if(!res.ok) {
-      throw new Error("Error at getPublisher")
-    }
-    
-    return res.json();
-  } catch (error) {
-    console.log(error);
-    return { publishers: [], totalPage: 0 };
+async function getPublisher(take: number, page: number): Promise<PublisherResponse> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-publisher?take=${take}&page=${page}`, {
+    cache: "no-store"
+  });
+  const data = await res.json();
+  
+  if(data.error) {
+    throw Error(data.error)
   }
+  
+  return data;
 }
 
 export default async function PublisherList({

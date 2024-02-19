@@ -1,5 +1,10 @@
 import { Suspense } from "react";
 import PublisherList from "./PublisherList";
+import { Metadata } from "next";
+
+export const metadata: Metadata ={
+  title: "Publisher Manangement | E-book store"
+}
 
 export default function PublisherManagementPage({
   searchParams,
@@ -9,7 +14,7 @@ export default function PublisherManagementPage({
     page?: string
   }
 }) {
-  const take = Number(searchParams?.take) || 5;
+  const take = Number(searchParams?.take) || 15;
   const page = Number(searchParams?.page) || 1;
   return (
     <>
