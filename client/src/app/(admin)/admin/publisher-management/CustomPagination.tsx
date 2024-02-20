@@ -15,7 +15,8 @@ export default function CustomPagination({
 
   return (
     <Pagination
-      total={totalPage}
+      className="mx-auto"
+      total={totalPage == 0 ? 1 : totalPage}
       value={page}
       onChange={(e) => {
         const params = new URLSearchParams(searchParams);

@@ -98,7 +98,7 @@ export default function Sidebar({
           Log out
         </Button>
       </AppShell.Navbar>
-      <AppShell.Main>{children}</AppShell.Main>
+      <AppShell.Main><div className="flex flex-col gap-4 md:px-12 md:py-6">{children}</div></AppShell.Main>
     </AppShell>
   )
 }

@@ -20,7 +20,7 @@ model User {
 
   createdAt   DateTime   @default(now())
   publisher   Publisher? @relation(fields: [publisherId], references: [id])
-  publisherId String?
+  publisherId Int?
   carts       CartItem[]
 }
 
@@ -34,7 +34,7 @@ model VerificationToken {
 }
 
 model Publisher {
-  id            String @id @default(cuid())
+  id            Int @id @default(autoincrement())
   publisherName String @unique
 
   book    Book[]
@@ -54,7 +54,7 @@ model Book {
   isSelling Boolean  @default(true)
 
   publisher   Publisher @relation(fields: [publisherId], references: [id])
-  publisherId String
+  publisherId Int
   category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  Int
   genres      Genre[]   @relation("BookGenres")
