@@ -1,4 +1,5 @@
 import prisma from "@/libs/prisma";
+import { PublisherResponse } from "@/types/publisher";
 import {
   PrismaClientInitializationError,
   PrismaClientKnownRequestError,
@@ -27,7 +28,7 @@ export const GET = async (req: Request) => {
       return NextResponse.json({ totalPage }, { status: 200 });
     }
 
-    const publishers = await prisma.publisher.findMany({
+    const result = await prisma.publisher.findMany({
       skip: take * (page - 1),
       take: take,
       include: {
@@ -41,18 +42,13 @@ export const GET = async (req: Request) => {
       }
     });
 
-    const count = await prisma.publisher.count({
-      where: {
-        publisherName: {
-          contains: search || "",
-          mode: "insensitive",
-        }
-      }
-    })
+    const publishers: PublisherResponse[] = result.map((publisher) => ({
+      id: publisher.id,
+      publisherName: publisher.publisherName,
+      totalBook: publisher.book.length
+    }))
 
-    const totalPage = Math.ceil(count / take);
-
-    return NextResponse.json({ publishers, totalPage }, { status: 200 });
+    return NextResponse.json({ publishers }, { status: 200 });
   } catch (error: any) {
     if (error instanceof PrismaClientKnownRequestError && error.code == "P1001") {
       return NextResponse.json(

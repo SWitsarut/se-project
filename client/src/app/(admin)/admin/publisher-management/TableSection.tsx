@@ -1,10 +1,7 @@
-import { Book, Publisher } from "@prisma/client";
-import { Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from "@mantine/core";
 
-interface PublisherResponse {
-  publishers: Array<Publisher & { book: Book[] }>
-  totalPage: number
-}
+import { PublisherResponse } from "@/types/publisher";
+import { Button, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from "@mantine/core";
+import Link from "next/link";
 
 interface TableSectionProps {
   take: number
@@ -12,7 +9,7 @@ interface TableSectionProps {
   search: string
 }
 
-async function getPublisher(take: number, page: number, search: string): Promise<PublisherResponse> {
+async function getPublisher(take: number, page: number, search: string): Promise<{ publishers: PublisherResponse[] }> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-publisher?take=${take}&page=${page}&search=${search}`);
   const data = await res.json();
 
@@ -41,7 +38,8 @@ export default async function TableSection({ take, page, search }: TableSectionP
           <TableTr key={publisher.id}>
             <TableTd>{publisher.id}</TableTd>
             <TableTd>{publisher.publisherName}</TableTd>
-            <TableTd>{publisher.book.length}</TableTd>
+            <TableTd>{publisher.totalBook}</TableTd>
+            <TableTd><Link href={`/admin/publisher-management/${publisher.publisherName}`}><Button>View book</Button></Link></TableTd>
           </TableTr>
         ))}
       </TableTbody>
