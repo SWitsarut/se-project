@@ -17,10 +17,10 @@ export default function RegisterForm() {
       acceptTermsOfUse: false,
     },
     validate: {
-      email: isEmail("Invalid email"),
-      username: isNotEmpty("Username is required."),
-      displayName: isNotEmpty("Display name is required."),
-      password: hasLength({ min: 8 }, "Password must be at least 8 character"),
+      email: isNotEmpty("Email is required") && isEmail("Invalid email"),
+      username: isNotEmpty("Username is required.") && hasLength({ max: 30 }),
+      displayName: isNotEmpty("Display name is required.")  && hasLength({ max: 30 }),
+      password: isNotEmpty("Password is required") && hasLength({ min: 8 }, "Password must be at least 8 character"),
       confirmPassword: matchesField(
         "password",
         "Passwords are not the same",
@@ -30,10 +30,10 @@ export default function RegisterForm() {
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [registerError, setRegisterError] = useState<string>("");
-  const router = useRouter();
   const [successOpened, { open: successOpen, close: successClose }] = useDisclosure(false);
   const [errorOpened, { open: errorOpen, close: errorClose }] = useDisclosure(false);
-
+  const router = useRouter();
+  
   const registerSubmit = async (userData: typeof form.values) => {
     try {
       setIsLoading(true);
@@ -46,14 +46,15 @@ export default function RegisterForm() {
       })
       const data = await res.json();
 
-      if(res.ok) {
-        successOpen();
-      } else {
+      if(data.error) {
         setRegisterError(data.error);
         errorOpen();
+      } else {
+        successOpen();
       }
     } catch (error) {
-      console.log(error)
+      setRegisterError("Something went wrong");
+      errorOpen();
     } finally {
       setIsLoading(false);
     }

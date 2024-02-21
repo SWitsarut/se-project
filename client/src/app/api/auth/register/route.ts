@@ -5,7 +5,19 @@ import { hash } from "bcrypt";
 import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
-  const { username, email, displayName, password } = await req.json();
+  const { username, email, displayName, password, confirmPassword } = await req.json();
+
+  if(!username || !email || !password || !displayName || !confirmPassword) {
+    return NextResponse.json({ error: "Please fill your information completely" }, { status: 400 });
+  }
+
+  if(password.length < 8) {
+    return NextResponse.json({ error: "Password must be at least 8 character" }, { status: 400 });
+  }
+
+  if(password !== confirmPassword) {
+    return NextResponse.json({ error: "Passwords are not the same" }, { status: 400 });
+  }
 
   try {
     const userExisting = await prisma.user.findFirst({

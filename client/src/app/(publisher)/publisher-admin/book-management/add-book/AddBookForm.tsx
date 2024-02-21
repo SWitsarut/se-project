@@ -46,18 +46,35 @@ export default function AddBookForm({ bookDetail }: AddBookFormProps) {
       })
       return;
     }
+
+    if(form.authorNames.length < 1) {
+      notifications.show({
+        title: "Error",
+        message: "Author is required at least 1 author",
+        color: "red",
+        autoClose: 3000,
+      })
+      return;
+    }
+
     setIsLoading(true);
     
     let cover, pdfUrl;
-    try {
-      try {
-        cover = await edgestore.publicImages.upload({ file: imageFile }).then((res) => res.url);
-        pdfUrl = await edgestore.publicFiles.upload({ file: pdfFile }).then((res) => res.url);
-      } catch (error) {
-        console.log(error);
-      }
-      
 
+    try {
+      cover = await edgestore.publicImages.upload({ file: imageFile }).then((res) => res.url);
+      pdfUrl = await edgestore.publicFiles.upload({ file: pdfFile }).then((res) => res.url);
+    } catch (error) {
+      notifications.show({
+        title: "Error",
+        message: "Something went wrong while uploading file",
+        color: "red",
+        autoClose: 3000,
+      })
+      return;
+    }
+    
+    try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/manage-book`, {
         method: "POST",
         headers: {
@@ -84,10 +101,9 @@ export default function AddBookForm({ bookDetail }: AddBookFormProps) {
         })
       }
     } catch (error: any) {
-      console.log(error);
       notifications.show({
         title: "Error",
-        message: error,
+        message: "Something went wrong while adding book",
         color: "red",
         autoClose: 3000,
       })
@@ -125,6 +141,7 @@ export default function AddBookForm({ bookDetail }: AddBookFormProps) {
         <TagsInput
           placeholder="Authors"
           label="Authors"
+          description="use ( , ), ( | ), ( / ), ( Enter ) to submit value"
           id="author"
           value={form.authorNames}
           onChange={(e) => setForm((prevState) => ({ ...prevState, authorNames: e }))}
@@ -147,6 +164,7 @@ export default function AddBookForm({ bookDetail }: AddBookFormProps) {
         <TagsInput
           placeholder="Genres"
           label="Genres"
+          description="use ( , ), ( | ), ( / ), ( Enter ) to submit value"
           id="genre"
           value={form.genreNames}
           onChange={(e) => setForm((prevState) => ({ ...prevState, genreNames: e }))}
