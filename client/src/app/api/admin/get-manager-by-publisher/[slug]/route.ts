@@ -32,6 +32,8 @@ export const GET = async (
       email: user.email,
       displayName: user.displayName,
       avatar: user.avatar,
+      isActive: user.isActive,
+      role: user.role
     }))
 
     return NextResponse.json({ managers }, { status: 200 });

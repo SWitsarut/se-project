@@ -10,7 +10,7 @@ export const metadata: Metadata ={
 }
 
 async function getTotalPublisherPage(take: number, page: number, search: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-publisher?action=get-page}&take=${take}&page=${page}&search=${search}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-publisher?action=get-page&take=${take}&page=${page}&search=${search}`, {
     cache: "no-store"
   });
   const data = await res.json();

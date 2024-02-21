@@ -1,5 +1,5 @@
 export const formatDate = (date: Date) => {
-  const formattedDate = date.toLocaleDateString('th-GB', {
+  const formattedDate = date.toLocaleDateString('en-GB', {
     day: "2-digit",
     month: "short",
     year: "2-digit",

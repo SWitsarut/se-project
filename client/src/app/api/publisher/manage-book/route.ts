@@ -17,9 +17,9 @@ export const POST = async (req: Request) => {
   try {
     const publisher = await prisma.publisher.findFirst({
       where: {
-        manager: {
+        users: {
           some: {
-            username: session.user.username,
+            username: session.user.username
           }
         }
       }

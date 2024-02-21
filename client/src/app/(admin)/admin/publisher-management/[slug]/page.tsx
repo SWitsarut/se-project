@@ -2,8 +2,8 @@ import prisma from "@/libs/prisma";
 import { notFound } from "next/navigation";
 import BookList from "./BookList";
 import { Suspense } from "react";
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@mantine/core";
 import ManagerList from "./ManagerList";
+import SelectTabs from "./SelectTabs";
 
 export async function generateMetadata({ params: { slug } }: { params: { slug: string }}) {
   return {
@@ -23,8 +23,9 @@ async function getPublisher(slug: string) {
   }
 }
 
-export default async function SinglePublisherPage({ params }: { params: { slug: string }}) {
+export default async function SinglePublisherPage({ params, searchParams }: { params: { slug: string }, searchParams: { tab?: string }}) {
   await getPublisher(params.slug);
+  const tab = searchParams.tab || "";
 
   return (
     <>
@@ -32,27 +33,19 @@ export default async function SinglePublisherPage({ params }: { params: { slug: 
         <h1>{params.slug}</h1>
       </div>
 
-      <Tabs>
-        <TabsList grow>
-          <TabsTab value="books">
-            Books
-          </TabsTab>
-          <TabsTab value="managers">
-            Managers
-          </TabsTab>
-        </TabsList>
-
-        <TabsPanel value="books">
-          <Suspense key={params.slug} fallback={<>Loading...</>}>
-            <BookList slug={params.slug}/> 
-          </Suspense>
-        </TabsPanel>
-        <TabsPanel value="managers">
+      <SelectTabs tab={tab}/>
+      
+      {tab=== "manager" ? (
+        <>
           <Suspense key={params.slug} fallback={<>Loading...</>}>
             <ManagerList slug={params.slug}/> 
           </Suspense>
-        </TabsPanel>
-      </Tabs>
+        </>
+      ):(
+        <Suspense key={params.slug} fallback={<>Loading...</>}>
+          <BookList slug={params.slug}/> 
+        </Suspense>
+      )}
     </>
   )
 }
