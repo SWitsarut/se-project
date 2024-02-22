@@ -3,7 +3,7 @@
 import { Button, Select, TextInput } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface SearchPublisherProps {
   search: string
@@ -21,9 +21,10 @@ export default function SearchPublisher({ search, take }:SearchPublisherProps) {
     
     const params = new URLSearchParams(searchParams);
     if (searchValue) {
-      params.set('search', searchValue);
+      params.set("page", "1")
+      params.set("search", searchValue);
     } else {
-      params.delete('search');
+      params.delete("search");
     }
     router.replace(`${pathname}?${params.toString()}`);
   }

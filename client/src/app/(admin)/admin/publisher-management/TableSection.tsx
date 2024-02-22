@@ -39,7 +39,11 @@ export default async function TableSection({ take, page, search }: TableSectionP
             <TableTd>{publisher.id}</TableTd>
             <TableTd>{publisher.publisherName}</TableTd>
             <TableTd>{publisher.totalBook}</TableTd>
-            <TableTd><Link href={`/admin/publisher-management/${publisher.publisherName}`}><Button>View book</Button></Link></TableTd>
+            <TableTd>
+              <Link href={`/admin/publisher-management/${publisher.publisherName}`}>
+                <Button size="xs" >View Publisher</Button>
+              </Link>
+            </TableTd>
           </TableTr>
         ))}
       </TableTbody>
