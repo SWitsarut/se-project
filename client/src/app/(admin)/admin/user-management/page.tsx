@@ -12,5 +12,5 @@ export default function UserManagementPage() {
         <UserList />
       </Suspense>
     </>
-  )
+  );
 }
