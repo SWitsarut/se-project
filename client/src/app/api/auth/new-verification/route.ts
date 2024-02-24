@@ -6,7 +6,7 @@ export const PUT = async (req: Request) => {
   const token = new URL(req.url).searchParams.get("token");
 
   if(!token || token == null) {
-    return NextResponse.json("Missing token", { status: 400 });
+    return NextResponse.json({ error: "Missing token" }, { status: 400 });
   }
 
   const existingToken = await getVerificationTokenByToken(token);
@@ -47,5 +47,5 @@ export const PUT = async (req: Request) => {
     }
   })
 
-  return NextResponse.json({ success: "Email verified" }, { status: 200 });
+  return NextResponse.json({ message: "Email verified" }, { status: 200 });
 };

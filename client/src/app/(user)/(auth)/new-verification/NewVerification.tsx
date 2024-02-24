@@ -24,7 +24,7 @@ export default function NewVerification() {
       const data = await res.json();
   
       if(res.ok) {
-        setSuccess(data.success);
+        setSuccess(data.message);
         setError("");
       } else {
         setSuccess("");
@@ -40,7 +40,7 @@ export default function NewVerification() {
 
   useEffect(() => {
     onSubmit();
-  }, [])
+  }, [onSubmit])
 
   return (
     <div className="animate-fade-up bg-light w-full sm:max-w-[28rem] flex flex-col gap-4 mx-auto px-8 py-4 rounded-xl border shadow-lg">

@@ -32,7 +32,6 @@ export default function ProfileDrawer({ session }: ProfileDrawerProps) {
             <div className="flex flex-col gap-2">
               <Text fw={700} lineClamp={1}>Email: <Text span>{session.user.email}</Text></Text>
               <Text c="dark" fw={700} lineClamp={1}>Display name: <Text span fw={400}>{session.user.displayName}</Text></Text>
-              <Text c="dark" fw={700} lineClamp={1}>Role: <Text span fw={400}>{session.user.role}</Text></Text>
               {session.user.role === "PUBLISHER" && (
                 <Text c="dark" fw={700} lineClamp={1}>Publisher name: <Text span fw={400}>{session.user.publisher}</Text></Text>
               )}

@@ -18,10 +18,11 @@ model User {
   isActive      Boolean   @default(true)
   emailVerified DateTime?
 
-  createdAt   DateTime   @default(now())
-  publisher   Publisher? @relation(fields: [publisherId], references: [id])
-  publisherId String?
-  carts       CartItem[]
+  createdAt        DateTime   @default(now())
+  publisherId      Int?
+  publisher        Publisher? @relation("PublisherUser", fields: [publisherId], references: [id])
+  managedPublisher Publisher? @relation("PublisherManager")
+  carts            CartItem[]
 }
 
 model VerificationToken {
@@ -34,11 +35,13 @@ model VerificationToken {
 }
 
 model Publisher {
-  id            String @id @default(cuid())
+  id            Int    @id @default(autoincrement())
   publisherName String @unique
 
-  book    Book[]
-  manager User[]
+  book      Book[]
+  managerId String? @unique
+  manager   User?   @relation("PublisherManager", fields: [managerId], references: [id])
+  users     User[]  @relation("PublisherUser")
 }
 
 model Book {
@@ -53,34 +56,33 @@ model Book {
   updatedAt DateTime @updatedAt
   isSelling Boolean  @default(true)
 
-  publisher   Publisher @relation(fields: [publisherId], references: [id])
-  publisherId String
-  category    Category  @relation(fields: [categoryId], references: [id])
+  publisher   Publisher  @relation(fields: [publisherId], references: [id])
+  publisherId Int
+  category    Category   @relation(fields: [categoryId], references: [id])
   categoryId  Int
-  genres      Genre[]   @relation("BookGenres")
-  authors     Author[]  @relation("BookAuthors")
+  genres      Genre[]    @relation("BookGenres")
+  authors     Author[]   @relation("BookAuthors")
   carts       CartItem[]
-
 }
 
 model CartItem {
-  id         Int       @id @default(autoincrement())
-  user       User      @relation(fields: [userId], references: [id])
-  book       Book      @relation(fields: [bookId], references: [isbn])
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  book       Book     @relation(fields: [bookId], references: [isbn])
   userId     String
   bookId     String
-  createTime DateTime  @default(now())
+  createTime DateTime @default(now())
 }
 
 model Invoice {
-  id        Int     @id @default(autoincrement())
+  id         Int         @id @default(autoincrement())
   userOrders UserOrder[] @relation("InvoiceUserOrders")
-  createdAt DateTime   @default(now())
+  createdAt  DateTime    @default(now())
 }
 
 model UserOrder {
-  id       Int      @id @default(autoincrement())
-  invoice  Invoice @relation("InvoiceUserOrders", fields: [invoiceId], references: [id])
+  id        Int     @id @default(autoincrement())
+  invoice   Invoice @relation("InvoiceUserOrders", fields: [invoiceId], references: [id])
   invoiceId Int
 
   @@unique([id, invoiceId])

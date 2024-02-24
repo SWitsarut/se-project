@@ -9,3 +9,16 @@ export interface AddbookFormType {
   pdfUrl: string
   description: string
 }
+
+export type BookResponse = {
+  isbn: string
+  title: string
+  price: number
+  cover: string
+  pdfUrl: string
+  isSelling: boolean
+  category: string
+  genres: string[]
+  authors: string[]
+  createdAt: string
+}

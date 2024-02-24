@@ -2,9 +2,16 @@
 
 import { useEdgeStore } from "@/libs/edgestore";
 import { AddbookFormType } from "@/types/book";
-import { Autocomplete, Button, FileButton, NumberInput, TagsInput, TextInput, Textarea } from "@mantine/core";
+import { Autocomplete, Button, FileButton, FileInput, Notification, NumberInput, TagsInput, TextInput, Textarea } from "@mantine/core";
 import Image from "next/image";
 import React, { useState } from "react";
+import { BookDetailType } from "./page";
+import { notifications } from "@mantine/notifications";
+import { useRouter } from "next/navigation";
+
+interface AddBookFormProps {
+  bookDetail: BookDetailType
+}
 
 const initialForm: AddbookFormType = {
   isbn: "",
@@ -18,36 +25,88 @@ const initialForm: AddbookFormType = {
   description: "",
 }
 
-export default function AddBookForm() {
+export default function AddBookForm({ bookDetail }: AddBookFormProps) {
   const [form, setForm] = useState<AddbookFormType>(initialForm);
   const [previewImg, setPreviewImage] = useState<string>();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { edgestore } = useEdgeStore();
+  const router = useRouter();
 
   const handleAddbook = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if(!form.isbn || !imageFile || !pdfFile || !form.title || !form.price) {
+    if(!form.isbn || !form.title || !form.price || !imageFile || !pdfFile) {
+      notifications.show({
+        title: "Error",
+        message: "Please fill in complete information.",
+        color: "red",
+        autoClose: 3000,
+      })
+      return;
+    }
+
+    if(form.authorNames.length < 1) {
+      notifications.show({
+        title: "Error",
+        message: "Author is required at least 1 author",
+        color: "red",
+        autoClose: 3000,
+      })
+      return;
+    }
+
+    setIsLoading(true);
+    
+    let cover, pdfUrl;
+
+    try {
+      cover = await edgestore.publicImages.upload({ file: imageFile }).then((res) => res.url);
+      pdfUrl = await edgestore.publicFiles.upload({ file: pdfFile }).then((res) => res.url);
+    } catch (error) {
+      notifications.show({
+        title: "Error",
+        message: "Something went wrong while uploading file",
+        color: "red",
+        autoClose: 3000,
+      })
       return;
     }
     
-    const cover = await edgestore.publicImages.upload({ file: imageFile }).then((res) => res.url);
-    const pdfUrl = await edgestore.publicFiles.upload({ file: pdfFile }).then((res) => res.url);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/manage-book`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ ...form, cover, pdfUrl })
+      });
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/manage-book`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ ...form, cover, pdfUrl })
-    });
-
-    const data = await res.json();
-    if(res.ok) {
-      console.log(data);
-    } else {
-      console.log("Error", data)
+      const data = await res.json();
+      if(res.ok) {
+        notifications.show({
+          title: "Success",
+          message: data.message,
+          color: "green",
+          autoClose: 3000,
+        })
+        router.push("/publisher-admin/book-management");
+      } else {
+        notifications.show({
+          title: "Error",
+          message: data.error,
+          color: "red",
+          autoClose: 3000,
+        })
+      }
+    } catch (error: any) {
+      notifications.show({
+        title: "Error",
+        message: "Something went wrong while adding book",
+        color: "red",
+        autoClose: 3000,
+      })
     }
   }
 
@@ -82,10 +141,11 @@ export default function AddBookForm() {
         <TagsInput
           placeholder="Authors"
           label="Authors"
+          description="use ( , ), ( | ), ( / ), ( Enter ) to submit value"
           id="author"
           value={form.authorNames}
           onChange={(e) => setForm((prevState) => ({ ...prevState, authorNames: e }))}
-          data={[]}
+          data={bookDetail ? bookDetail.authors.map((author) => author) : []}
           splitChars={[',', '|', '/']}
         />
         <Autocomplete
@@ -93,7 +153,7 @@ export default function AddBookForm() {
           label="Category"
           value={form.categoryName}
           onChange={(e) => setForm((prevState) => ({ ...prevState, categoryName: e }))}
-          data={[]}
+          data={bookDetail ? bookDetail.categories.map((category) => category) : []}
         />
         <NumberInput
           label="Price"
@@ -104,10 +164,11 @@ export default function AddBookForm() {
         <TagsInput
           placeholder="Genres"
           label="Genres"
+          description="use ( , ), ( | ), ( / ), ( Enter ) to submit value"
           id="genre"
           value={form.genreNames}
           onChange={(e) => setForm((prevState) => ({ ...prevState, genreNames: e }))}
-          data={[]}
+          data={bookDetail ? bookDetail.genres.map((genre) => genre) : []}
           splitChars={[',', '|', '/']}
         />
         <Textarea
@@ -117,13 +178,11 @@ export default function AddBookForm() {
           value={form.description}
           onChange={(e) => setForm((prevState) => ({ ...prevState, description: e.target.value }))}
         />
-        <div className="flex gap-8">
-          <FileButton onChange={(e) => handleImageUpload(e) }>
+        <div className="flex flex-col gap-4 items-center lg:items-start">
+          <FileButton accept="image/*" onChange={(e) => handleImageUpload(e) }>
             {(props) => <Button {...props}>Upload Cover</Button>}
           </FileButton>
-          <FileButton onChange={setPdfFile}>
-            {(props) => <Button {...props}>Upload PDF</Button>}
-          </FileButton>
+          <FileInput accept="application/pdf" onChange={setPdfFile} value={pdfFile} label="Upload PDF" placeholder="Upload file"/>
         </div>
       </div>
       <div className="flex items-center justify-center">
@@ -141,7 +200,7 @@ export default function AddBookForm() {
         </div>
       </div>
       <div className="flex w-full justify-center lg:justify-end col-span-1 lg:col-span-2">
-        <Button type="submit">Add book</Button>
+        <Button loading={isLoading} type="submit">Add book</Button>
       </div>
     </form>
   )
