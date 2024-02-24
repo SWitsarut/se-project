@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import chalk from "chalk";
 import apiTracker from "./middle ware/apiTracker";
+import { Message } from "./type/Message";
 
 dotenv.config();
 const app = express();
@@ -33,16 +34,21 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
 	console.log("New socket connected " + socket.id);
 
-	socket.on("message", () => {
-		io.to(``).emit("receive-message");
+	socket.on("message", (msg: Message) => {
+		console.log("receive from", msg);
+
+		io.to(msg.receiver).emit("receive-message", msg);
 	});
 
+	socket.on("join", (rooms: string[]) => {
+		socket.join(rooms);
+	});
 	socket.on("disconnect", (reason: DisconnectReason, description: any) => {
 		console.log(reason);
 	});
 });
 
-app.get("/", (_, res) => {
+app.get("/", (req, res) => {
 	res.status(200).send("hello!");
 });
 app.get("*", (_, res) => {
