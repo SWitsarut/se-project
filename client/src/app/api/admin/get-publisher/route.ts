@@ -10,27 +10,9 @@ export const GET = async (req: Request) => {
   const take = Number(new URL(req.url).searchParams.get("take"));
   const page = Number(new URL(req.url).searchParams.get("page"));
   const search = new URL(req.url).searchParams.get("search");
-  const action = new URL(req.url).searchParams.get("action");
 
   try {
-    if(action == "get-page") {
-      const count = await prisma.publisher.count({
-        where: {
-          publisherName: {
-            contains: search || "",
-            mode: "insensitive",
-          }
-        }
-      })
-  
-      const totalPage = Math.ceil(count / take);
-  
-      return NextResponse.json({ totalPage }, { status: 200 });
-    }
-
     const result = await prisma.publisher.findMany({
-      skip: take * (page - 1),
-      take: take,
       include: {
         book: true,
       },
@@ -39,7 +21,9 @@ export const GET = async (req: Request) => {
           contains: search || "",
           mode: "insensitive"
         }
-      }
+      },
+      take,
+      skip: take * (page - 1),
     });
 
     const publishers: PublisherResponse[] = result.map((publisher) => ({

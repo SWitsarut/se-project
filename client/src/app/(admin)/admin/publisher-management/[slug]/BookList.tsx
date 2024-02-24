@@ -5,10 +5,14 @@ import Link from "next/link";
 
 interface BookListProps {
   slug: string
+  page: number
+  take: number
+  search: string
 }
 
-async function getBookList(slug: string): Promise<{ books: BookResponse[] }> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-book-by-publisher/${slug}`, {
+async function getBookList(slug: string, page: number, take: number, search: string): Promise<{ books: BookResponse[] }> {
+  const searchParams = `?page=${page}&take=${take}&search=${search}`
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-book-by-publisher/${slug}${searchParams}`, {
     cache: "no-store",
   })
 
@@ -21,8 +25,8 @@ async function getBookList(slug: string): Promise<{ books: BookResponse[] }> {
   return data;
 }
 
-export default async function BookList({ slug }: BookListProps) {
-  const { books } = await getBookList(slug);
+export default async function BookList({ slug, page, take, search }: BookListProps) {
+  const { books } = await getBookList(slug, page, take, search);
   
   return (
     <>
@@ -33,7 +37,7 @@ export default async function BookList({ slug }: BookListProps) {
             <TableTh>Title</TableTh>
             <TableTh>Price</TableTh>
             <TableTh>Category</TableTh>
-            <TableTh>isSelling</TableTh>
+            <TableTh>Status</TableTh>
             <TableTh>CreatedAt</TableTh>
           </TableTr>
         </TableThead>

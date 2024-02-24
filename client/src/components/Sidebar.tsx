@@ -15,7 +15,7 @@ export default function Sidebar({
   children: React.ReactNode,
   session: Session
 }) {
-  const [opened, { toggle }] = useDisclosure();
+  const [opened, { toggle, close }] = useDisclosure();
   const pathname = usePathname();
 
   return (
@@ -58,7 +58,7 @@ export default function Sidebar({
         {/* Publisher Menu */}
         {session.user.role === "PUBLISHER" && (
           publisherMenu.map((menu, index) => (
-            <Link key={index} href={menu.link}>
+            <Link onClick={() => close()} key={index} href={menu.link}>
               <Button
                 size="lg"
                 leftSection={<menu.icon />}
@@ -74,7 +74,7 @@ export default function Sidebar({
         {/* Admin Menu */}
         {session.user.role === "ADMIN" && (
           adminMenu.map((menu, index) => (
-            <Link key={index} href={menu.link}>
+            <Link onClick={() => close()} key={index} href={menu.link}>
               <Button
                 size="lg"
                 leftSection={<menu.icon />}

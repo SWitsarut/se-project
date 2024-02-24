@@ -1,8 +1,9 @@
 import { User } from "@/types/user";
 import { Avatar, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core";
 
-async function getManagerList(slug: string): Promise<{ managers: User[] }> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-manager-by-publisher/${slug}`, {
+async function getManagerList(slug: string, page: number, take: number, search: string): Promise<{ managers: User[] }> {
+  const searchParams = `?page=${page}&take=${take}&search=${search}`;
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-manager-by-publisher/${slug}${searchParams}`, {
     cache: "no-store"
   })
 
@@ -16,10 +17,13 @@ async function getManagerList(slug: string): Promise<{ managers: User[] }> {
 
 interface ManagerListProps {
   slug: string
+  page: number
+  take: number
+  search: string
 }
 
-export default async function ManagerList({ slug }: ManagerListProps) {
-  const { managers } = await getManagerList(slug);
+export default async function ManagerList({ slug, page, take, search }: ManagerListProps) {
+  const { managers } = await getManagerList(slug, page, take, search);
 
   return (
     <>
@@ -30,7 +34,7 @@ export default async function ManagerList({ slug }: ManagerListProps) {
             <TableTh>Username</TableTh>
             <TableTh>Email</TableTh>
             <TableTh>Display name</TableTh>
-            <TableTh>Active</TableTh>
+            <TableTh>Status</TableTh>
           </TableTr>
         </TableThead>
         <TableTbody>

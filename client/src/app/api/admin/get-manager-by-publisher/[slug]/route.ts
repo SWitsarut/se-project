@@ -1,29 +1,26 @@
 import prisma from "@/libs/prisma";
-import { BookResponse } from "@/types/book";
-import { formatDate } from "@/utils/formatDate";
 import { NextResponse } from "next/server";
 
 export const GET = async (
   req: Request,
   { params: { slug } }: { params: { slug: string } },
 ) => {
+  const take = Number(new URL(req.url).searchParams.get("take"));
+  const page = Number(new URL(req.url).searchParams.get("page"));
+  const search = new URL(req.url).searchParams.get("search");
+
   try {
-    const publisher = await prisma.publisher.findUnique({
-      where: {
-        publisherName: slug
-      }
-    })
-
-    if(!publisher) {
-      return NextResponse.json({ error: "Not found publisher" }, { status: 404 });
-    }
-
     const result = await prisma.user.findMany({
       where: {
         publisher: {
           publisherName: slug
         },
-      }
+        username: {
+          contains: search || ""
+        }
+      },
+      take,
+      skip: take * (page - 1)
     });
   
     const managers = result.map((user) => ({

@@ -7,5 +7,6 @@ export type User = {
   displayName: string
   avatar: string | null
   isActive: boolean
-  role: Role
+  role: string
+  publisherName: string | undefined
 }
