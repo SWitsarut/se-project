@@ -74,7 +74,7 @@ export const authOption: NextAuthOptions = {
         if(user.role === "PUBLISHER") {
           const publisher = await prisma.publisher.findFirst({
             where: {
-              users: {
+              staffs: {
                 some: {
                   username: user.username
                 }

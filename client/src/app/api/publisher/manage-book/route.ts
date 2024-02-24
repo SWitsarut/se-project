@@ -1,15 +1,15 @@
 import prisma from "@/libs/prisma";
-import { getServerSession } from "next-auth";
-import { authOption } from "@/libs/authOption";
 import { NextResponse } from "next/server";
 import { AddbookFormType } from "@/types/book";
+import { getCurrentUser } from "@/libs/session";
 
 // add book
 export const POST = async (req: Request) => {
-  const session = await getServerSession(authOption);
+  const user = await getCurrentUser();
+  console.log(user)
 
-  if(!session || session.user.role !== "PUBLISHER") {
-    return NextResponse.json({ error: "Access denied" }, { status: 403 });
+  if(!user || user.role !== "PUBLISHER") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const { isbn, title, cover, price, categoryName, authorNames, genreNames, pdfUrl, description }: AddbookFormType = await req.json();
@@ -38,9 +38,9 @@ export const POST = async (req: Request) => {
   try {
     const publisher = await prisma.publisher.findFirst({
       where: {
-        users: {
+        staffs: {
           some: {
-            username: session.user.username
+            id: user.id
           }
         }
       }

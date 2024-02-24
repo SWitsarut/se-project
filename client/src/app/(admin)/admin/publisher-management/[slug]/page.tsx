@@ -2,12 +2,12 @@ import prisma from "@/libs/prisma";
 import { notFound } from "next/navigation";
 import BookList from "./BookList";
 import { Suspense } from "react";
-import ManagerList from "./ManagerList";
 import SelectTabs from "./SelectTabs";
 import { Skeleton } from "@mantine/core";
 import SearchBar from "../../_components/SearchBar";
 import SelectTake from "../../_components/SelectTake";
 import CustomPagination from "../../_components/CustomPagination";
+import StaffList from "./StaffList";
 
 export async function generateMetadata({ params: { slug } }: { params: { slug: string }}) {
   return {
@@ -85,17 +85,17 @@ export default async function SinglePublisherPage({
 
       <SelectTabs />
       
-      {tab === "manager" ? (
-        <Suspense key={page + take + search} fallback={<Skeleton animate={true} height={400} />}>
+      {tab === "staff" ? (
+        <Suspense key={tab + page + take + search} fallback={<Skeleton animate={true} height={400} />}>
           <div className="flex gap-4">
             <SelectTake />
             <SearchBar label="Search for manager"/>
           </div>
-          <ManagerList slug={params.slug} page={page} take={take} search={search}/> 
+          <StaffList slug={params.slug} page={page} take={take} search={search}/> 
           <CustomPagination totalPage={totalPage}/>
         </Suspense>
-      ):(
-        <Suspense key={page + take + search} fallback={<Skeleton animate={true} height={400} />}>
+      ) : (
+        <Suspense key={String(tab) + page + take + search} fallback={<Skeleton animate={true} height={400} />}>
           <div className="flex gap-4">
             <SelectTake />
             <SearchBar label="Search for book"/>

@@ -41,7 +41,7 @@ model Publisher {
   book      Book[]
   managerId String? @unique
   manager   User?   @relation("PublisherManager", fields: [managerId], references: [id])
-  users     User[]  @relation("PublisherUser")
+  staffs    User[]  @relation("PublisherUser")
 }
 
 model Book {

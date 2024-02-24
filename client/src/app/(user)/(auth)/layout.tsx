@@ -1,11 +1,10 @@
-import { authOption } from "@/libs/authOption";
-import { getServerSession } from "next-auth"
+import { getCurrentUser } from "@/libs/session";
 import { redirect } from "next/navigation";
 
 export default async function AuthLayout({ children }: { children: React.ReactNode}) {
-  const session = await getServerSession(authOption);
+  const user = await getCurrentUser();
   
-  if(session) {
+  if(user) {
     redirect("/");
   }
 

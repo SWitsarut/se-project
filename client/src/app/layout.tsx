@@ -10,9 +10,9 @@ import { theme } from "@/theme";
 
 import SessionProvider from "@/components/SessionProvider";
 import { EdgeStoreProvider } from "@/libs/edgestore";
-
 import { getServerSession } from "next-auth";
 import { authOption } from "@/libs/authOption";
+import ProviderWrapper from "@/components/ProviderWrapper";
 
 export const metadata: Metadata = {
   title: "E-book store",
@@ -24,7 +24,9 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  
   const session = await getServerSession(authOption);
+
   return (
     <html lang="en">
       <head>
@@ -32,14 +34,9 @@ export default async function RootLayout({
       </head>
       <body>
         <SessionProvider session={session}>
-          <EdgeStoreProvider>
-            <MantineProvider theme={theme}>
-              <Notifications />
-              <main className="bg-light">
-                {children}
-              </main>
-            </MantineProvider>
-          </EdgeStoreProvider>
+          <ProviderWrapper>
+            <main className="bg-light">{children}</main>
+          </ProviderWrapper>
         </SessionProvider>
       </body>
     </html>

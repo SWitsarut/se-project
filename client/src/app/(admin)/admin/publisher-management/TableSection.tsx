@@ -41,7 +41,7 @@ export default async function TableSection({ take, page, search }: TableSectionP
             <TableTd>{publisher.totalBook}</TableTd>
             <TableTd>
               <Link href={`/admin/publisher-management/${publisher.publisherName}`}>
-                <Button size="xs" >View Publisher</Button>
+                <Button size="sm" >View Publisher</Button>
               </Link>
             </TableTd>
           </TableTr>

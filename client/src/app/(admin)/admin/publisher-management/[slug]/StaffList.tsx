@@ -1,9 +1,9 @@
 import { User } from "@/types/user";
 import { Avatar, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core";
 
-async function getManagerList(slug: string, page: number, take: number, search: string): Promise<{ managers: User[] }> {
+async function getStaffList(slug: string, page: number, take: number, search: string): Promise<{ staffs: User[] }> {
   const searchParams = `?page=${page}&take=${take}&search=${search}`;
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-manager-by-publisher/${slug}${searchParams}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-staff-by-publisher/${slug}${searchParams}`, {
     cache: "no-store"
   })
 
@@ -15,15 +15,15 @@ async function getManagerList(slug: string, page: number, take: number, search: 
   return data;
 }
 
-interface ManagerListProps {
+interface StaffListProps {
   slug: string
   page: number
   take: number
   search: string
 }
 
-export default async function ManagerList({ slug, page, take, search }: ManagerListProps) {
-  const { managers } = await getManagerList(slug, page, take, search);
+export default async function StaffList({ slug, page, take, search }: StaffListProps) {
+  const { staffs } = await getStaffList(slug, page, take, search);
 
   return (
     <>
@@ -38,15 +38,15 @@ export default async function ManagerList({ slug, page, take, search }: ManagerL
           </TableTr>
         </TableThead>
         <TableTbody>
-          {managers.map((manager) => (
-            <TableTr key={manager.id}>
+          {staffs.map((staff) => (
+            <TableTr key={staff.id}>
               <TableTd>
-                <Avatar src={manager.avatar} className="mx-auto" />
+                <Avatar src={staff.avatar} className="mx-auto" />
               </TableTd>
-              <TableTd>{manager.username}</TableTd>
-              <TableTd>{manager.email}</TableTd>
-              <TableTd>{manager.displayName}</TableTd>
-              <TableTd>{manager.isActive ? <Text c="green">Active</Text> : <Text c="red">Inactive</Text>}</TableTd>
+              <TableTd>{staff.username}</TableTd>
+              <TableTd>{staff.email}</TableTd>
+              <TableTd>{staff.displayName}</TableTd>
+              <TableTd>{staff.isActive ? <Text c="green">Active</Text> : <Text c="red">Inactive</Text>}</TableTd>
             </TableTr>
           ))}
         </TableTbody>

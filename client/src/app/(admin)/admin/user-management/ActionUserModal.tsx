@@ -143,8 +143,8 @@ export default function ActionUserModal({ user, publisherName }: ActionUserModal
         </div>
       </Modal>
 
-      <Button leftSection={<IconPencil />} onClick={openEdit} color="blue" size="sm">Edit</Button>
-      <Button leftSection={<IconTrash />} onClick={openDelete} color="red" size="sm">Delete</Button>
+      <Button leftSection={<IconPencil size={20}/>} onClick={openEdit} color="blue" size="sm">Edit</Button>
+      <Button leftSection={<IconTrash size={20}/>} onClick={openDelete} color="red" size="sm">Delete</Button>
     </>
   )
 }

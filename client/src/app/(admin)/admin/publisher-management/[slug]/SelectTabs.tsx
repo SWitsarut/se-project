@@ -20,10 +20,14 @@ export default function SelectTabs() {
   }
 
   return (
-    <Tabs value={searchParams.get("tab")?.toString()} onChange={(value) => handleSelect(value as string)} defaultValue={searchParams.get("tab")?.toString() || "book"}>
+    <Tabs
+      value={searchParams.get("tab")?.toString()}
+      onChange={(value) => handleSelect(value as string)}
+      defaultValue={searchParams.get("tab")?.toString() || "book"}
+    >
       <Tabs.List grow>
         <Tabs.Tab value="book" fw="bolder"><Text size="xl" fw="bolder">Book</Text></Tabs.Tab>
-        <Tabs.Tab value="manager" fw="bolder"><Text size="xl" fw="bolder">Manager</Text></Tabs.Tab>
+        <Tabs.Tab value="staff" fw="bolder"><Text size="xl" fw="bolder">Staff</Text></Tabs.Tab>
       </Tabs.List>
     </Tabs>
   )

@@ -2,9 +2,9 @@
 const nextConfig = {
   webpack: (config) => {
     config.resolve.alias.canvas = false;
-    
+
     config.resolve.extensionAlias = {
-      '.js': ['.js', '.ts', '.tsx'],
+      ".js": [".js", ".ts", ".tsx"],
     };
 
     return config;
@@ -23,6 +23,9 @@ const nextConfig = {
         pathname: "/*/**",
       },
     ],
+  },
+  experimental: {
+    optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
   },
 };
 

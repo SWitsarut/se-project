@@ -1,6 +1,7 @@
 import {
   IconBook2,
   IconBooks,
+  IconCopyright,
   IconLayoutDashboard,
   IconUser,
   IconUserCircle,
@@ -10,12 +11,13 @@ export const adminMenu = [
   { label: "Dashboard", link: "/admin", icon: IconLayoutDashboard },
   { label: "Book management", link: "/admin/book-management", icon: IconBook2 },
   { label: "User management", link: "/admin/user-management", icon: IconUser },
-  { label: "Publisher management", link: "/admin/publisher-management", icon: IconUser },
+  { label: "Publisher management", link: "/admin/publisher-management", icon: IconCopyright },
 ];
 
 export const publisherMenu = [
-  { label: "Dashboard", link: "/publisher-admin", icon: IconLayoutDashboard },
-  { label: "Book management", link: "/publisher-admin/book-management", icon: IconBook2 },
+  { label: "Dashboard", link: "/publisher", icon: IconLayoutDashboard },
+  { label: "Book management", link: "/publisher/book-management", icon: IconBook2 },
+  { label: "staff management", link: "/publisher/staff-management", icon: IconUser },
 ]
 
 export const userMenu = [

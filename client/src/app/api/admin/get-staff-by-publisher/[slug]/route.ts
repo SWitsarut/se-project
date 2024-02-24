@@ -23,17 +23,17 @@ export const GET = async (
       skip: take * (page - 1)
     });
   
-    const managers = result.map((user) => ({
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      displayName: user.displayName,
-      avatar: user.avatar,
-      isActive: user.isActive,
-      role: user.role
+    const staffs = result.map((staff) => ({
+      id: staff.id,
+      username: staff.username,
+      email: staff.email,
+      displayName: staff.displayName,
+      avatar: staff.avatar,
+      isActive: staff.isActive,
+      role: staff.role
     }))
 
-    return NextResponse.json({ managers }, { status: 200 });
+    return NextResponse.json({ staffs }, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
