@@ -1,14 +1,18 @@
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 
 import type { Metadata } from "next";
 import "./globals.css";
-import { ColorSchemeScript } from "@mantine/core";
 
-import ProviderWrapper from "@/components/ProviderWrapper";
+import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
+import { theme } from "@/theme";
+
 import SessionProvider from "@/components/SessionProvider";
-
+import { EdgeStoreProvider } from "@/libs/edgestore";
 import { getServerSession } from "next-auth";
 import { authOption } from "@/libs/authOption";
+import ProviderWrapper from "@/components/ProviderWrapper";
 
 export const metadata: Metadata = {
   title: "E-book store",
@@ -20,7 +24,9 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  
   const session = await getServerSession(authOption);
+
   return (
     <html lang="en">
       <head>

@@ -1,9 +1,10 @@
 import { User } from "@/types/user";
-import { Avatar, Button, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core";
-import { IconPencil, IconTrash } from "@tabler/icons-react";
+import { Avatar, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core";
+import ActionUserModal from "./ActionUserModal";
+import prisma from "@/libs/prisma";
 
-async function getUser(): Promise<{ users: User[] }> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-user`, {
+async function getUser(page: number, take: number, search: string): Promise<{ users: User[] }> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-user?page=${page}&take=${take}&search=${search}`, {
     cache: "no-store"
   })
   const data = await res.json();
@@ -15,8 +16,25 @@ async function getUser(): Promise<{ users: User[] }> {
   return data;
 }
 
-export default async function UserList() {
-  const { users } = await getUser();
+async function getPublisherName() {
+  const result = await prisma.publisher.findMany({
+    select: {
+      publisherName: true
+    }
+  })
+
+  return result;
+}
+
+interface UserListProps {
+  page: number
+  take: number
+  search: string
+}
+
+export default async function UserList({ page, take, search }: UserListProps) {
+  const [{ users }, publishers] = await Promise.all([getUser(page, take, search), getPublisherName()])
+
   return (
     <>
       <Table striped highlightOnHover withTableBorder withColumnBorders>
@@ -27,7 +45,8 @@ export default async function UserList() {
             <TableTh>Email</TableTh>
             <TableTh>Display name</TableTh>
             <TableTh>Role</TableTh>
-            <TableTh>Active</TableTh>
+            <TableTh>Publisher name</TableTh>
+            <TableTh>Status</TableTh>
             <TableTh>Actions</TableTh>
           </TableTr>
         </TableThead>
@@ -40,11 +59,14 @@ export default async function UserList() {
               <TableTd>{user.username}</TableTd>
               <TableTd>{user.email}</TableTd>
               <TableTd>{user.displayName}</TableTd>
-              <TableTd>{user.isActive ? <Text c="green">Active</Text> : <Text c="red">Inactive</Text>}</TableTd>
               <TableTd>{user.role}</TableTd>
+              <TableTd>{user.publisherName ? user.publisherName : "-"}</TableTd>
+              <TableTd>{user.isActive ? <Text c="green">Active</Text> : <Text c="red">Inactive</Text>}</TableTd>
               <TableTd classNames={{ td: "gap-2 flex"}}>
-                <Button leftSection={<IconPencil />} color="blue">Edit</Button>
-                <Button leftSection={<IconTrash />} color="red">Delete</Button>
+                <ActionUserModal
+                  publisherName={publishers.map((publisher) => publisher.publisherName)}
+                  user={user}
+                />
               </TableTd>
             </TableTr>
           ))}

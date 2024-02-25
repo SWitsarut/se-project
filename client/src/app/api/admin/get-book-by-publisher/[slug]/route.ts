@@ -7,6 +7,10 @@ export const GET = async (
   req: Request,
   { params: { slug } }: { params: { slug: string } },
 ) => {
+  const take = Number(new URL(req.url).searchParams.get("take"));
+  const page = Number(new URL(req.url).searchParams.get("page"));
+  const search = new URL(req.url).searchParams.get("search");
+  
   try {
     const publisher = await prisma.publisher.findUnique({
       where: {
@@ -23,12 +27,24 @@ export const GET = async (
         publisher: {
           publisherName: slug
         },
+        OR: [
+          {title: {
+              contains: search || "",
+              mode: "insensitive",
+          }},
+          {isbn: {
+            contains: search || "",
+            mode: "insensitive",
+          }}
+        ]
       },
       include: {
         category: true,
         genres: true,
         authors: true,
       },
+      take,
+      skip: take * (page - 1)
     });
   
     const books: BookResponse[] = result.map((book) => ({

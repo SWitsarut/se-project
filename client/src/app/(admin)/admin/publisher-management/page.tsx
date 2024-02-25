@@ -1,25 +1,31 @@
 import { Metadata } from "next";
-import TableSection from "./TableSection";
-import SearchPublisher from "./SearchPublisher";
 import { Suspense } from "react";
-import CustomPagination from "./CustomPagination";
 import { Skeleton } from "@mantine/core";
+import TableSection from "./TableSection";
+import CustomPagination from "../_components/CustomPagination";
+import SelectTake from "../_components/SelectTake";
+import SearchBar from "../_components/SearchBar";
+import prisma from "@/libs/prisma";
 
 export const metadata: Metadata ={
   title: "Publisher Manangement | E-book store"
 }
 
-async function getTotalPublisherPage(take: number, page: number, search: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-publisher?action=get-page&take=${take}&page=${page}&search=${search}`, {
-    cache: "no-store"
-  });
-  const data = await res.json();
+async function getTotalPage(take: number, search: string) {
+  try {
+    const count = await prisma.publisher.count({
+      where: {
+        publisherName: {
+          contains: search
+        }
+      }
+    })
 
-  if(data.error) {
-    throw new Error(data.error);
+    return Math.ceil(count / take);
+  } catch (error) {
+    console.log(error);
+    return 1;
   }
-
-  return data;
 }
 
 export default async function PublisherManagementPage({
@@ -35,7 +41,7 @@ export default async function PublisherManagementPage({
   const page = Number(searchParams?.page) || 1;
   const search = searchParams?.search || "";
 
-  const { totalPage } = await getTotalPublisherPage(take, page, search);
+  const totalPage = await getTotalPage(take, search);
   
   return (
     <>
@@ -43,13 +49,16 @@ export default async function PublisherManagementPage({
         <h1>Publisher Management</h1>
       </div>
 
-      <SearchPublisher take={take} search={search}/>
+      <div className="flex gap-4">
+        <SelectTake />
+        <SearchBar label="Search for publisher"/>
+      </div>
 
-      <Suspense key={search + page + take} fallback={<Skeleton animate={true} height={500} />}>
+      <Suspense key={search + page + take} fallback={<Skeleton animate={true} height={400} />}>
         <TableSection search={search} take={take} page={page}/>
       </Suspense>
 
-      <CustomPagination page={page} totalPage={totalPage}/>
+      <CustomPagination totalPage={totalPage}/>
     </>
   );
 }

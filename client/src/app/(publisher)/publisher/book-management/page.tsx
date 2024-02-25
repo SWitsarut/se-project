@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function ManageBookPage() {
   return (
     <div>
-      <Link href={"/publisher-admin/book-management/add-book"}><Button>Add book</Button></Link>
+      <Link href={"/publisher/book-management/add-book"}><Button>Add book</Button></Link>
     </div>
   )
 }

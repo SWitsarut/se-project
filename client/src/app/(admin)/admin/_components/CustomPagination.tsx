@@ -4,9 +4,8 @@ import { Pagination } from "@mantine/core";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function CustomPagination({
-  page, totalPage
+  totalPage
 }: {
-  page: number
   totalPage: number
 }) {
   const searchParams = useSearchParams();
@@ -17,7 +16,7 @@ export default function CustomPagination({
     <Pagination
       className="mx-auto"
       total={totalPage == 0 ? 1 : totalPage}
-      value={page}
+      value={Number(searchParams.get("page")?.toString()) || 1}
       onChange={(e) => {
         const params = new URLSearchParams(searchParams);
         params.set("page", `${e}`)
