@@ -7,6 +7,7 @@ export default function App() {
 	const msg = useRef<HTMLInputElement | null>(null);
 	const reciever = useRef<HTMLInputElement | null>(null);
 	const curRoom = "1234";
+
 	useEffect(() => {
 		const joinedRoom = ["1234"];
 		socket.current = io("localhost:8080");
