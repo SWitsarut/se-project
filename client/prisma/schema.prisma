@@ -18,11 +18,14 @@ model User {
   isActive      Boolean   @default(true)
   emailVerified DateTime?
 
-  createdAt        DateTime   @default(now())
+  createdAt        DateTime    @default(now())
   publisherId      Int?
-  publisher        Publisher? @relation("PublisherUser", fields: [publisherId], references: [id])
-  managedPublisher Publisher? @relation("PublisherManager")
+  publisher        Publisher?  @relation("PublisherStaff", fields: [publisherId], references: [id])
+  managedPublisher Publisher?  @relation("PublisherManager")
   carts            CartItem[]
+
+  @@index([username, email])
+  @@map("user")
 }
 
 model VerificationToken {
@@ -39,9 +42,12 @@ model Publisher {
   publisherName String @unique
 
   book      Book[]
-  managerId String? @unique
-  manager   User?   @relation("PublisherManager", fields: [managerId], references: [id])
-  staffs    User[]  @relation("PublisherUser")
+  managerId String?     @unique
+  manager   User?       @relation("PublisherManager", fields: [managerId], references: [id])
+  staffs    User[]      @relation("PublisherStaff")
+
+  @@index([publisherName])
+  @@map("publisher")
 }
 
 model Book {
@@ -60,9 +66,12 @@ model Book {
   publisherId Int
   category    Category   @relation(fields: [categoryId], references: [id])
   categoryId  Int
-  genres      Genre[]    @relation("BookGenres")
-  authors     Author[]   @relation("BookAuthors")
+  genres      Genre[]    @relation(name: "BookGenres")
+  authors     Author[]   @relation(name: "BookAuthors")
   carts       CartItem[]
+
+  @@index([title])
+  @@map("book")
 }
 
 model CartItem {
@@ -93,20 +102,26 @@ model Category {
   categoryName String @unique
 
   books Book[]
+
+  @@map("category")
 }
 
 model Genre {
   id        Int    @id @default(autoincrement())
   genreName String @unique
 
-  books Book[] @relation("BookGenres")
+  books Book[] @relation(name: "BookGenres")
+
+  @@map("genre")
 }
 
 model Author {
   id         Int    @id @default(autoincrement())
   authorName String @unique
 
-  books Book[] @relation("BookAuthors")
+  books Book[] @relation(name: "BookAuthors")
+
+  @@map("author")
 }
 
 enum Role {

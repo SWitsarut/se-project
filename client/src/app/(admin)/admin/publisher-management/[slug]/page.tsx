@@ -89,7 +89,7 @@ export default async function SinglePublisherPage({
         <Suspense key={tab + page + take + search} fallback={<Skeleton animate={true} height={400} />}>
           <div className="flex gap-4">
             <SelectTake />
-            <SearchBar label="Search for manager"/>
+            <SearchBar label="Search for staff"/>
           </div>
           <StaffList slug={params.slug} page={page} take={take} search={search}/> 
           <CustomPagination totalPage={totalPage}/>

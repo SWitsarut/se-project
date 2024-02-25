@@ -91,7 +91,7 @@ export default function AddBookForm({ bookDetail }: AddBookFormProps) {
           color: "green",
           autoClose: 3000,
         })
-        router.push("/publisher-admin/book-management");
+        router.push("/publisher/book-management");
       } else {
         notifications.show({
           title: "Error",

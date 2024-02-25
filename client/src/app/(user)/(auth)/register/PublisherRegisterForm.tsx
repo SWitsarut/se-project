@@ -6,11 +6,12 @@ import { useDisclosure } from "@mantine/hooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-export default function RegisterForm() {
+export default function PublisherRegisterForm() {
   const form = useForm({
     initialValues: {
       email: "",
       username: "",
+      publisherName: "",
       displayName: "",
       password: "",
       confirmPassword: "",
@@ -32,13 +33,12 @@ export default function RegisterForm() {
   const [registerError, setRegisterError] = useState<string>("");
   const [successOpened, { open: successOpen, close: successClose }] = useDisclosure(false);
   const [errorOpened, { open: errorOpen, close: errorClose }] = useDisclosure(false);
-  const searchParams = useSearchParams();
   const router = useRouter();
   
   const registerSubmit = async (userData: typeof form.values) => {
     try {
       setIsLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/auth/register`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/auth/publisher-register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,6 +95,12 @@ export default function RegisterForm() {
           withAsterisk
           name="confirmPassword"
           {...form.getInputProps("confirmPassword")}
+        />
+        <TextInput
+          label="Publisher name:"
+          withAsterisk
+          name="publisherName"
+          {...form.getInputProps("publisherName")}
         />
         <TextInput
           label="Display name:"

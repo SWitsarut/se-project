@@ -31,7 +31,6 @@ export default function LoginForm() {
 
     if(res?.error) {
       setLoginError(res.error)
-      // setIsLoading(false);
     } else {
       setLoginError("");
       router.push("/");

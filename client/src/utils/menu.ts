@@ -17,8 +17,8 @@ export const adminMenu = [
 export const publisherMenu = [
   { label: "Dashboard", link: "/publisher", icon: IconLayoutDashboard },
   { label: "Book management", link: "/publisher/book-management", icon: IconBook2 },
-  { label: "staff management", link: "/publisher/staff-management", icon: IconUser },
-]
+  { label: "Staff management", link: "/publisher/staff-management", icon: IconUser },
+];
 
 export const userMenu = [
   { label: "Profile", link: "/my-profile", icon: IconUserCircle },
