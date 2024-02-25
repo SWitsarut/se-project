@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest --watchAll --verbose"
   },
   "dependencies": {
     "@edgestore/react": "^0.1.6",

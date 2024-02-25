@@ -4,30 +4,30 @@ import { AddbookFormType } from "../types/book";
 // add book
 export const POST = async (req: any, session: any, prisma: any, NextResponse: any) => {
 
-  if(!session || session.user.role !== "PUBLISHER") {
+  if (!session || session.user.role !== "PUBLISHER") {
     return NextResponse.json({ error: "Access denied" }, { status: 403 });
   }
 
   const { isbn, title, cover, price, categoryName, authorNames, genreNames, pdfUrl, description }: AddbookFormType = await req.json();
-  
-  if(!isbn || !title || !price || !categoryName) {
+
+  if (!isbn || !title || !price || !categoryName) {
     return NextResponse.json({ error: "Invalid Input" }, { status: 400 });
   }
 
-  if(Number(price) < 0) {
+  if (Number(price) < 0) {
     return NextResponse.json({ error: "Invalid price" }, { status: 400 });
   }
-  
-  if(authorNames.length < 1) {
+
+  if (authorNames.length < 1) {
     return NextResponse.json({ error: "Author is required at least 1 author" }, { status: 400 });
   }
 
-  if(!cover) {
+  if (!cover) {
     return NextResponse.json({ error: "Image cover is required" }, { status: 400 })
   }
-  
 
-  if(!pdfUrl) {
+
+  if (!pdfUrl) {
     return NextResponse.json({ error: "PDF file is required" }, { status: 400 });
   }
 
@@ -41,8 +41,8 @@ export const POST = async (req: any, session: any, prisma: any, NextResponse: an
         }
       }
     })
-  
-    if(!publisher || !publisher.publisherName) {
+
+    if (!publisher || !publisher.publisherName) {
       return NextResponse.json({ error: "Publisher is required" }, { status: 403 });
     }
 
@@ -55,7 +55,7 @@ export const POST = async (req: any, session: any, prisma: any, NextResponse: an
       }
     })
 
-    if(existingBook) {
+    if (existingBook) {
       return NextResponse.json({ error: "Already have a book" }, { status: 400 });
     }
 
@@ -119,11 +119,13 @@ const createMockSession = (role: string, publisher: string | null = null) => ({
 
 const createMockPrisma = (publisherFound = false, bookFound = false, bookCreateSuccess = false) => ({
   publisher: {
-    findFirst: jest.fn().mockResolvedValue(publisherFound ? {publisherName: "name"} : null),
+    findFirst: jest.fn().mockResolvedValue(publisherFound ? { publisherName: "name" } : null),
   },
   book: {
     findFirst: jest.fn().mockResolvedValue(bookFound ? {} : null),
-    create: jest.fn().mockResolvedValue(bookCreateSuccess ? {} : new Error()),
+    create: bookCreateSuccess ? jest.fn().mockResolvedValue({}) : jest.fn(() => {
+      throw new Error('Simulated create error');
+    }),
   },
 });
 
@@ -134,21 +136,21 @@ const createMockResponse = () => ({
 describe('normal inputs', () => {
   test('should return success message', async () => {
     const req = createMockRequest({
-        isbn: '1234567890',
-        title: 'Title',
-        cover: 'cover-url',
-        price: '900',
-        categoryName: 'Test Category',
-        authorNames: ['Author 1', 'Author 2'],
-        genreNames: ['Genre 1', 'Genre 2'],
-        pdfUrl: 'pdf-URL',
-        description: 'text description <>'
+      isbn: '1234567890',
+      title: 'Title',
+      cover: 'cover-url',
+      price: '900',
+      categoryName: 'Test Category',
+      authorNames: ['Author 1', 'Author 2'],
+      genreNames: ['Genre 1', 'Genre 2'],
+      pdfUrl: 'pdf-URL',
+      description: 'text description <>'
     });
-  
+
     const session = createMockSession('PUBLISHER', 'LEAGUE OF GAYS');
-  
+
     const prisma = createMockPrisma(true, false, true);
-  
+
     const NextResponse = createMockResponse();
 
     await POST(req, session, prisma, NextResponse);
@@ -156,156 +158,144 @@ describe('normal inputs', () => {
     expect(prisma.publisher.findFirst).toHaveBeenCalled();
     expect(prisma.book.findFirst).toHaveBeenCalled();
     expect(prisma.book.create).toHaveBeenCalled();
-    expect(NextResponse.json).toHaveBeenCalledWith(expect.any(Object), {status: 201});
+    expect(NextResponse.json).toHaveBeenCalledWith(expect.any(Object), { status: 201 });
   });
 });
 
-// describe('handles abnormal input data', () => {
-//   test('negative price', async () => {
-//     const req = createMockRequest({
-//       isbn: '1234567890',
-//       title: 'Test Book',
-//       cover: 'cover-url',
-//       price: '19.99',
-//       categoryName: 'Test Category',
-//       authorNames: ['Author 1', 'Author 2'],
-//       genreNames: ['Genre 1', 'Genre 2'],
-//       pdfUrl: 'pdf-url',
-//       description: 'Test Description',
-//     })
+describe('handles abnormal input data', () => {
+  test('handles negative price', async () => {
+    const req = createMockRequest({
+      isbn: '1234567890',
+      title: 'Test Book',
+      cover: 'cover-url',
+      price: '-120',
+      categoryName: 'Test Category',
+      authorNames: ['Author 1', 'Author 2'],
+      genreNames: ['Genre 1', 'Genre 2'],
+      pdfUrl: 'pdf-url',
+      description: '',
+    })
 
-//     const session = {
-//       user: {
-//         name: undefined,
-//         email: 'admin@admin.com',
-//         image: undefined,
-//         id: '7928d07b-0f52-4da2-8223-27c16bb2d0d1',
-//         username: 'admin',
-//         displayName: 'admin',
-//         role: 'PUBLISHER',
-//         publisher: 'League of Gays'
-//       },
-//     };
+    const session = createMockSession('PUBLISHER', 'Electronic Art');
 
-//     const prisma = {
-//       publisher: {
-//         findFirst: jest.fn().mockResolvedValue({ publisherName: 'something' }),
-//       },
-//       book: {
-//         findFirst: jest.fn().mockResolvedValue(null),
-//         create: jest.fn().mockResolvedValue({}),
-//       },
-//     };
+    const prisma = createMockPrisma(true, false, true);
 
-//     const NextResponse = {
-//       json: jest.fn(),
-//     };
+    const NextResponse = createMockResponse();
 
-//     await POST(req, session, prisma, NextResponse);
+    await POST(req, session, prisma, NextResponse);
 
-//     expect(prisma.publisher.findFirst).not.toHaveBeenCalled();
-//     expect(prisma.book.findFirst).not.toHaveBeenCalled();
-//     expect(prisma.book.create).not.toHaveBeenCalled();
-//     expect(NextResponse.json).toHaveBeenCalledWith({ error: "Invalid price" }, { status: 400 });
-//   });
+    expect(prisma.publisher.findFirst).not.toHaveBeenCalled();
+    expect(prisma.book.findFirst).not.toHaveBeenCalled();
+    expect(prisma.book.create).not.toHaveBeenCalled();
+    expect(NextResponse.json).toHaveBeenCalledWith(expect.any(Object), { status: 400 });
+  });
 
-//   test('handles incomplete input data', async () => {
-//     const req = {
-//       json: () => Promise.resolve({
-//         isbn: '1234567890',
-//         title: '',
-//         cover: 'cover-url',
-//         price: '19.99',
-//         categoryName: 'Test Category',
-//         authorNames: ['Author 1', 'Author 2'],
-//         genreNames: ['Genre 1', 'Genre 2'],
-//         pdfUrl: '',
-//         description: '',
-//       }),
-//     };
+  test('handles incomplete input data', async () => {
+    const req = createMockRequest({
+      isbn: '1234567890',
+      title: '',
+      cover: 'cover-url',
+      price: '19.99',
+      categoryName: 'Test Category',
+      authorNames: ['Author 1', 'Author 2'],
+      genreNames: ['Genre 1', 'Genre 2'],
+      pdfUrl: '',
+      description: '',
+    });
 
-//     const session = {
-//       user: {
-//         name: undefined,
-//         email: 'admin@admin.com',
-//         image: undefined,
-//         id: '7928d07b-0f52-4da2-8223-27c16bb2d0d1',
-//         username: 'admin',
-//         displayName: 'admin',
-//         role: 'PUBLISHER',
-//         publisher: 'League of Gays'
-//       },
-//     };
+    const session = createMockSession('PUBLISHER', 'Som3th1n9');
 
-//     const prisma = {
-//       publisher: {
-//         findFirst: jest.fn().mockResolvedValue({ publisherName: 'something' }),
-//       },
-//       book: {
-//         findFirst: jest.fn().mockResolvedValue(null),
-//         create: jest.fn().mockResolvedValue({}),
-//       },
-//     };
+    const prisma = createMockPrisma(true, false, true);
 
-//     const NextResponse = {
-//       json: jest.fn(),
-//     };
+    const NextResponse = createMockResponse();
 
-//     await POST(req, session, prisma, NextResponse);
+    await POST(req, session, prisma, NextResponse);
 
-//     expect(prisma.publisher.findFirst).not.toHaveBeenCalled();
-//     expect(prisma.book.findFirst).not.toHaveBeenCalled();
-//     expect(prisma.book.create).not.toHaveBeenCalled();
-//     expect(NextResponse.json).toHaveBeenCalledWith({ error: "Invalid Input" }, { status: 400 });
-//   });
+    expect(prisma.publisher.findFirst).not.toHaveBeenCalled();
+    expect(prisma.book.findFirst).not.toHaveBeenCalled();
+    expect(prisma.book.create).not.toHaveBeenCalled();
+    expect(NextResponse.json).toHaveBeenCalledWith(expect.any(Object), { status: 400 });
+  });
 
-//   test('not a publisher', async () => {
-//     const req = {
-//       json: () => Promise.resolve({
-//         isbn: '1234567890',
-//         title: 'hello',
-//         cover: 'cover-url',
-//         price: '100',
-//         categoryName: 'Test Category',
-//         authorNames: ['Author 1', 'Author 2'],
-//         genreNames: ['Genre 1', 'Genre 2'],
-//         pdfUrl: 'an-url',
-//         description: '',
-//       }),
-//     };
+  test('handles not a publisher', async () => {
+    const req = createMockRequest({
+      isbn: '1234567890',
+      title: 'hello',
+      cover: 'cover-url',
+      price: '100',
+      categoryName: 'Test Category',
+      authorNames: ['Author 1', 'Author 2'],
+      genreNames: ['Genre 1', 'Genre 2'],
+      pdfUrl: 'an-url',
+      description: '',
+    });
 
-//     const session = {
-//       user: {
-//         name: undefined,
-//         email: 'tryhard@email.com',
-//         image: undefined,
-//         id: '7928d07b-0f52-4da2-8223-27c16bb2d0d1',
-//         username: 'tryhard',
-//         displayName: 'tryhard',
-//         role: 'USER',
-//         publisher: null
-//       },
-//     };
+    const session = createMockSession('USER');
 
-//     const prisma = {
-//       publisher: {
-//         findFirst: jest.fn().mockResolvedValue(null),
-//       },
-//       book: {
-//         findFirst: jest.fn().mockResolvedValue(null),
-//         create: jest.fn().mockResolvedValue({}),
-//       },
-//     };
+    const prisma = createMockPrisma(false, false, true);
 
-//     const NextResponse = {
-//       json: jest.fn(),
-//     };
+    const NextResponse = createMockResponse();
 
-//     await POST(req, session, prisma, NextResponse);
+    await POST(req, session, prisma, NextResponse);
 
-//     expect(prisma.publisher.findFirst).not.toHaveBeenCalled();
-//     expect(prisma.book.findFirst).not.toHaveBeenCalled();
-//     expect(prisma.book.create).not.toHaveBeenCalled();
-//     expect(NextResponse.json).toHaveBeenCalledWith({ error: "Access denied" }, { status: 403 });
-  // });
-// });
+    expect(prisma.publisher.findFirst).not.toHaveBeenCalled();
+    expect(prisma.book.findFirst).not.toHaveBeenCalled();
+    expect(prisma.book.create).not.toHaveBeenCalled();
+    expect(NextResponse.json).toHaveBeenCalledWith(expect.any(Object), { status: 403 });
+  });
+  test('handles book already exist', async () => {
+    const req = createMockRequest({
+      isbn: '1234567890',
+      title: 'hello',
+      cover: 'cover-url',
+      price: '100',
+      categoryName: 'Test Category',
+      authorNames: ['Author 1', 'Author 2'],
+      genreNames: ['Genre 1', 'Genre 2'],
+      pdfUrl: 'an-url',
+      description: '',
+    });
+
+    const session = createMockSession('PUBLISHER', 'DDD');
+
+    const prisma = createMockPrisma(true, true, true);
+
+    const NextResponse = createMockResponse();
+
+    await POST(req, session, prisma, NextResponse);
+
+    expect(prisma.publisher.findFirst).toHaveBeenCalled();
+    expect(prisma.book.findFirst).toHaveBeenCalled();
+    expect(prisma.book.create).not.toHaveBeenCalled();
+    expect(NextResponse.json).toHaveBeenCalledWith(expect.any(Object), { status: 400 });
+  });
+});
+
+describe('handles other errors', () => {
+  test('handles book creation error', async () => {
+    const req = createMockRequest({
+      isbn: '1234567890',
+      title: 'hello',
+      cover: 'cover-url',
+      price: '100',
+      categoryName: 'Test Category',
+      authorNames: ['Author 1', 'Author 2'],
+      genreNames: ['Genre 1', 'Genre 2'],
+      pdfUrl: 'an-url',
+      description: '',
+    });
+
+    const session = createMockSession('PUBLISHER', 'DDD');
+
+    const prisma = createMockPrisma(true, false, false);
+
+    const NextResponse = createMockResponse();
+
+    await POST(req, session, prisma, NextResponse);
+
+    expect(prisma.publisher.findFirst).toHaveBeenCalled();
+    expect(prisma.book.findFirst).toHaveBeenCalled();
+    expect(prisma.book.create).toHaveBeenCalled();
+    expect(NextResponse.json).toHaveBeenCalledWith(expect.any(Object), { status: 500 });
+  });
+});
