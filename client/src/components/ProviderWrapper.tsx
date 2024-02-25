@@ -3,6 +3,19 @@ import { theme } from "@/theme";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 
+<<<<<<< HEAD
+interface ProviderWrapperProps {
+  children: React.ReactNode;
+}
+
+export default function ProviderWrapper({ children }: ProviderWrapperProps) {
+  return (
+    <MantineProvider theme={theme}>
+      <EdgeStoreProvider>
+        <ChatProvider>{children}</ChatProvider>
+      </EdgeStoreProvider>
+    </MantineProvider>
+=======
 export default function ProviderWrapper({
   children
 }: {
@@ -15,5 +28,6 @@ export default function ProviderWrapper({
         {children}
       </MantineProvider>
     </EdgeStoreProvider>
+>>>>>>> a1ae53e4e86f8233eebe62c0510a0b1e33e2aba8
   );
 }
