@@ -7,3 +7,5 @@ package-lock.json
 *.dll
 *.so
 *.dylib
+
+src/__test__/coverage
