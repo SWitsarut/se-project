@@ -23,6 +23,8 @@ model User {
   publisher        Publisher? @relation("PublisherStaff", fields: [publisherId], references: [id])
   managedPublisher Publisher? @relation("PublisherManager")
   carts            CartItem[]
+  sender   ChatMessage[] @relation("ChatSender")
+  receiver ChatMessage[] @relation("ChatReceiver")
 
   @@index([username, email])
   @@map("user")
@@ -124,13 +126,12 @@ model Author {
   @@map("author")
 }
 
-
-
-model Chat {
+model ChatMessage {
   id         String @id @default(uuid())
   senderId   String
   receiverId String
   content    String
+  timeStamp DateTime @default(now())
 
   sender   User @relation("ChatSender", fields: [senderId], references: [id])
   receiver User @relation("ChatReceiver", fields: [receiverId], references: [id])
