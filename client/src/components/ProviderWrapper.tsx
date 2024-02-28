@@ -3,10 +3,14 @@ import { theme } from "@/theme";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 
+interface ProviderWrapperProps {
+  children: React.ReactNode;
+}
+
 export default function ProviderWrapper({
-  children
+  children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <EdgeStoreProvider>
