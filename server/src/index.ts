@@ -34,6 +34,7 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
 	console.log("New socket connected " + socket.id);
 
+	console.log(socket.handshake.auth.username);
 	socket.on("message", (msg: Message) => {
 		console.log("receive from", msg);
 
