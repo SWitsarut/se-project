@@ -18,10 +18,10 @@ model User {
   isActive      Boolean   @default(true)
   emailVerified DateTime?
 
-  createdAt        DateTime    @default(now())
+  createdAt        DateTime   @default(now())
   publisherId      Int?
-  publisher        Publisher?  @relation("PublisherStaff", fields: [publisherId], references: [id])
-  managedPublisher Publisher?  @relation("PublisherManager")
+  publisher        Publisher? @relation("PublisherStaff", fields: [publisherId], references: [id])
+  managedPublisher Publisher? @relation("PublisherManager")
   carts            CartItem[]
 
   @@index([username, email])
@@ -42,9 +42,9 @@ model Publisher {
   publisherName String @unique
 
   book      Book[]
-  managerId String?     @unique
-  manager   User?       @relation("PublisherManager", fields: [managerId], references: [id])
-  staffs    User[]      @relation("PublisherStaff")
+  managerId String? @unique
+  manager   User?   @relation("PublisherManager", fields: [managerId], references: [id])
+  staffs    User[]  @relation("PublisherStaff")
 
   @@index([publisherName])
   @@map("publisher")
@@ -122,6 +122,18 @@ model Author {
   books Book[] @relation(name: "BookAuthors")
 
   @@map("author")
+}
+
+
+
+model Chat {
+  id         String @id @default(uuid())
+  senderId   String
+  receiverId String
+  content    String
+
+  sender   User @relation("ChatSender", fields: [senderId], references: [id])
+  receiver User @relation("ChatReceiver", fields: [receiverId], references: [id])
 }
 
 enum Role {

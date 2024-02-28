@@ -44,12 +44,12 @@ io.on("connection", (socket) => {
 	socket.on("join", (rooms: string[]) => {
 		socket.join(rooms);
 	});
-	socket.on("disconnect", (reason: DisconnectReason, description: any) => {
+	socket.on("disconnect", (reason: DisconnectReason, _description) => {
 		console.log(reason);
 	});
 });
 
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
 	res.status(200).send("hello!");
 });
 app.get("*", (_, res) => {
