@@ -5,16 +5,17 @@ import { Notifications } from "@mantine/notifications";
 
 <<<<<<< HEAD
 interface ProviderWrapperProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export default function ProviderWrapper({ children }: ProviderWrapperProps) {
   return (
     <MantineProvider theme={theme}>
       <EdgeStoreProvider>
-        <ChatProvider>{children}</ChatProvider>
+        {children}
       </EdgeStoreProvider>
     </MantineProvider>
+<<<<<<< HEAD
 =======
 export default function ProviderWrapper({
   children
@@ -31,3 +32,7 @@ export default function ProviderWrapper({
 >>>>>>> a1ae53e4e86f8233eebe62c0510a0b1e33e2aba8
   );
 }
+=======
+  )
+}
+>>>>>>> parent of da93acb (don chat feature)
