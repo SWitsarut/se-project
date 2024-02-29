@@ -10,11 +10,11 @@ async function getStaffByPublisher(publisherName: string) {
     where: {
       publisher: {
         publisherName,
-      }
+      },
     },
     include: {
       publisher: true
-    }
+    },
   })
 
   const staffs:User[] = result.map((staff) => ({
@@ -31,6 +31,21 @@ async function getStaffByPublisher(publisherName: string) {
   return staffs;
 }
 
+async function checkIsManager(userId: string, publisherName: string) {
+  try {
+    const result = await prisma.publisher.findUnique({
+      where: {
+        managerId: userId,
+        publisherName,
+      }
+    })
+
+    return result ? true : false;
+  } catch (error) {
+    throw new Error("Failed to check is manager");
+  }
+}
+
 export default async function StaffList() {
   const user = await getCurrentUser();
 
@@ -39,13 +54,7 @@ export default async function StaffList() {
   }
 
   const staffs = await getStaffByPublisher(user.publisher);
-
-  const isManager = await prisma.publisher.findUnique({
-    where: {
-      managerId: user.id,
-      publisherName: user.publisher
-    }
-  })
+  const isManager = await checkIsManager(user.id, user.publisher);
   
   return (
     <>
@@ -71,7 +80,7 @@ export default async function StaffList() {
               <TableTd>{staff.displayName}</TableTd>
               <TableTd>{staff.isActive ? <Text c="green">Active</Text> : <Text c="red">Inactive</Text>}</TableTd>
               <TableTd classNames={{ td: "gap-2 flex" }}>
-                <ActionStaffModal staff={staff} isManager={isManager ? true : false}/>
+                <ActionStaffModal staff={staff} isManager={isManager}/>
               </TableTd>
             </TableTr>
           ))}

@@ -6,7 +6,6 @@ import { getCurrentUser } from "@/libs/session";
 // add book
 export const POST = async (req: Request) => {
   const user = await getCurrentUser();
-  console.log(user)
 
   if(!user || user.role !== "PUBLISHER") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

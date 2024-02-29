@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import StaffList from "./StaffList";
 import AddStaffModal from "./AddStaffModal";
+import { Skeleton } from "@mantine/core";
 
 export default async function StaffManagement() {
-
   return (
     <>
       <div className="prose">
@@ -14,7 +14,7 @@ export default async function StaffManagement() {
         <AddStaffModal />
       </div>
 
-      <Suspense fallback={<>Loading...</>}>
+      <Suspense fallback={<Skeleton animate height={400} />}>
         <StaffList />
       </Suspense>
     </>

@@ -16,7 +16,7 @@ export const GET = async (
       where: {
         publisherName: slug
       }
-    })
+    });
 
     if(!publisher) {
       return NextResponse.json({ error: "Not found publisher" }, { status: 404 });
