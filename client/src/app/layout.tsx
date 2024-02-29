@@ -4,12 +4,9 @@ import "@mantine/notifications/styles.css";
 import type { Metadata } from "next";
 import "./globals.css";
 
-import { ColorSchemeScript, MantineProvider } from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
-import { theme } from "@/theme";
+import { ColorSchemeScript } from "@mantine/core";
 
 import SessionProvider from "@/components/SessionProvider";
-import { EdgeStoreProvider } from "@/libs/edgestore";
 import { getServerSession } from "next-auth";
 import { authOption } from "@/libs/authOption";
 import ProviderWrapper from "@/components/ProviderWrapper";

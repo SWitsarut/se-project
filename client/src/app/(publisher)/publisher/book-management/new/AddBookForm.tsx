@@ -1,10 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { useEdgeStore } from "@/libs/edgestore";
 import { AddbookFormType } from "@/types/book";
 import { Autocomplete, Button, FileButton, FileInput, NumberInput, TagsInput, TextInput, Textarea } from "@mantine/core";
-import Image from "next/image";
-import React, { useState } from "react";
+import { useState } from "react";
 import { BookDetailType } from "./page";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/navigation";
@@ -91,6 +91,7 @@ export default function AddBookForm({ bookDetail }: AddBookFormProps) {
           color: "green",
           autoClose: 3000,
         })
+        router.prefetch("/publisher/book-management");
         router.push("/publisher/book-management");
       } else {
         notifications.show({
