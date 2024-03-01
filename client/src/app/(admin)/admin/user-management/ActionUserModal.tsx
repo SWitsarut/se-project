@@ -1,7 +1,7 @@
 "use client";
 
 import { User } from "@/types/user";
-import { Autocomplete, Button, Modal, Select, Text, TextInput } from "@mantine/core";
+import { Button, Modal, Select, Text, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
