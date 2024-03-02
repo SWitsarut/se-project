@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import ChatBar from "./ChatBar";
 
 export default function MainLayout({ children }: {
   children: React.ReactNode
@@ -9,6 +10,7 @@ export default function MainLayout({ children }: {
       <div className="py-16 px-0 md:px-24">
         {children}
       </div>
+      <ChatBar/>
     </>
   )
 }

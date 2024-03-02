@@ -31,10 +31,17 @@ const io = new Server(server, {
 	},
 });
 
-io.on("connection", (socket) => {
-	console.log("New socket connected " + socket.id);
+type UserInfo= {
+	email:string;
+	id:string;
+	username:string;
+	displayname:string;
+	role:string;
+}
 
-	console.log(socket.handshake.auth.username);
+io.on("connection", (socket) => {
+	const userAuth:UserInfo =socket.handshake.auth.userInfo
+	console.log("New socket connected",socket.id,"with username",userAuth.username);
 	socket.on("message", (msg: Message) => {
 		console.log("receive from", msg);
 

@@ -13,10 +13,14 @@ export default function ChatProvider({
   const socket = useRef<Socket | null>();
   const { data: session } = useSession();
   socket.current = io("localhost:8080", { autoConnect: false });
-  socket.current.auth = { session };
+  socket.current.auth = { userInfo:session?.user };
   socket.current.connect();
 
   return (
-    <Connection.Provider value={socket.current}>{children}</Connection.Provider>
+    <Connection.Provider value={socket.current}>
+      {children}
+
+    </Connection.Provider>
   );
 }
+export {Connection};
