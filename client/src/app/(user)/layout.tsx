@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import ChatBar from "./ChatBar";
+import ChatBar from "./_components/ChatBar";
 
 export default function MainLayout({ children }: {
   children: React.ReactNode
