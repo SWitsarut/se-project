@@ -1,6 +1,6 @@
 import { User } from './user'
 export type message = {
-  sender: User | 'admin'
-  receiver: User | 'admin'
+  sender: User
+  receiver: User
   content: string
 }

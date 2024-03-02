@@ -47,7 +47,7 @@ export default function ChatBar() {
       {isLoading ? null : (
         <div className="bg-white p-0 m-0 hidden md:block fixed bottom-0 right-0 w-[20em] border border-gray-300">
           <div
-            className="flex align-middle justify-center cursor-pointer"
+            className="flex align-middle justify-center cursor-pointer border-gray-300 shadow-sm"
             onClick={toggleChat}
           >
             <p>Chat with admin</p>
@@ -68,19 +68,39 @@ export default function ChatBar() {
                       role: 'USER',
                       username: '',
                     },
-                    sender: 'admin',
-                    content: 'hello admin',
-                  }}
-                />
-                <ChatChip
-                  message={{
-                    receiver: 'admin',
                     sender: {
                       avatar:
                         'http://localhost:3000/_next/image?url=https%3A%2F%2Fcdn-local.mebmarket.com%2Fmeb%2Fserver1%2F265529%2FThumbnail%2Fbook_detail_large.gif%3F2&w=828&q=75',
                       displayName: '8retid8',
                       email: 'nitid1987@gmail.com',
                       id: 'sex slave',
+                      isActive: true,
+                      publisherName: undefined,
+                      role: 'ADMIN',
+                      username: '',
+                    },
+                    content: 'hello from admin',
+                  }}
+                />
+                <ChatChip
+                  message={{
+                    receiver: {
+                      avatar:
+                        'http://localhost:3000/_next/image?url=https%3A%2F%2Fcdn-local.mebmarket.com%2Fmeb%2Fserver1%2F265529%2FThumbnail%2Fbook_detail_large.gif%3F2&w=828&q=75',
+                      displayName: '8retid8',
+                      email: 'nitid1987@gmail.com',
+                      id: 'sex slave',
+                      isActive: true,
+                      publisherName: undefined,
+                      role: 'ADMIN',
+                      username: '',
+                    },
+                    sender: {
+                      avatar:
+                        'http://localhost:3000/_next/image?url=https%3A%2F%2Fcdn-local.mebmarket.com%2Fmeb%2Fserver1%2F265529%2FThumbnail%2Fbook_detail_large.gif%3F2&w=828&q=75',
+                      displayName: '8retid8',
+                      email: 'nitid1987@gmail.com',
+                      id: 'gundam lover',
                       isActive: true,
                       publisherName: undefined,
                       role: 'USER',
