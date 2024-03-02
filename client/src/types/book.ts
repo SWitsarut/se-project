@@ -36,6 +36,8 @@ export type BookResponse = {
   cover: string
   pdfUrl: string
   isSelling: boolean
+  description: string | null
+  publisher: string
   category: string
   genres: string[]
   authors: string[]

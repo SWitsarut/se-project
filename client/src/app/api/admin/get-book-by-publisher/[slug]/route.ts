@@ -42,6 +42,7 @@ export const GET = async (
         category: true,
         genres: true,
         authors: true,
+        publisher: true
       },
       take,
       skip: take * (page - 1)
@@ -53,11 +54,13 @@ export const GET = async (
       price: book.price,
       cover: book.cover,
       pdfUrl: book.pdfUrl,
+      description: book.description,
       isSelling: book.isSelling,
       category: book.category.categoryName,
       genres: book.genres.map((genre) => genre.genreName),
       authors: book.authors.map((author) => author.authorName),
       createdAt: formatDate(book.createdAt),
+      publisher: book.publisher.publisherName
     }))
 
     return NextResponse.json({ books }, { status: 200 });
