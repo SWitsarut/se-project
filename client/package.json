@@ -6,12 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-<<<<<<< HEAD
-    "lint": "next lint",
-    "test": "jest --coverage"
-=======
     "lint": "next lint"
->>>>>>> 3a972617a82aedfb39052c07ddfc404b7b4a7e2e
   },
   "dependencies": {
     "@edgestore/react": "^0.1.6",

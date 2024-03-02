@@ -18,13 +18,14 @@ model User {
   isActive      Boolean   @default(true)
   emailVerified DateTime?
 
-  createdAt        DateTime   @default(now())
+  createdAt        DateTime      @default(now())
   publisherId      Int?
-  publisher        Publisher? @relation("PublisherStaff", fields: [publisherId], references: [id])
-  managedPublisher Publisher? @relation("PublisherManager")
+  publisher        Publisher?    @relation("PublisherStaff", fields: [publisherId], references: [id])
+  managedPublisher Publisher?    @relation("PublisherManager")
   carts            CartItem[]
-  sender   ChatMessage[] @relation("ChatSender")
-  receiver ChatMessage[] @relation("ChatReceiver")
+  sender           ChatMessage[] @relation("ChatSender")
+  receiver         ChatMessage[] @relation("ChatReceiver")
+  UserSession      UserSession[]
 
   @@index([username, email])
   @@map("user")
@@ -127,14 +128,20 @@ model Author {
 }
 
 model ChatMessage {
-  id         String @id @default(uuid())
+  id         String   @id @default(uuid())
   senderId   String
   receiverId String
   content    String
-  timeStamp DateTime @default(now())
+  timeStamp  DateTime @default(now())
 
   sender   User @relation("ChatSender", fields: [senderId], references: [id])
   receiver User @relation("ChatReceiver", fields: [receiverId], references: [id])
+}
+
+model UserSession {
+  id        String @id
+  user      User?  @relation(fields: [id], references: [id])
+  sessionId String
 }
 
 enum Role {
@@ -142,4 +149,5 @@ enum Role {
   ADMIN
   PUBLISHER
 }
+
 //

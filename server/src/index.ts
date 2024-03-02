@@ -31,17 +31,19 @@ const io = new Server(server, {
 	},
 });
 
-type UserInfo= {
-	email:string;
-	id:string;
-	username:string;
-	displayname:string;
-	role:string;
-}
+type UserInfo = {
+	email: string;
+	id: string;
+	username: string;
+	displayname: string;
+	role: string;
+};
 
 io.on("connection", (socket) => {
-	const userAuth:UserInfo =socket.handshake.auth.userInfo
-	console.log("New socket connected",socket.id,"with username",userAuth.username);
+	const userAuth: UserInfo = socket.handshake.auth.userInfo;
+
+	console.log("New socket connected", socket.id, "with username", userAuth.username);
+
 	socket.on("message", (msg: Message) => {
 		console.log("receive from", msg);
 
@@ -51,6 +53,7 @@ io.on("connection", (socket) => {
 	socket.on("join", (rooms: string[]) => {
 		socket.join(rooms);
 	});
+
 	socket.on("disconnect", (reason: DisconnectReason, _description) => {
 		console.log(reason);
 	});

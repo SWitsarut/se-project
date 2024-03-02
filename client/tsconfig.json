@@ -28,12 +28,6 @@
       ]
     }
   },
-<<<<<<< HEAD
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/__test__/*", "jest.setup.js"],
-  "exclude": ["node_modules"],
-  "types": ["node", "jest", "@testing-library/jest-dom"],
-=======
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
->>>>>>> 3a972617a82aedfb39052c07ddfc404b7b4a7e2e
 }
