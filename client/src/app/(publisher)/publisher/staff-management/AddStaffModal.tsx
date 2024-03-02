@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface AddStaffModalProps {
-
+  publisherName: string
 }
 
 interface AddStaffForm {
@@ -20,7 +20,7 @@ const initialForm: AddStaffForm = {
   email: "",
 }
 
-export default function AddStaffModal() {
+export default function AddStaffModal({ publisherName }: AddStaffModalProps) {
   const [form, setForm] = useState<AddStaffForm>(initialForm);
   const [opened, { open, close }] = useDisclosure(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -46,7 +46,7 @@ export default function AddStaffModal() {
     
     setIsLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/manage-staff`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/staff-management`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

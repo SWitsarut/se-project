@@ -1,16 +1,16 @@
 import { getCurrentSession } from "@/libs/getCurrentSession";
 import { redirect } from "next/navigation";
 
-export default async function AuthLayout({ children }: { children: React.ReactNode}) {
+export default async function PublisherDashboard() {
   const session = await getCurrentSession();
-  
-  if(session) {
+
+  if(!session || !session.user.publisher  || session.user.role !== "PUBLISHER") {
     redirect("/");
   }
 
   return (
-    <>
-      {children}
-    </>
+    <div>
+      Publisher Dashboard
+    </div>
   )
 }

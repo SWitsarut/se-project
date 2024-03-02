@@ -1,12 +1,12 @@
+import { getCurrentSession } from "@/libs/getCurrentSession";
 import prisma from "@/libs/prisma";
-import { getCurrentUser } from "@/libs/session";
 import { NextResponse } from "next/server"
 
 export const PUT = async (req: Request, { params : { userId }}: { params : { userId: string}}) => {
   const { role, status, publisherName } = await req.json();
-  const user = await getCurrentUser();
+  const session = await getCurrentSession();
 
-  if(!user || user.role !== "ADMIN") {
+  if(!session || session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -68,9 +68,9 @@ export const PUT = async (req: Request, { params : { userId }}: { params : { use
 }
 
 export const DELETE = async (req: Request, { params: { userId }}: { params: { userId: string}}) => {
-  const user = await getCurrentUser();
+  const session = await getCurrentSession();
 
-  if(!user || user.role !== "ADMIN") {
+  if(!session || session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

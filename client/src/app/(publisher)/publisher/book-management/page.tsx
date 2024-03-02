@@ -1,16 +1,14 @@
-import { getCurrentUser } from "@/libs/session";
+import { getCurrentSession } from "@/libs/getCurrentSession";
 import { Button, Skeleton } from "@mantine/core";
 import Link from "next/link";
 import BookList from "./BookList";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
-export const dynamic = "force-dynamic";
-
 export default async function ManageBookPage() {
-  const user = await getCurrentUser();
+  const session = await getCurrentSession();
 
-  if(!user || !user.publisher || user.role !== "PUBLISHER"){
+  if(!session || !session.user.publisher || session.user.role !== "PUBLISHER"){
     redirect("/");
   }
 
@@ -27,7 +25,7 @@ export default async function ManageBookPage() {
       </div>
 
       <Suspense fallback={<Skeleton height={400}/>}>
-        <BookList publisherName={user.publisher}/>
+        <BookList publisherName={session.user.publisher}/>
       </Suspense>
     </>
   )

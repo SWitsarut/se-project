@@ -1,4 +1,10 @@
-export interface AddbookFormType {
+export interface BookDetailType {
+  genres: string[]
+  categories: string[]
+  authors: string[]
+}
+
+export interface AddBookFormType {
   isbn: string
   title: string
   cover: string
@@ -8,6 +14,19 @@ export interface AddbookFormType {
   genreNames: string[]
   pdfUrl: string
   description: string
+}
+
+export interface EditBookData {
+  isbn: string
+  title: string
+  cover: string
+  price: number | string
+  categoryName: string
+  authorNames: string[]
+  genreNames: string[]
+  pdfUrl: string
+  description: string | null
+  isSelling: boolean
 }
 
 export type BookResponse = {

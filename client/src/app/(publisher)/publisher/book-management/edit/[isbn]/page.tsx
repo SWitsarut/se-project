@@ -1,8 +1,8 @@
 import prisma from "@/libs/prisma";
-import AddBookForm from "./AddBookForm";
-import { BookDetailType } from "@/types/book";
+import EditBookForm from "./EditBookForm";
+import { BookDetailType, EditBookData } from "@/types/book";
+import { notFound, redirect } from "next/navigation";
 import { getCurrentSession } from "@/libs/getCurrentSession";
-import { redirect } from "next/navigation";
 
 const getBookDetail = async (): Promise<BookDetailType> => {
   try {
@@ -25,21 +25,40 @@ const getBookDetail = async (): Promise<BookDetailType> => {
   }
 }
 
-export default async function AddBookPage() {
+async function getBookData(publisherName: string, isbn: string): Promise<{ book: EditBookData }> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/book-management/${isbn}`, {
+    cache: "no-store"
+  });
+
+  const data = await res.json();
+  
+  if(data.error) {
+    if(res.status === 404) {
+      notFound();
+    }
+    throw new Error(data.error);
+  }
+
+  return data;
+}
+
+export default async function EditBookPage({
+  params: { isbn },
+}: {
+  params: { isbn: string };
+}) {
   const session = await getCurrentSession();
 
   if(!session || !session.user.publisher || session.user.role !== "PUBLISHER") {
     redirect("/");
   }
-  
+
   const bookDetail = await getBookDetail();
+  const { book } = await getBookData(session.user.publisher, isbn);
 
   return (
     <>
-      <div className="prose">
-        <h1>Add book</h1>
-      </div>
-      <AddBookForm publisherName={session.user.publisher} bookDetail={bookDetail}/>
+      <EditBookForm publisherName={session.user.publisher} bookData={book} bookDetail={bookDetail} />
     </>
-  )
+  );
 }

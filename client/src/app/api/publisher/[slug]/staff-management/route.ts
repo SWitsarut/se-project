@@ -1,19 +1,55 @@
 import prisma from "@/libs/prisma";
-import { getCurrentUser } from "@/libs/session";
+import { getCurrentSession } from "@/libs/getCurrentSession";
+import { User } from "@/types/user";
 import { NextResponse } from "next/server";
 
-export const POST = async (req: Request) => {
-  const user = await getCurrentUser();
+export const GET = async (req: Request, { params: { slug }}: { params: { slug: string }}) => {
+  try {
+    const result = await prisma.user.findMany({
+      where: {
+        publisher: {
+          publisherName: slug,
+        },
+      },
+      include: {
+        publisher: true
+      },
+    })
+  
+    const staffs:User[] = result.map((staff) => ({
+      id: staff.id,
+      username: staff.username,
+      email: staff.email,
+      displayName: staff.displayName,
+      role: staff.role,
+      avatar: staff.avatar,
+      publisherName: staff.publisher?.publisherName,
+      isActive: staff.isActive
+    }))
+    
+    return NextResponse.json({ staffs }, { status: 200 });
+  } catch (error) {
+    console.log("Error at /api/publisher/[slug]/manage-staff GET");
+    return NextResponse.json({ error: "Internal Server Error"})
+  }
+}
 
-  if(!user || !user.publisher) {
+export const POST = async (req: Request, { params: { slug }}: { params: { slug: string }}) => {
+  const session = await getCurrentSession();
+
+  if(!session || !session.user.publisher || session.user.role !== "PUBLISHER") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  if(session.user.publisher !== slug) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   try {
     const isManager = await prisma.publisher.findUnique({
       where: {
-        managerId: user.id,
-        publisherName: user.publisher,
+        managerId: session.user.id,
+        publisherName: session.user.publisher,
       }
     })
   
@@ -52,7 +88,7 @@ export const POST = async (req: Request) => {
 
     await prisma.publisher.update({
       where: {
-        publisherName: user.publisher,
+        publisherName: session.user.publisher,
       },
       data: {
         staffs: {
@@ -73,7 +109,7 @@ export const POST = async (req: Request) => {
 
     return NextResponse.json({ message: "Invite successful" }, { status: 200 });
   } catch (error) {
-    console.log("Error at /api/manage-staff POST", error);
+    console.log("Error at /api/publisher/[slug]/staff-management POST", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
