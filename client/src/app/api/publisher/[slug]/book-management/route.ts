@@ -27,11 +27,13 @@ export const GET = async (req: Request, { params: { slug }}: { params: { slug: s
       price: book.price,
       cover: book.cover,
       pdfUrl: book.pdfUrl,
+      description: book.description,
       isSelling: book.isSelling,
       genres: book.genres.map((genre) => genre.genreName),
       authors: book.authors.map((author) => author.authorName),
       category: book.category.categoryName,
-      createdAt: formatDate(book.createdAt)
+      createdAt: formatDate(book.createdAt),
+      publisher: book.publisher.publisherName
     }));
 
     return NextResponse.json({ books }, { status: 200 });
