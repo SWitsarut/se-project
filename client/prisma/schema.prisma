@@ -23,6 +23,8 @@ model User {
   publisher        Publisher? @relation("PublisherStaff", fields: [publisherId], references: [id])
   managedPublisher Publisher? @relation("PublisherManager")
   cart             CartItem[]
+  favorites        Favorite[]
+  report           Report[]
 
   @@index([username, email])
   @@map("user")
@@ -69,19 +71,29 @@ model Book {
   genres      Genre[]    @relation(name: "BookGenres")
   authors     Author[]   @relation(name: "BookAuthors")
   cart        CartItem[]
+  favorites   Favorite[]
+  reports     Report[]
 
   @@index([title])
   @@map("book")
 }
 
 model CartItem {
-  user     User?   @relation(fields: [userId], references: [id])
+  user     User?  @relation(fields: [userId], references: [id])
   userId   String
-  book     Book?   @relation(fields: [bookIsbn], references: [isbn])
+  book     Book?  @relation(fields: [bookIsbn], references: [isbn])
   bookIsbn String
 
   @@id([userId, bookIsbn])
   @@map("cart_item")
+}
+
+model Favorite {
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
+  book   Book   @relation(fields: [bookId], references: [isbn])
+  userId String
+  bookId String
 }
 
 model Invoice {
@@ -123,6 +135,16 @@ model Author {
   books Book[] @relation(name: "BookAuthors")
 
   @@map("author")
+}
+
+model Report {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  book       Book     @relation(fields: [bookId], references: [isbn])
+  userId     String
+  bookId     String
+  reason     String
+  createTime DateTime @default(now())
 }
 
 enum Role {
