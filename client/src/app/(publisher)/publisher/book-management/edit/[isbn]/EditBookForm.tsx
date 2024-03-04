@@ -7,7 +7,8 @@ import { Autocomplete, Button, FileButton, FileInput, Group, NumberInput, Radio,
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/navigation";
-import { IconPencil } from "@tabler/icons-react";
+import { IconEye, IconPencil } from "@tabler/icons-react";
+import Link from "next/link";
 
 interface EditBookFormProps {
   publisherName: string
@@ -220,7 +221,8 @@ export default function EditBookForm({ publisherName, bookDetail, bookData }: Ed
           />
         </div>
       </div>
-      <div className="flex w-full justify-center lg:justify-end col-span-1 lg:col-span-2">
+      <div className="flex w-full justify-center gap-4 lg:justify-end col-span-1 lg:col-span-2">
+        <Link href={`/book/${bookData.title}`} target="_blank"><Button leftSection={<IconEye />}>View Book</Button></Link>
         <Button leftSection={<IconPencil />} loading={isLoading} type="submit">Update</Button>
       </div>
     </form>

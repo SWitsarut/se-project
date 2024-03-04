@@ -1,7 +1,6 @@
 "use client";
 
 import { Button, Text } from "@mantine/core";
-import { useResizeObserver } from "@mantine/hooks";
 import { IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight } from "@tabler/icons-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";

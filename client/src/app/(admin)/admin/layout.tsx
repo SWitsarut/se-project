@@ -7,7 +7,7 @@ export default async function AdminLayout({ children }: {
 }) {
   const session = await getCurrentSession();
   
-  if(!session || !session.user.publisher || session.user.role === "PUBLISHER") {
+  if(!session || session.user.role !== "ADMIN") {
     redirect("/");
   }
 
