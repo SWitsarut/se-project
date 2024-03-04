@@ -128,20 +128,20 @@ model Author {
 }
 
 model ChatMessage {
-  id         String   @id @default(uuid())
-  senderId   String
-  receiverId String
-  content    String
-  timeStamp  DateTime @default(now())
+  id        String   @id @default(uuid())
+  sender    String
+  receiver  String
+  content   String
+  timeStamp DateTime @default(now())
 
-  sender   User @relation("ChatSender", fields: [senderId], references: [id])
-  receiver User @relation("ChatReceiver", fields: [receiverId], references: [id])
+  senderRelation   User @relation("ChatSender", fields: [sender], references: [id])
+  receiverRelation User @relation("ChatReceiver", fields: [receiver], references: [id])
 }
 
 model UserSession {
   id        String @id
-  user      User?  @relation(fields: [id], references: [id])
   sessionId String
+  user      User?  @relation(fields: [id], references: [id])
 }
 
 enum Role {

@@ -9,11 +9,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface ActionStaffModalProps {
-  staff: User
-  isManager: boolean
+  publisherName: string
+  staffId: string
+  staffUsername: string
 }
 
-export default function ActionStaffModal({ staff, isManager }: ActionStaffModalProps) {
+export default function ActionStaffModal({ publisherName, staffId, staffUsername }: ActionStaffModalProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
@@ -21,7 +22,7 @@ export default function ActionStaffModal({ staff, isManager }: ActionStaffModalP
   const handleRemove = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/manage-staff/${staff.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/staff-management/${staffId}`, {
         method: "PATCH",
       });
       const data = await res.json();
@@ -57,7 +58,7 @@ export default function ActionStaffModal({ staff, isManager }: ActionStaffModalP
     <>
       <Modal centered classNames={{ title: "font-bold text-xl" }} opened={opened} onClose={close} title={`Remove from publisher`}>
         <div className="flex flex-col gap-4 my-4">
-          <Text c="dark">Are you sure to <Text c="red" span fw="bold">remove</Text> staff {staff.username}?</Text>
+          <Text c="dark">Are you sure to <Text c="red" span fw="bold">remove</Text> staff {staffUsername}?</Text>
           <div className="flex justify-end gap-4">
             <Button onClick={close} variant="outline" color="red">Cancel</Button>
             <Button loading={isLoading} onClick={() => handleRemove()} color="red">Yes</Button>
@@ -65,7 +66,7 @@ export default function ActionStaffModal({ staff, isManager }: ActionStaffModalP
         </div>
       </Modal>
 
-      <Button disabled={!isManager} leftSection={<IconTrash size={20}/>} onClick={open} color="red" size="sm">Remove</Button>
+      <Button leftSection={<IconTrash size={20}/>} onClick={open} color="red" size="sm">Remove</Button>
     </>
   )
 }

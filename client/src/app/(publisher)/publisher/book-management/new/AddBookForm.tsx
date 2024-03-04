@@ -2,18 +2,19 @@
 
 import Image from "next/image";
 import { useEdgeStore } from "@/libs/edgestore";
-import { AddbookFormType } from "@/types/book";
+import { AddBookFormType, BookDetailType } from "@/types/book";
 import { Autocomplete, Button, FileButton, FileInput, NumberInput, TagsInput, TextInput, Textarea } from "@mantine/core";
 import { useState } from "react";
-import { BookDetailType } from "./page";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/navigation";
+import { IconPlus } from "@tabler/icons-react";
 
 interface AddBookFormProps {
+  publisherName: string
   bookDetail: BookDetailType
 }
 
-const initialForm: AddbookFormType = {
+const initialForm: AddBookFormType = {
   isbn: "",
   title: "",
   cover: "",
@@ -25,8 +26,8 @@ const initialForm: AddbookFormType = {
   description: "",
 }
 
-export default function AddBookForm({ bookDetail }: AddBookFormProps) {
-  const [form, setForm] = useState<AddbookFormType>(initialForm);
+export default function AddBookForm({ publisherName, bookDetail }: AddBookFormProps) {
+  const [form, setForm] = useState<AddBookFormType>(initialForm);
   const [previewImg, setPreviewImage] = useState<string>();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -71,11 +72,12 @@ export default function AddBookForm({ bookDetail }: AddBookFormProps) {
         color: "red",
         autoClose: 3000,
       })
+      setIsLoading(false);
       return;
     }
     
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/manage-book`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/book-management`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -84,30 +86,33 @@ export default function AddBookForm({ bookDetail }: AddBookFormProps) {
       });
 
       const data = await res.json();
-      if(res.ok) {
-        notifications.show({
-          title: "Success",
-          message: data.message,
-          color: "green",
-          autoClose: 3000,
-        })
-        router.prefetch("/publisher/book-management");
-        router.push("/publisher/book-management");
-      } else {
+
+      if(data.error) {
         notifications.show({
           title: "Error",
           message: data.error,
           color: "red",
           autoClose: 3000,
         })
+      } else {
+        notifications.show({
+          title: "Success",
+          message: data.message,
+          color: "green",
+          autoClose: 3000,
+        })
+        router.push("/publisher/book-management");
+        router.refresh();
       }
-    } catch (error: any) {
+    } catch (error) {
       notifications.show({
         title: "Error",
         message: "Something went wrong while adding book",
         color: "red",
         autoClose: 3000,
       })
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -201,7 +206,7 @@ export default function AddBookForm({ bookDetail }: AddBookFormProps) {
         </div>
       </div>
       <div className="flex w-full justify-center lg:justify-end col-span-1 lg:col-span-2">
-        <Button loading={isLoading} type="submit">Add book</Button>
+        <Button leftSection={<IconPlus />} loading={isLoading} type="submit">Add book</Button>
       </div>
     </form>
   )

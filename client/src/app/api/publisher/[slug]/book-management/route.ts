@@ -1,23 +1,70 @@
 import prisma from "@/libs/prisma";
 import { NextResponse } from "next/server";
-import { AddbookFormType } from "@/types/book";
-import { getCurrentUser } from "@/libs/session";
+import { AddBookFormType, BookResponse } from "@/types/book";
+import { getCurrentSession } from "@/libs/getCurrentSession";
+import { formatDate } from "@/utils/formatDate";
+
+// get book
+export const GET = async (req: Request, { params: { slug }}: { params: { slug: string }}) => {
+  try {
+    const result = await prisma.book.findMany({
+      where: {
+        publisher: {
+          publisherName: slug
+        }
+      },
+      include: {
+        publisher: true,
+        genres: true,
+        authors: true,
+        category: true
+      }
+    });
+
+    const books: BookResponse[] = result.map((book) => ({
+      isbn: book.isbn,
+      title: book.title,
+      price: book.price,
+      cover: book.cover,
+      pdfUrl: book.pdfUrl,
+      description: book.description,
+      isSelling: book.isSelling,
+      genres: book.genres.map((genre) => genre.genreName),
+      authors: book.authors.map((author) => author.authorName),
+      category: book.category.categoryName,
+      createdAt: formatDate(book.createdAt),
+      publisher: book.publisher.publisherName
+    }));
+
+    return NextResponse.json({ books }, { status: 200 });
+  } catch (error) {
+    console.log("Error at /api/publisher/[slug]/book-management GET");
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
 
 // add book
-export const POST = async (req: Request) => {
-  const user = await getCurrentUser();
+export const POST = async (
+  req: Request,
+  { params: { slug } }: { params: { slug: string } }
+) => {
+  const session = await getCurrentSession();
 
-  if(!user || user.role !== "PUBLISHER") {
+  if(!session || !session.user.publisher || session.user.role !== "PUBLISHER") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { isbn, title, cover, price, categoryName, authorNames, genreNames, pdfUrl, description }: AddbookFormType = await req.json();
+  if(session.user.publisher !== slug) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const { isbn, title, cover, price, categoryName, authorNames, genreNames, pdfUrl, description }: AddBookFormType = await req.json();
   
   if(!isbn || !title || !price || !categoryName) {
     return NextResponse.json({ error: "Invalid Input" }, { status: 400 });
   }
 
-  if(Number(price) < 0) {
+  if(isNaN(Number(price)) || Number(price) < 0) {
     return NextResponse.json({ error: "Invalid price" }, { status: 400 });
   }
   
@@ -28,7 +75,6 @@ export const POST = async (req: Request) => {
   if(!cover) {
     return NextResponse.json({ error: "Image cover is required" }, { status: 400 })
   }
-  
 
   if(!pdfUrl) {
     return NextResponse.json({ error: "PDF file is required" }, { status: 400 });
@@ -39,7 +85,7 @@ export const POST = async (req: Request) => {
       where: {
         staffs: {
           some: {
-            id: user.id
+            id: session.user.id
           }
         }
       }
@@ -56,11 +102,11 @@ export const POST = async (req: Request) => {
           { title },
         ]
       }
-    })
+    });
 
     if(existingBook) {
       return NextResponse.json({ error: "Already have a book" }, { status: 400 });
-    }
+    };
 
     await prisma.book.create({
       data: {
@@ -98,7 +144,7 @@ export const POST = async (req: Request) => {
 
     return NextResponse.json({ message: "Add book successful" }, { status: 201 });
   } catch (error) {
-    console.log("Error at /api/publisher/manage-book POST", error);
+    console.log("Error at /api/publisher/[slug]/book-management POST", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
 }

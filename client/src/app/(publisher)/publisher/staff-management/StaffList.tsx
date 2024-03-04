@@ -1,60 +1,46 @@
 import prisma from "@/libs/prisma";
-import { getCurrentUser } from "@/libs/session"
 import { User } from "@/types/user";
 import { Avatar, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core";
-import { redirect } from "next/navigation";
 import ActionStaffModal from "./ActionStaffModal";
 
-async function getStaffByPublisher(publisherName: string) {
-  const result = await prisma.user.findMany({
-    where: {
-      publisher: {
-        publisherName,
-      },
-    },
-    include: {
-      publisher: true
-    },
-  })
-
-  const staffs:User[] = result.map((staff) => ({
-    id: staff.id,
-    username: staff.username,
-    email: staff.email,
-    displayName: staff.displayName,
-    role: staff.role,
-    avatar: staff.avatar,
-    publisherName: staff.publisher?.publisherName,
-    isActive: staff.isActive
-  }))
-
-  return staffs;
+interface StaffListProps {
+  staffId: string
+  publisherName: string
 }
 
-async function checkIsManager(userId: string, publisherName: string) {
+async function getStaffByPublisher(publisherName: string): Promise<{ staffs: User[] }>  {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/staff-management`, {
+    cache: "no-store",
+  })
+
+  const data = await res.json();
+  
+  if(data.error) {
+    throw new Error(data.error);
+  }
+  
+  return data;
+}
+
+async function checkIsManager(staffId: string, publisherName: string) {
   try {
     const result = await prisma.publisher.findUnique({
       where: {
-        managerId: userId,
+        managerId: staffId,
         publisherName,
       }
     })
 
     return result ? true : false;
   } catch (error) {
+    console.log(error)
     throw new Error("Failed to check is manager");
   }
 }
 
-export default async function StaffList() {
-  const user = await getCurrentUser();
-
-  if(!user || !user.publisher || user.role !== "PUBLISHER") {
-    redirect("/");
-  }
-
-  const staffs = await getStaffByPublisher(user.publisher);
-  const isManager = await checkIsManager(user.id, user.publisher);
+export default async function StaffList({ publisherName, staffId }: StaffListProps) {
+  const { staffs } = await getStaffByPublisher(publisherName);
+  const isManager = await checkIsManager(staffId, publisherName);
   
   return (
     <>
@@ -66,7 +52,9 @@ export default async function StaffList() {
             <TableTh>Email</TableTh>
             <TableTh>Display name</TableTh>
             <TableTh>Status</TableTh>
-            <TableTh>Actions</TableTh>
+            {isManager && (
+              <TableTh>Actions</TableTh>
+            )}
           </TableTr>
         </TableThead>
         <TableTbody>
@@ -79,9 +67,11 @@ export default async function StaffList() {
               <TableTd>{staff.email}</TableTd>
               <TableTd>{staff.displayName}</TableTd>
               <TableTd>{staff.isActive ? <Text c="green">Active</Text> : <Text c="red">Inactive</Text>}</TableTd>
-              <TableTd classNames={{ td: "gap-2 flex" }}>
-                <ActionStaffModal staff={staff} isManager={isManager}/>
-              </TableTd>
+              {isManager && (
+                <TableTd classNames={{ td: "gap-2 flex" }}>
+                  <ActionStaffModal publisherName={publisherName} staffId={staff.id} staffUsername={staff.username} />
+                </TableTd>
+              )}
             </TableTr>
           ))}
         </TableTbody>

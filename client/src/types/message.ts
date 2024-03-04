@@ -1,7 +1,8 @@
 import { User } from './user'
 
 export type message = {
-  sender: User
-  receiver: User
+  id?: string
+  sender: User | undefined
+  receiver: User | undefined
   content: string
 }

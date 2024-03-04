@@ -50,6 +50,11 @@ io.on("connection", (socket) => {
 		io.to(msg.receiver).emit("receive-message", msg);
 	});
 
+	socket.on("request-admin", () => {
+		
+		io.to(socket.id).emit("assign-admin");
+	});
+
 	socket.on("join", (rooms: string[]) => {
 		socket.join(rooms);
 	});

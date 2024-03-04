@@ -1,6 +1,4 @@
-import prisma from "@/libs/prisma";
 import { BookResponse } from "@/types/book";
-import { formatDate } from "@/utils/formatDate";
 import { Button, HoverCard, HoverCardDropdown, HoverCardTarget, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core";
 import { IconPencil } from "@tabler/icons-react";
 import Image from "next/image";
@@ -11,44 +9,23 @@ interface BookListProps {
   publisherName: string
 }
 
-async function getBookList(publisherName: string) {
-  try {
-    const result = await prisma.book.findMany({
-      where: {
-        publisher: {
-          publisherName
-        }
-      },
-      include: {
-        publisher: true,
-        genres: true,
-        authors: true,
-        category: true
-      }
-    })
+async function getBookList(publisherName: string): Promise<{ books: BookResponse[] }> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/book-management`, {
+    cache: "no-store",
+  });
 
-    const books: BookResponse[] = result.map((book) => ({
-      isbn: book.isbn,
-      title: book.title,
-      price: book.price,
-      cover: book.cover,
-      pdfUrl: book.pdfUrl,
-      isSelling: book.isSelling,
-      genres: book.genres.map((genre) => genre.genreName),
-      authors: book.authors.map((author) => author.authorName),
-      category: book.category.categoryName,
-      createdAt: formatDate(book.createdAt)
-    }))
+  const data = await res.json();
 
-    return books;
-  } catch (error) {
-    throw new Error("Failed to get booklist");
+  if(data.error) {
+    throw new Error(data.error);
   }
+
+  return data;
 }
 
 
 export default async function BookList({ publisherName }: BookListProps) {
-  const books:BookResponse[] = await getBookList(publisherName);
+  const { books } = await getBookList(publisherName);
 
   return (
     <>
@@ -83,6 +60,7 @@ export default async function BookList({ publisherName }: BookListProps) {
                       height={0}
                       alt="book_cover"
                       sizes="100vw"
+                      priority
                     />
                   </HoverCardDropdown>
                 </HoverCard>
@@ -93,10 +71,10 @@ export default async function BookList({ publisherName }: BookListProps) {
               <TableTd>{book.createdAt}</TableTd>
               <TableTd>
                 <div className="space-x-4">
-                  <Link href={`book-management/edit/${book.title}`}>
+                  <Link href={`book-management/edit/${book.isbn}`}>
                     <Button leftSection={<IconPencil />}>Edit</Button>
                   </Link>
-                  <DeleteModal isbn={book.isbn} title={book.title} />
+                  <DeleteModal publisherName={publisherName} isbn={book.isbn} title={book.title} />
                 </div>
               </TableTd>
             </TableTr>

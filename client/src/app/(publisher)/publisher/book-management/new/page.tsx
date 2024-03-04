@@ -1,11 +1,8 @@
 import prisma from "@/libs/prisma";
 import AddBookForm from "./AddBookForm";
-
-export interface BookDetailType {
-  genres: string[]
-  categories: string[]
-  authors: string[]
-}
+import { BookDetailType } from "@/types/book";
+import { getCurrentSession } from "@/libs/getCurrentSession";
+import { redirect } from "next/navigation";
 
 const getBookDetail = async (): Promise<BookDetailType> => {
   try {
@@ -29,13 +26,20 @@ const getBookDetail = async (): Promise<BookDetailType> => {
 }
 
 export default async function AddBookPage() {
+  const session = await getCurrentSession();
+
+  if(!session || !session.user.publisher || session.user.role !== "PUBLISHER") {
+    redirect("/");
+  }
+  
   const bookDetail = await getBookDetail();
+
   return (
     <>
       <div className="prose">
         <h1>Add book</h1>
       </div>
-      <AddBookForm bookDetail={bookDetail}/>
+      <AddBookForm publisherName={session.user.publisher} bookDetail={bookDetail}/>
     </>
   )
 }

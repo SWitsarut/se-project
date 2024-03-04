@@ -8,11 +8,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface DeleteModalProps {
+  publisherName: string
   isbn: string
   title: string
 }
 
-export default function DeleteModal({ isbn, title } : DeleteModalProps) {
+export default function DeleteModal({ publisherName, isbn, title } : DeleteModalProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [opened, { open, close }] = useDisclosure(false);
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function DeleteModal({ isbn, title } : DeleteModalProps) {
   const handleDelete = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/manage-book/${isbn}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/book-management/${isbn}`, {
         method: "DELETE",
       })
 
@@ -48,6 +49,8 @@ export default function DeleteModal({ isbn, title } : DeleteModalProps) {
         color: "red",
         autoClose: 3000
       })
+    } finally {
+      setIsLoading(false);
     }
   }
 
