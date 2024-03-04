@@ -17,6 +17,7 @@ export default function LoginForm() {
       password: isNotEmpty(),
     },
   });
+  
   const [loginError, setLoginError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter();
@@ -47,12 +48,14 @@ export default function LoginForm() {
       <TextInput
         label="Username:"
         name="username"
-        {...form.getInputProps("username")}
+        onChange={(e) => form.setFieldValue("username", e.currentTarget.value)}
+        error={form.errors.username}
       />
       <PasswordInput
         label="Password:"
         name="password"
-        {...form.getInputProps("password")}
+        onChange={(e) => form.setFieldValue("password", e.currentTarget.value)}
+        error={form.errors.password}
       />
       <Text c="red">{loginError}</Text>
       <Button loading={isLoading} type="submit" variant="filled">Login</Button>

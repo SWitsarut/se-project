@@ -3,7 +3,7 @@
 import { Button, Checkbox, Modal, PasswordInput, Text, TextInput } from "@mantine/core";
 import { hasLength, isEmail, isNotEmpty, matchesField, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function PublisherRegisterForm() {
@@ -19,8 +19,9 @@ export default function PublisherRegisterForm() {
     },
     validate: {
       email: isNotEmpty("Email is required") && isEmail("Invalid email"),
-      username: isNotEmpty("Username is required.") && hasLength({ max: 30 }),
-      displayName: isNotEmpty("Display name is required.")  && hasLength({ max: 30 }),
+      username: isNotEmpty("Username is required.") && hasLength({ max: 30 }, "The length of the username must not exceed 30 characters."),
+      publisherName: isNotEmpty("Publisher name is required") && hasLength({ max: 30}, "The length of the publisher name must not exceed 30 characters."),
+      displayName: isNotEmpty("Display name is required.")  && hasLength({ max: 30 }, "The length of the display name must not exceed 30 characters."),
       password: isNotEmpty("Password is required") && hasLength({ min: 8 }, "Password must be at least 8 character"),
       confirmPassword: matchesField(
         "password",
@@ -76,41 +77,48 @@ export default function PublisherRegisterForm() {
           label="Email:"
           withAsterisk
           name="email"
-          {...form.getInputProps("email")}
+          onChange={(e) => form.setFieldValue("email", e.currentTarget.value)}
+          error={form.errors.email}
         />
         <TextInput
           label="Username:"
           withAsterisk
           name="username"
-          {...form.getInputProps("username")}
+          onChange={(e) => form.setFieldValue("username", e.currentTarget.value)}
+          error={form.errors.username}
         />
         <PasswordInput
           label="Password:"
           withAsterisk
           name="password"
-          {...form.getInputProps("password")}
+          onChange={(e) => form.setFieldValue("password", e.currentTarget.value)}
+          error={form.errors.password}
         />
         <PasswordInput
           label="Confirm password:"
           withAsterisk
           name="confirmPassword"
-          {...form.getInputProps("confirmPassword")}
+          onChange={(e) => form.setFieldValue("confirmPassword", e.currentTarget.value)}
+          error={form.errors.confirmPassword}
         />
         <TextInput
           label="Publisher name:"
           withAsterisk
           name="publisherName"
-          {...form.getInputProps("publisherName")}
+          onChange={(e) => form.setFieldValue("publisherName", e.currentTarget.value)}
+          error={form.errors.publisherName}
         />
         <TextInput
           label="Display name:"
           withAsterisk
           name="displayName"
-          {...form.getInputProps("displayName")}
+          onChange={(e) => form.setFieldValue("displayName", e.currentTarget.value)}
+          error={form.errors.displayName}
         />
         <Checkbox
           label="Accept terms of use"
-          {...form.getInputProps("acceptTermsOfUse", { type: "checkbox" })}
+          onChange={(e) => form.setFieldValue("acceptTermsOfUse", e.currentTarget.checked)}
+          error={form.errors.acceptTermsOfUse}
         />
         <Button loading={isLoading} type="submit" variant="filled">Register</Button>
       </form>
