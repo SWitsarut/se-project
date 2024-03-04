@@ -4,12 +4,15 @@ import { BookResponse } from "@/types/book";
 import { Button, Rating, Text, Tooltip } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
+import { useCart } from "./CartProvider";
 
 interface BookItemProps {
   book: BookResponse
 }
 
 export default function BookItem({ book }: BookItemProps) {
+  const { addToCart, check } = useCart();
+
   return (
     <>
       <div className="w-48 flex flex-col items-center rounded-lg bg-white border shadow-2xl">
@@ -43,7 +46,7 @@ export default function BookItem({ book }: BookItemProps) {
               <Rating readOnly value={5} size="xs"/>
               <Text size="xs">Rating Count</Text>
             </div>
-            <Button fullWidth><Text truncate classNames={{ root: "text-sm" }}>฿ {book.price}</Text></Button>
+            <Button disabled={check(book.isbn)} onClick={() => addToCart(book.isbn)} fullWidth><Text truncate classNames={{ root: "text-sm" }}>฿ {book.price}</Text></Button>
           </div>
         </div>
       </div>

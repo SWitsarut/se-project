@@ -33,7 +33,7 @@ export const POST = async (req: Request) => {
       return NextResponse.json({ error: "Username or Email already in use" }, { status: 400 });
     }
   
-    const salt = 10;
+    const salt = 5;
     const hashedPassword = await hash(password, salt);
 
     await prisma.user.create({

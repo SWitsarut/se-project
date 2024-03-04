@@ -25,7 +25,7 @@ export const GET = async (
   
     const book: EditBookData = {
       isbn: result.isbn,
-      title: result.isbn,
+      title: result.title,
       price: result.price,
       cover: result.cover,
       pdfUrl: result.pdfUrl,

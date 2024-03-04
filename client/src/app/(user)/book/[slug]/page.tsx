@@ -2,6 +2,7 @@ import { BookResponse } from "@/types/book";
 import { Badge, Button, Text } from "@mantine/core";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import AddToCartButton from "./AddToCartButton";
 
 async function getBookData(slug: string): Promise<BookResponse> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/book/${slug}`, {
@@ -57,7 +58,7 @@ export default async function BookPage({
           </div>
           <div className="flex gap-4">
             <Button variant="outline" size="lg" radius="xl">Preview</Button>
-            <Button size="lg" radius="xl">฿ {book.price}</Button>
+            <AddToCartButton isbn={book.isbn} price={book.price} />
           </div>
         </div>
       </div>
