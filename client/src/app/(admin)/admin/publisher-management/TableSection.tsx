@@ -30,6 +30,7 @@ export default async function TableSection({ take, page, search }: TableSectionP
           <TableTh>ID</TableTh>
           <TableTh>Publisher name</TableTh>
           <TableTh>Total book</TableTh>
+          <TableTh>Total staff</TableTh>
           <TableTh>Actions</TableTh>
         </TableTr>
       </TableThead>
@@ -39,6 +40,7 @@ export default async function TableSection({ take, page, search }: TableSectionP
             <TableTd>{publisher.id}</TableTd>
             <TableTd>{publisher.publisherName}</TableTd>
             <TableTd>{publisher.totalBook}</TableTd>
+            <TableTd>{publisher.totalStaff}</TableTd>
             <TableTd>
               <Link href={`/admin/publisher-management/${publisher.publisherName}`}>
                 <Button size="sm" >View Publisher</Button>

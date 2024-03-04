@@ -3,10 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply scroll-smooth;
-  }
-
   a {
     @apply no-underline text-inherit;
   }

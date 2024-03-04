@@ -30,7 +30,7 @@ export default async function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <SessionProvider session={session}>
+        <SessionProvider refetchOnWindowFocus={false} session={session}>
           <ProviderWrapper>
             <main className="bg-light">{children}</main>
           </ProviderWrapper>

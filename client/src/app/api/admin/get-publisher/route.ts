@@ -15,6 +15,7 @@ export const GET = async (req: Request) => {
     const result = await prisma.publisher.findMany({
       include: {
         book: true,
+        staffs: true,
       },
       where: {
         publisherName: {
@@ -25,12 +26,14 @@ export const GET = async (req: Request) => {
       take,
       skip: take * (page - 1),
     });
-
+    
     const publishers: PublisherResponse[] = result.map((publisher) => ({
       id: publisher.id,
       publisherName: publisher.publisherName,
-      totalBook: publisher.book.length
-    }))
+      totalBook: publisher.book.length,
+      totalStaff: publisher.staffs.length
+    }));
+
 
     return NextResponse.json({ publishers }, { status: 200 });
   } catch (error: any) {

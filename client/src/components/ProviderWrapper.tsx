@@ -2,6 +2,7 @@ import { EdgeStoreProvider } from "@/libs/edgestore";
 import { theme } from "@/theme";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+import { CartProvider } from "./CartProvider";
 
 export default function ProviderWrapper({
   children
@@ -11,8 +12,10 @@ export default function ProviderWrapper({
   return (
     <EdgeStoreProvider>
       <MantineProvider theme={theme}>
-        <Notifications />
-        {children}
+        <CartProvider>
+          <Notifications />
+          {children}
+        </CartProvider>
       </MantineProvider>
     </EdgeStoreProvider>
   );
