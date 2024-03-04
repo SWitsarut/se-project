@@ -84,7 +84,7 @@ describe('registeration, login, logout', () => {
     cy.contains('Login').click()
     cy.url().should('include', '/login').should('exist', { timeout: 10000 });
 
-    const username = 'dummy';
+    const username = 'trueuser';
     const password = 'testtest'
 
     cy.get('[name=username]').type(`${username}`);
