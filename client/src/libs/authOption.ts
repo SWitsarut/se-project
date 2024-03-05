@@ -1,6 +1,6 @@
+import prisma from "./prisma";
 import Credentials from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
-import prisma from "./prisma";
 import { PrismaClientKnownRequestError} from "@prisma/client/runtime/library.js";
 import { compare } from "bcrypt";
 import { generateVerificationToken } from "./tokens";
@@ -29,7 +29,7 @@ export const authOption: NextAuthOptions = {
             },
           });
         } catch(error) {
-          console.log(error)
+          console.log(error);
           if(error instanceof PrismaClientKnownRequestError) {
             throw new Error("Error Establishing a Database Connection");
           } else {
@@ -70,6 +70,7 @@ export const authOption: NextAuthOptions = {
         token.username = user.username;
         token.email = user.email;
         token.displayName = user.displayName;
+        token.avatar = user.avatar;
         token.role = user.role;
         if(user.role === "PUBLISHER") {
           const publisher = await prisma.publisher.findFirst({
@@ -96,7 +97,7 @@ export const authOption: NextAuthOptions = {
         session.user.username = token.username;
         session.user.email = token.email;
         session.user.displayName = token.displayName;
-        session.user.image = token.avatar;
+        session.user.avatar = token.avatar;
         session.user.role = token.role;
         session.user.publisher = token.publisher;
       }

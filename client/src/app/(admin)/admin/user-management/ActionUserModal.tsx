@@ -5,6 +5,7 @@ import { Button, Modal, Select, Text, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -21,6 +22,7 @@ export default function ActionUserModal({ user, publisherName }: ActionUserModal
   const [selectedActive, setSelectedActive] = useState<string | null>(user.isActive ? "Active" : "Inactive");
   const [publisher, setPublisher] = useState<string | null>(String(user.publisherName));
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { data: session } = useSession();
   const router = useRouter();
 
   const handleSave = async (e: React.FormEvent) => {
@@ -143,8 +145,8 @@ export default function ActionUserModal({ user, publisherName }: ActionUserModal
         </div>
       </Modal>
 
-      <Button leftSection={<IconPencil size={20}/>} onClick={openEdit} color="blue" size="sm">Edit</Button>
-      <Button leftSection={<IconTrash size={20}/>} onClick={openDelete} color="red" size="sm">Delete</Button>
+      <Button disabled={user.id == session?.user.id} leftSection={<IconPencil size={20}/>} onClick={openEdit} color="blue" size="sm">Edit</Button>
+      <Button disabled={user.id == session?.user.id} leftSection={<IconTrash size={20}/>} onClick={openDelete} color="red" size="sm">Delete</Button>
     </>
   )
 }

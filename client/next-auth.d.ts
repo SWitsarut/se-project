@@ -9,6 +9,7 @@ declare module "next-auth" {
       username: string
       displayName: string
       role: Role
+      avatar: string | null
       publisher?: string
     } & DefaultSession["user"]
   }

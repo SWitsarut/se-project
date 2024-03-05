@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id            String    @id @unique @default(uuid())
+  id            String    @id @default(uuid())
   username      String    @unique
   email         String    @unique
   displayName   String
@@ -18,11 +18,13 @@ model User {
   isActive      Boolean   @default(true)
   emailVerified DateTime?
 
-  createdAt        DateTime    @default(now())
+  createdAt        DateTime   @default(now())
   publisherId      Int?
-  publisher        Publisher?  @relation("PublisherStaff", fields: [publisherId], references: [id])
-  managedPublisher Publisher?  @relation("PublisherManager")
-  carts            CartItem[]
+  publisher        Publisher? @relation("PublisherStaff", fields: [publisherId], references: [id])
+  managedPublisher Publisher? @relation("PublisherManager")
+  cart             CartItem[]
+  favorites        Favorite[]
+  report           Report[]
 
   @@index([username, email])
   @@map("user")
@@ -42,16 +44,16 @@ model Publisher {
   publisherName String @unique
 
   book      Book[]
-  managerId String?     @unique
-  manager   User?       @relation("PublisherManager", fields: [managerId], references: [id])
-  staffs    User[]      @relation("PublisherStaff")
+  managerId String? @unique
+  manager   User?   @relation("PublisherManager", fields: [managerId], references: [id])
+  staffs    User[]  @relation("PublisherStaff")
 
   @@index([publisherName])
   @@map("publisher")
 }
 
 model Book {
-  isbn        String  @id @unique
+  isbn        String  @id
   title       String  @unique
   price       Float
   cover       String
@@ -68,19 +70,30 @@ model Book {
   categoryId  Int
   genres      Genre[]    @relation(name: "BookGenres")
   authors     Author[]   @relation(name: "BookAuthors")
-  carts       CartItem[]
+  cart        CartItem[]
+  favorites   Favorite[]
+  reports     Report[]
 
   @@index([title])
   @@map("book")
 }
 
 model CartItem {
-  id         Int      @id @default(autoincrement())
-  user       User     @relation(fields: [userId], references: [id])
-  book       Book     @relation(fields: [bookId], references: [isbn])
-  userId     String
-  bookId     String
-  createTime DateTime @default(now())
+  user     User?  @relation(fields: [userId], references: [id])
+  userId   String
+  book     Book?  @relation(fields: [bookIsbn], references: [isbn])
+  bookIsbn String
+
+  @@id([userId, bookIsbn])
+  @@map("cart_item")
+}
+
+model Favorite {
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
+  book   Book   @relation(fields: [bookId], references: [isbn])
+  userId String
+  bookId String
 }
 
 model Invoice {
@@ -122,6 +135,16 @@ model Author {
   books Book[] @relation(name: "BookAuthors")
 
   @@map("author")
+}
+
+model Report {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  book       Book     @relation(fields: [bookId], references: [isbn])
+  userId     String
+  bookId     String
+  reason     String
+  createTime DateTime @default(now())
 }
 
 enum Role {
