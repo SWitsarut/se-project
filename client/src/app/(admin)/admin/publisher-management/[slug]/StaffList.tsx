@@ -3,9 +3,9 @@ import { Avatar, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text 
 
 async function getStaffList(slug: string, page: number, take: number, search: string): Promise<{ staffs: User[] }> {
   const searchParams = `?page=${page}&take=${take}&search=${search}`;
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-staff-by-publisher/${slug}${searchParams}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/publisher-management/${slug}/staff${searchParams}`, {
     cache: "no-store"
-  })
+  });
 
   const data = await res.json();
   if(data.error) {
