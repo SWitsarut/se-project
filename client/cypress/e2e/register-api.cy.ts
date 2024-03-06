@@ -29,7 +29,7 @@ describe('Send POST request to register user', () => {
       failOnStatusCode: false,
     }).then(response => {
 
-      expect(response.status).to.eq(200);
+      expect(response.status).to.eq(201);
       cy.log('User registered successfully');
 
     });

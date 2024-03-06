@@ -91,8 +91,8 @@ describe('registeration, login, logout', () => {
     cy.get('[name=password]').type(`${password}{enter}`);
 
     cy.url().should('not.include', '/login', { timeout: 10000 });
-    cy.contains(`${username}`).should('be.visible');
-    cy.contains(`${username}`).click()
+    cy.contains(`${displayName}`).should('be.visible');
+    cy.contains(`${displayName}`).click()
 
     cy.contains('Logout').should('be.visible')
     cy.contains('Logout').click()
