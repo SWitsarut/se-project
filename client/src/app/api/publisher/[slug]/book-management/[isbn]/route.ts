@@ -104,6 +104,16 @@ export const PUT = async (
       return NextResponse.json({ error: "Not found book"}, { status: 404 });
     }
 
+    const existingBook = await prisma.book.findUnique({
+      where: {
+        title
+      }
+    })
+
+    if(existingBook) {
+      return NextResponse.json({ error: "Already have a book"}, { status: 400 })
+    }
+
     await prisma.book.update({
       where: {
         isbn: book.isbn

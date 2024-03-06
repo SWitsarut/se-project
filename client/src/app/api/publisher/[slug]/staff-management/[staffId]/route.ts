@@ -28,6 +28,10 @@ export const PATCH = async (
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    if(session.user.id === staffId) {
+      return NextResponse.json({ error: "You can't remove yourself from publisher" }, { status: 400 });
+    }
+
     await prisma.publisher.update({
       where: {
         publisherName: slug,
