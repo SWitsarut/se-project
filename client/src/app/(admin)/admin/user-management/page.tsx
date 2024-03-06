@@ -53,9 +53,11 @@ export default async function UserManagementPage({ searchParams }: UserManagemen
         <SearchBar label="Search for user"/>
       </div>
 
-      <Suspense key={page + take + search} fallback={<Skeleton animate={true} height={400} />}>
-        <UserList page={page} take={take} search={search}/>
-      </Suspense>
+      <div className="overflow-x-auto">
+        <Suspense key={page + take + search} fallback={<Skeleton animate={true} height={400} />}>
+          <UserList page={page} take={take} search={search}/>
+        </Suspense>
+      </div>
 
       <CustomPagination totalPage={totalPage}/>
     </>

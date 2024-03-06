@@ -24,9 +24,11 @@ export default async function ManageBookPage() {
         </Link>
       </div>
 
-      <Suspense fallback={<Skeleton height={400}/>}>
-        <BookList publisherName={session.user.publisher}/>
-      </Suspense>
+      <div className="overflow-x-auto">
+        <Suspense fallback={<Skeleton height={400}/>}>
+          <BookList publisherName={session.user.publisher}/>
+        </Suspense>
+      </div>
     </>
   )
 }

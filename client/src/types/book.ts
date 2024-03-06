@@ -29,6 +29,13 @@ export interface EditBookData {
   isSelling: boolean
 }
 
+export interface BookCart {
+  isbn: string
+  title: string
+  cover: string
+  price: number
+}
+
 export type BookResponse = {
   isbn: string
   title: string

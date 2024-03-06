@@ -54,10 +54,12 @@ export default async function PublisherManagementPage({
         <SearchBar label="Search for publisher"/>
       </div>
 
-      <Suspense key={search + page + take} fallback={<Skeleton animate={true} height={400} />}>
-        <TableSection search={search} take={take} page={page}/>
-      </Suspense>
-
+      <div className="overflow-x-auto">
+        <Suspense key={search + page + take} fallback={<Skeleton animate={true} height={400} />}>
+          <TableSection search={search} take={take} page={page}/>
+        </Suspense>
+      </div>
+      
       <CustomPagination totalPage={totalPage}/>
     </>
   );
