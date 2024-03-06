@@ -144,6 +144,7 @@ model Report {
   userId     String
   bookId     String
   reason     String
+  status     ReportStatus @default(PENDING)
   createTime DateTime @default(now())
 }
 
@@ -151,4 +152,10 @@ enum Role {
   USER
   ADMIN
   PUBLISHER
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  DISMISSED
 }
