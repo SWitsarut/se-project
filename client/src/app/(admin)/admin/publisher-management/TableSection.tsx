@@ -10,7 +10,9 @@ interface TableSectionProps {
 }
 
 async function getPublisher(take: number, page: number, search: string): Promise<{ publishers: PublisherResponse[] }> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-publisher?take=${take}&page=${page}&search=${search}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/publisher-management?take=${take}&page=${page}&search=${search}`, {
+    cache: "no-store"
+  });
   const data = await res.json();
 
   if(data.error) {

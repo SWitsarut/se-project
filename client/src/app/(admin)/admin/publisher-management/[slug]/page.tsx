@@ -69,18 +69,19 @@ export default async function SinglePublisherPage({
   params: { slug: string },
   searchParams: { tab?: string, page?: string, take?: string, search?: string }
 }) {
-  await getPublisher(params.slug);
+  const slug = decodeURIComponent(params.slug);
+  await getPublisher(slug)
   
   const tab = searchParams.tab;
   const take = Number(searchParams?.take) || 20;
   const page = Number(searchParams?.page) || 1;
   const search = searchParams?.search || "";
-  const totalPage = await getTotalPage(params.slug, tab, take, search);
+  const totalPage = await getTotalPage(slug, tab, take, search);
 
   return (
     <>
       <div className="prose">
-        <h1>{params.slug}</h1>
+        <h1>{decodeURIComponent(slug)}</h1>
       </div>
 
       <SelectTabs />
@@ -91,7 +92,7 @@ export default async function SinglePublisherPage({
             <SelectTake />
             <SearchBar label="Search for staff"/>
           </div>
-          <StaffList slug={params.slug} page={page} take={take} search={search}/> 
+          <StaffList slug={slug} page={page} take={take} search={search}/> 
           <CustomPagination totalPage={totalPage}/>
         </Suspense>
       ) : (
@@ -100,7 +101,7 @@ export default async function SinglePublisherPage({
             <SelectTake />
             <SearchBar label="Search for book"/>
           </div>
-          <BookList slug={params.slug} page={page} take={take} search={search}/>
+          <BookList slug={slug} page={page} take={take} search={search}/>
           <CustomPagination totalPage={totalPage}/>
         </Suspense>
       )}

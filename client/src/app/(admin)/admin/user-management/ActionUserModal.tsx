@@ -30,13 +30,13 @@ export default function ActionUserModal({ user, publisherName }: ActionUserModal
     
     setIsLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/manage-user/${user.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/user-management/${user.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ role: selectedRole, status: selectedActive, publisherName: publisher})
-      })
+      });
 
       const data = await res.json();
 
@@ -69,7 +69,7 @@ export default function ActionUserModal({ user, publisherName }: ActionUserModal
   const handlerDelete = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/manage-user/${user.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/user-management/${user.id}`, {
         method: "DELETE",
       });
       const data = await res.json();
