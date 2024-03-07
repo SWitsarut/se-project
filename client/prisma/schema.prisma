@@ -82,9 +82,9 @@ model Book {
 }
 
 model CartItem {
-  user     User?  @relation(fields: [userId], references: [id])
+  user     User  @relation(fields: [userId], references: [id])
   userId   String
-  book     Book?  @relation(fields: [bookIsbn], references: [isbn])
+  book     Book  @relation(fields: [bookIsbn], references: [isbn])
   bookIsbn String
 
   @@id([userId, bookIsbn])
@@ -147,6 +147,7 @@ model Report {
   userId     String
   bookId     String
   reason     String
+  status     ReportStatus @default(PENDING)
   createTime DateTime @default(now())
 }
 
@@ -172,5 +173,8 @@ enum Role {
   ADMIN
   PUBLISHER
 }
-
-//
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  DISMISSED
+}

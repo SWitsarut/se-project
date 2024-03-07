@@ -1,15 +1,15 @@
-import { Suspense } from "react";
 import StaffList from "./StaffList";
 import AddStaffModal from "./AddStaffModal";
+import { Suspense } from "react";
 import { Skeleton } from "@mantine/core";
 import { getCurrentSession } from "@/libs/getCurrentSession";
 import { redirect } from "next/navigation";
 
-export default async function StaffManagement() {
+export default async function StaffManagementPage() {
   const session = await getCurrentSession();
 
   if(!session || !session.user.publisher || session.user.role !== "PUBLISHER") {
-    redirect("/");
+    redirect("/")
   }
 
   return (
@@ -22,9 +22,11 @@ export default async function StaffManagement() {
         <AddStaffModal publisherName={session.user.publisher} />
       </div>
 
-      <Suspense fallback={<Skeleton animate height={400} />}>
-        <StaffList staffId={session.user.id} publisherName={session.user.publisher} />
-      </Suspense>
+      <div className="overflow-x-auto">
+        <Suspense fallback={<Skeleton animate height={400} />}>
+          <StaffList staffId={session.user.id} publisherName={session.user.publisher}/>
+        </Suspense>
+      </div>
     </>
   )
 }

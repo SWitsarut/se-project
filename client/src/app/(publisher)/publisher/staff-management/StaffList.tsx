@@ -2,6 +2,7 @@ import prisma from "@/libs/prisma";
 import { User } from "@/types/user";
 import { Avatar, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core";
 import ActionStaffModal from "./ActionStaffModal";
+import { getCurrentSession } from "@/libs/getCurrentSession";
 
 interface StaffListProps {
   staffId: string
@@ -38,7 +39,9 @@ async function checkIsManager(staffId: string, publisherName: string) {
   }
 }
 
-export default async function StaffList({ publisherName, staffId }: StaffListProps) {
+export default async function StaffList({ staffId, publisherName } : StaffListProps) {
+  const session = await getCurrentSession();
+
   const { staffs } = await getStaffByPublisher(publisherName);
   const isManager = await checkIsManager(staffId, publisherName);
   
@@ -69,7 +72,12 @@ export default async function StaffList({ publisherName, staffId }: StaffListPro
               <TableTd>{staff.isActive ? <Text c="green">Active</Text> : <Text c="red">Inactive</Text>}</TableTd>
               {isManager && (
                 <TableTd classNames={{ td: "gap-2 flex" }}>
-                  <ActionStaffModal publisherName={publisherName} staffId={staff.id} staffUsername={staff.username} />
+                  <ActionStaffModal
+                    managerId={staffId}
+                    publisherName={publisherName}
+                    staffId={staff.id}
+                    staffUsername={staff.username}
+                  />
                 </TableTd>
               )}
             </TableTr>

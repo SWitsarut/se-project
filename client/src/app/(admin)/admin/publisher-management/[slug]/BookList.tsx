@@ -12,9 +12,9 @@ interface BookListProps {
 
 async function getBookList(slug: string, page: number, take: number, search: string): Promise<{ books: BookResponse[] }> {
   const searchParams = `?page=${page}&take=${take}&search=${search}`
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/get-book-by-publisher/${slug}${searchParams}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/publisher-management/${slug}/book${searchParams}`, {
     cache: "no-store",
-  })
+  });
 
   const data = await res.json();
 

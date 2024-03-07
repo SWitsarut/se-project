@@ -1,6 +1,5 @@
 "use client";
 
-import { User } from "@/types/user";
 import { Button, Modal, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -10,11 +9,12 @@ import { useState } from "react";
 
 interface ActionStaffModalProps {
   publisherName: string
+  managerId: string
   staffId: string
   staffUsername: string
 }
 
-export default function ActionStaffModal({ publisherName, staffId, staffUsername }: ActionStaffModalProps) {
+export default function ActionStaffModal({ publisherName, managerId, staffId, staffUsername }: ActionStaffModalProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
@@ -43,7 +43,6 @@ export default function ActionStaffModal({ publisherName, staffId, staffUsername
         close();
       }
     } catch (error) {
-      console.log(error)
       notifications.show({
         message: "Something went wrong",
         color: "red",
@@ -66,7 +65,7 @@ export default function ActionStaffModal({ publisherName, staffId, staffUsername
         </div>
       </Modal>
 
-      <Button leftSection={<IconTrash size={20}/>} onClick={open} color="red" size="sm">Remove</Button>
+      <Button disabled={managerId === staffId} leftSection={<IconTrash size={20}/>} onClick={open} color="red" size="sm">Remove</Button>
     </>
   )
 }
