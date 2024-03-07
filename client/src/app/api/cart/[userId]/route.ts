@@ -1,3 +1,4 @@
+import { getCurrentSession } from "@/libs/getCurrentSession";
 import prisma from "@/libs/prisma";
 import { BookCart } from "@/types/book";
 import { NextResponse } from "next/server";
@@ -45,8 +46,14 @@ export const GET = async (req: Request, { params: { userId }}: { params: { userI
 }
 
 export const POST = async (req: Request, { params: { userId }}: { params: { userId: string }}) => {
-  const { isbn } = await req.json();
+  const session = await getCurrentSession();
   
+  if(!session || session.user.id !== userId) {
+    return NextResponse.json({ error: "Forbidden" } ,{ status: 403 });
+  }
+
+  const { isbn } = await req.json();
+
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -84,6 +91,12 @@ export const POST = async (req: Request, { params: { userId }}: { params: { user
 }
 
 export const DELETE = async (req: Request, { params: { userId }}: { params: { userId: string }}) => {
+  const session = await getCurrentSession();
+  
+  if(!session || session.user.id !== userId) {
+    return NextResponse.json({ error: "Forbidden" } ,{ status: 403 });
+  }
+  
   const { isbn } = await req.json();
 
   try {

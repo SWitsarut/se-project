@@ -20,16 +20,17 @@ interface CartProviderProps {
 
 export const CartProvider = ({ children } : CartProviderProps) => {
   const [cart, setCart] = useState<String[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { data: session } = useSession();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
 
   const check = (isbn: string): boolean => {
-    const existingBook = cart.findIndex((item) => item === isbn)
+    const existingBook = cart.findIndex((item) => item === isbn);
     return existingBook !== -1;
   }
 
   const addToCart = async (isbn: string) => {
+    setIsLoading(true);
     const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart/${session?.user.id}`, {
       method: "POST",
       headers: {
@@ -42,6 +43,7 @@ export const CartProvider = ({ children } : CartProviderProps) => {
     console.log(data);
 
     setCart((prevState) => [ ...prevState, isbn]);
+    setIsLoading(false);
     router.refresh();
   }
 
@@ -60,6 +62,7 @@ export const CartProvider = ({ children } : CartProviderProps) => {
 
     const newCartItem = cart.filter((item) => item !== isbn);
     setCart(newCartItem);
+    setIsLoading(false);
     router.refresh();
   }
 
