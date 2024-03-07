@@ -39,7 +39,7 @@ export const PUT = async (req: Request, { params : { userId }}: { params : { use
             }
           }
         }
-      })
+      });
 
       return NextResponse.json({ message: "Update user successful"}, { status: 200 });
     }
@@ -72,6 +72,10 @@ export const DELETE = async (req: Request, { params: { userId }}: { params: { us
 
   if(!session || session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  if(session.user.publisher === userId) {
+    return NextResponse.json({ error: "You can't remove yourself" }, { status: 400 });
   }
 
   try {

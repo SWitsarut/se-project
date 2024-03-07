@@ -23,13 +23,12 @@ async function getBookList(publisherName: string): Promise<{ books: BookResponse
   return data;
 }
 
-
 export default async function BookList({ publisherName }: BookListProps) {
   const { books } = await getBookList(publisherName);
 
   return (
     <>
-      <Table striped highlightOnHover withTableBorder withColumnBorders>
+      <Table layout="auto" striped highlightOnHover withTableBorder withColumnBorders>
         <TableThead>
           <TableTr>
             <TableTh>ISBN</TableTh>
@@ -53,24 +52,24 @@ export default async function BookList({ publisherName }: BookListProps) {
                     </Link>
                   </HoverCardTarget>
                   <HoverCardDropdown>
-                    <Image
-                      className="w-auto h-40 aspect-[1/1.414]"
-                      src={book.cover}
-                      width={0}
-                      height={0}
-                      alt="book_cover"
-                      sizes="100vw"
-                      priority
-                    />
+                    <div className="w-24 aspect-[1/1.414] relative">
+                      <Image
+                        className="w-full h-full"
+                        src={book.cover}
+                        alt={book.title}
+                        fill
+                        priority
+                      />
+                    </div>
                   </HoverCardDropdown>
                 </HoverCard>
               </TableTd>
-              <TableTd>{book.price}</TableTd>
+              <TableTd>฿ {book.price}</TableTd>
               <TableTd>{book.category}</TableTd>
               <TableTd>{book.isSelling ? <Text c="green">Selling</Text> : <Text c="red">Closing</Text>}</TableTd>
               <TableTd>{book.createdAt}</TableTd>
               <TableTd>
-                <div className="space-x-4">
+                <div className="flex gap-4">
                   <Link href={`book-management/edit/${book.isbn}`}>
                     <Button leftSection={<IconPencil />}>Edit</Button>
                   </Link>

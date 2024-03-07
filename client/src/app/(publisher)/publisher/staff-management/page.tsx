@@ -22,9 +22,11 @@ export default async function StaffManagementPage() {
         <AddStaffModal publisherName={session.user.publisher} />
       </div>
 
-      <Suspense fallback={<Skeleton animate height={400} />}>
-        <StaffList staffId={session.user.id} publisherName={session.user.publisher}/>
-      </Suspense>
+      <div className="overflow-x-auto">
+        <Suspense fallback={<Skeleton animate height={400} />}>
+          <StaffList staffId={session.user.id} publisherName={session.user.publisher}/>
+        </Suspense>
+      </div>
     </>
   )
 }

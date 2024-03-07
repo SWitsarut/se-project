@@ -1,17 +1,23 @@
 "use client";
 
 import { BookResponse } from "@/types/book";
-import { Button, Rating, Text, Tooltip } from "@mantine/core";
+import { Button, Modal, Rating, Text, Tooltip } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "./CartProvider";
+import { useSession } from "next-auth/react";
+import { useDisclosure } from "@mantine/hooks";
+import { useRouter } from "next/navigation";
 
 interface BookItemProps {
   book: BookResponse
 }
 
 export default function BookItem({ book }: BookItemProps) {
+  const { data: session } = useSession();
   const { addToCart, check } = useCart();
+  const [ opened, { open, close } ] = useDisclosure(false);
+  const router = useRouter();
 
   return (
     <>
@@ -46,7 +52,22 @@ export default function BookItem({ book }: BookItemProps) {
               <Rating readOnly value={5} size="xs"/>
               <Text size="xs">Rating Count</Text>
             </div>
-            <Button disabled={check(book.isbn)} onClick={() => addToCart(book.isbn)} fullWidth><Text truncate classNames={{ root: "text-sm" }}>฿ {book.price}</Text></Button>
+            <Button
+              disabled={check(book.isbn)}
+              onClick={session ? () => addToCart(book.isbn) : () => open()}
+              fullWidth
+            >
+              <Text truncate classNames={{ root: "text-sm" }}>฿ {book.price}</Text>
+            </Button>
+
+            {!session && (
+              <Modal classNames={{ title: "font-bold" }} centered opened={opened} onClose={close} title="can't add book to cart">
+                <div className="flex flex-col gap-4">
+                  <Text>You must have login to add book into cart</Text>
+                  <Button className="mx-auto" onClick={() => router.push("/login")}>Go to login</Button>
+                </div>
+              </Modal>
+            )}
           </div>
         </div>
       </div>
