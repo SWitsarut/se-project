@@ -22,6 +22,11 @@ export const POST = async (req: Request) => {
   console.log(session)
   if (!found) {
     await addNewUserSession(id, session)
+  } else {
+    await prisma.userSession.update({
+      where: { id },
+      data: { sessionId: session },
+    })
   }
   return NextResponse.json({ session }, { status: 200 })
 }

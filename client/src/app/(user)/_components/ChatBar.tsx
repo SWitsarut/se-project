@@ -8,13 +8,32 @@ import { IconSend } from '@tabler/icons-react'
 import { useSession } from 'next-auth/react'
 import { message } from '@/types/message'
 import { User } from '@/types/user'
+import { Session } from 'next-auth'
+import { sendingMSG } from '@/types/chat'
+
+// function session2user(session: any): User {
+//   const { user } = session
+//   const converted: User = {
+//     id: user.id,
+//     avatar: user.avatar,
+//     displayName: user.displayName,
+//     email: user.email,
+//     isActive: true,
+//     role: user.role,
+//     username: user.username,
+//     publisherName: undefined,
+//   }
+//   return converted
+// }
 
 export default function ChatBar({ initmsg }: { initmsg: message[] }) {
-  const { data: session, status } = useSession()
+  const session = useSession()
   const socket = useContext(Connection)
 
   const [isConnected, setIsConnected] = useState<boolean>(false)
-  const [sendtarget, setSendTarget] = useState<User | undefined>(undefined)
+  const [sendtarget, setSendTarget] = useState<string | undefined>(
+    '0ba61313-9640-4712-bb96-e289f890de96',
+  )
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isOpened, setIsOpened] = useState<boolean>(false)
@@ -24,11 +43,15 @@ export default function ChatBar({ initmsg }: { initmsg: message[] }) {
   const [msgs, setMsgs] = useState<message[]>(initmsg)
 
   useEffect(() => {
-    console.log(status)
-  }, [status])
+    console.log(session)
+  }, [session])
 
   useEffect(() => {
-    if (initmsg.length != 0 && !isConnected) {
+    if (
+      session.status == 'authenticated' &&
+      initmsg.length != 0 &&
+      !isConnected
+    ) {
       socket?.connect()
     }
     const lsOpened = localStorage.getItem('chat-open')
@@ -46,11 +69,12 @@ export default function ChatBar({ initmsg }: { initmsg: message[] }) {
       }
     }
     const content = text.current?.value
-    // const msg: message = {
-    //   content: content || '',
-    //   sender: session?.user,
-    //   receiver: sendtarget || undefined,
-    // }
+    const msg: sendingMSG = {
+      content: content || '',
+      sender: session.data?.user.id,
+      receiver: sendtarget,
+    }
+    socket?.emit('message', JSON.stringify(msg))
   }
 
   const toggleChat = () => {
@@ -69,7 +93,7 @@ export default function ChatBar({ initmsg }: { initmsg: message[] }) {
           {
             method: 'POST',
             body: JSON.stringify({
-              id: session?.user.id,
+              id: session?.data?.user.id,
               session: socket.id,
             }),
           },
@@ -78,24 +102,38 @@ export default function ChatBar({ initmsg }: { initmsg: message[] }) {
         console.log(res)
       }
 
+      const sended = (id: string) => {
+        console.log(id)
+      }
+
       const assignAdmin = async () => {}
 
       const receive = (msg: string) => {
         console.log(msg)
       }
+      const disConnect = async () => {
+        await fetch(`/api/chat/endSession`, {
+          method: 'POST',
+          body: JSON.stringify({ id: session.data?.user.id }),
+        })
+      }
       socket.on('connect', onConnect)
+      socket.on('disconnect', disConnect)
       socket.on('receive-message', receive)
+      socket.on('sended', sended)
       socket.on('assign-admin', receive)
       return () => {
-        socket.off('receive-message', receive)
         socket.off('connect', onConnect)
+        socket.off('disconnect', disConnect)
+        socket.off('receive-message', receive)
+        socket.on('sended', sended)
         socket.off('assign-admin', assignAdmin)
       }
     }
   }, [socket, session])
   return (
     <>
-      {isLoading || status == 'unauthenticated' ? null : (
+      {isLoading || session.status == 'unauthenticated' ? null : (
         <div className="bg-white p-0 m-0 mr-4 hidden md:block fixed bottom-0 right-0 w-[20em] border border-gray-300">
           <div
             className="flex align-middle justify-center cursor-pointer border-gray-300 shadow-sm"
@@ -110,6 +148,20 @@ export default function ChatBar({ initmsg }: { initmsg: message[] }) {
                   return <ChatChip key={element.id} message={element} />
                 })}
               </div>
+              <Button
+                onClick={() => {
+                  socket?.connect()
+                }}
+              >
+                Con
+              </Button>
+              <Button
+                onClick={() => {
+                  socket?.disconnect()
+                }}
+              >
+                Dis
+              </Button>
               <form
                 onSubmit={(e) => {
                   e.preventDefault()

@@ -11,14 +11,7 @@ export default async function MainLayout({
 }) {
   // const {data:session} =useSession()
   const session = await getCurrentSession()
-  if (!session) {
-    return (
-      <>
-        <Navbar />
-        <div className="py-16 px-0 md:px-24">{children}</div>
-      </>
-    )
-  }
+
   const initmsg: message[] = [
     {
       id: '1',

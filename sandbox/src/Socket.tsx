@@ -5,7 +5,6 @@ import { io, Socket as SocketType } from "socket.io-client";
 const Connection = createContext<SocketType | undefined | null>(undefined);
 
 export default function Socket({ children }: { children: React.ReactNode }) {
-	const { data: session } = useSession();
 	const socket = useRef<SocketType | null>();
 
 	socket.current = io("localhost:8080", { autoConnect: false });
