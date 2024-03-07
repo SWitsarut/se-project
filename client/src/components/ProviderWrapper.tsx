@@ -3,6 +3,7 @@ import { theme } from '@/theme'
 import { MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
 import ChatProvider from './ChatProvider'
+import { CartProvider } from './CartProvider'
 
 interface ProviderWrapperProps {
   children: React.ReactNode
@@ -16,8 +17,10 @@ export default function ProviderWrapper({
   return (
     <EdgeStoreProvider>
       <MantineProvider theme={theme}>
-        <Notifications />
-        <ChatProvider>{children}</ChatProvider>
+        <CartProvider>
+          <Notifications />
+          <ChatProvider>{children}</ChatProvider>
+        </CartProvider>
       </MantineProvider>
     </EdgeStoreProvider>
   )

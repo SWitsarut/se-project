@@ -26,7 +26,7 @@ export const POST = async (req: Request) => {
     msg.receiver == undefined
   ) {
     return NextResponse.json({ error: 'bad request' }, { status: 400 })
-  }
+  }1
 
   const res = await prisma.chatMessage.create({
     data: {

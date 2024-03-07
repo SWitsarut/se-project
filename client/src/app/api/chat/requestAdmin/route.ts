@@ -1,14 +1,21 @@
 import prisma from '@/libs/prisma'
-import { User } from '@prisma/client'
+import { NextResponse } from 'next/server'
 
-function selectOneAdmin(admins: User[]) {
+function selectOneAdmin(
+  admins: {
+    id: string
+  }[],
+) {
   const randomIndex = Math.floor(Math.random() * admins.length)
   return admins[randomIndex]
 }
 
 export async function GET() {
   prisma.userSession.findMany({ where: { user: { role: 'ADMIN' } } })
-  const admins = await prisma.user.findMany({ where: { role: 'ADMIN' } })
+  const admins = await prisma.user.findMany({
+    where: { role: 'ADMIN' },
+    select: { id: true },
+  })
   const admin = selectOneAdmin(admins)
-  return admin
+  return NextResponse.json(admin, { status: 200 })
 }

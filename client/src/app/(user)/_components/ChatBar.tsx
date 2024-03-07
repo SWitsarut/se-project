@@ -7,8 +7,6 @@ import { Button, TextInput } from '@mantine/core'
 import { IconSend } from '@tabler/icons-react'
 import { useSession } from 'next-auth/react'
 import { message } from '@/types/message'
-import { User } from '@/types/user'
-import { Session } from 'next-auth'
 import { sendingMSG } from '@/types/chat'
 
 // function session2user(session: any): User {
@@ -26,30 +24,30 @@ import { sendingMSG } from '@/types/chat'
 //   return converted
 // }
 
-export default function ChatBar({ initmsg }: { initmsg: message[] }) {
+export default function ChatBar({
+  initmsg,
+  target,
+}: {
+  initmsg: message[] | []
+  target: string
+}) {
   const session = useSession()
   const socket = useContext(Connection)
 
   const [isConnected, setIsConnected] = useState<boolean>(false)
-  const [sendtarget, setSendTarget] = useState<string | undefined>(
-    '0ba61313-9640-4712-bb96-e289f890de96',
-  )
+  const sendtaget = useRef<string>(target)
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isOpened, setIsOpened] = useState<boolean>(false)
 
-  const text = useRef<HTMLInputElement | null>(null)
+  const [text, setText] = useState<string>('')
 
-  const [msgs, setMsgs] = useState<message[]>(initmsg)
-
-  useEffect(() => {
-    console.log(session)
-  }, [session])
+  const [msgs, setMsgs] = useState<message[] | []>(initmsg)
 
   useEffect(() => {
     if (
       session.status == 'authenticated' &&
-      initmsg.length != 0 &&
+      initmsg?.length != 0 &&
       !isConnected
     ) {
       socket?.connect()
@@ -60,22 +58,7 @@ export default function ChatBar({ initmsg }: { initmsg: message[] }) {
     }
     setIsOpened(Boolean(lsOpened))
     setIsLoading(false)
-  }, [initmsg.length, isConnected, session, socket])
-
-  function sendMSG() {
-    if (!sendtarget && msgs.length == 0) {
-      if (!isConnected) {
-        socket?.connect()
-      }
-    }
-    const content = text.current?.value
-    const msg: sendingMSG = {
-      content: content || '',
-      sender: session.data?.user.id,
-      receiver: sendtarget,
-    }
-    socket?.emit('message', JSON.stringify(msg))
-  }
+  }, [initmsg?.length, isConnected, session, socket])
 
   const toggleChat = () => {
     setIsOpened((prev) => {
@@ -102,32 +85,28 @@ export default function ChatBar({ initmsg }: { initmsg: message[] }) {
         console.log(res)
       }
 
-      const sended = (id: string) => {
-        console.log(id)
-      }
-
-      const assignAdmin = async () => {}
-
-      const receive = (msg: string) => {
-        console.log(msg)
-      }
-      const disConnect = async () => {
-        await fetch(`/api/chat/endSession`, {
-          method: 'POST',
-          body: JSON.stringify({ id: session.data?.user.id }),
+      const sended = async (confirm: string) => {
+        const { id, msg } = await JSON.parse(confirm)
+        console.log('sended', id)
+        setMsgs((prev) => {
+          return [...prev, msg]
         })
       }
+
+      const receive = async (msg: message) => {
+        console.log(msg)
+        setMsgs((prev) => {
+          return [...prev, msg]
+        })
+      }
+
       socket.on('connect', onConnect)
-      socket.on('disconnect', disConnect)
       socket.on('receive-message', receive)
       socket.on('sended', sended)
-      socket.on('assign-admin', receive)
       return () => {
         socket.off('connect', onConnect)
-        socket.off('disconnect', disConnect)
         socket.off('receive-message', receive)
         socket.on('sended', sended)
-        socket.off('assign-admin', assignAdmin)
       }
     }
   }, [socket, session])
@@ -144,8 +123,8 @@ export default function ChatBar({ initmsg }: { initmsg: message[] }) {
           {!isOpened ? null : (
             <>
               <div className="flex gap-3 flex-col h-[20em] px-5 overflow-y-scroll bg-gray-200 py-3">
-                {msgs?.map((element) => {
-                  return <ChatChip key={element.id} message={element} />
+                {msgs?.map((element, index) => {
+                  return <ChatChip key={index} message={element} />
                 })}
               </div>
               <Button
@@ -165,11 +144,21 @@ export default function ChatBar({ initmsg }: { initmsg: message[] }) {
               <form
                 onSubmit={(e) => {
                   e.preventDefault()
-                  sendMSG()
+                  const msg: sendingMSG = {
+                    content: text,
+                    sender: session.data?.user.id,
+                    receiver: target,
+                  }
+                  socket?.emit('message', JSON.stringify(msg))
+                  setText('')
                 }}
                 className="flex flex-row w"
               >
-                <TextInput ref={text} classNames={{ root: 'w-full' }} />
+                <TextInput
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  classNames={{ root: 'w-full' }}
+                />
                 <Button type="submit">
                   <IconSend />
                 </Button>

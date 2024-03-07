@@ -1,6 +1,6 @@
 import express from "express";
 import { createServer } from "http";
-import { DisconnectReason, Server } from "socket.io";
+import { Server } from "socket.io";
 import cors from "cors";
 
 import bodyParser from "body-parser";
@@ -45,7 +45,7 @@ io.on("connection", (socket) => {
 	console.log("New socket connected", socket.id, "with ", userAuth);
 
 	socket.on("message", async (msg: string) => {
-		// console.log("receive from", msg);
+		console.log("receive from", msg);
 		const msgContent: sendingMSG = await JSON.parse(msg);
 		// console.log("to json", msg);
 		const saved = await fetch(`${webapp_url}/api/chat/newmsg`, {
@@ -53,27 +53,19 @@ io.on("connection", (socket) => {
 			body: JSON.stringify(msgContent),
 		}).then((e) => e.json());
 		console.log("saved", saved);
-		io.to(socket.id).emit("sended", saved.id);
+		io.to(socket.id).emit("sended", JSON.stringify({ id: saved.id, msg: saved.message }));
 		io.to(saved.to.sessionId).emit("receive-message", saved.message);
 	});
 
-	socket.on("request-admin", () => {
-		io.to(socket.id).emit("assign-admin");
-	});
-
-	socket.on("join", (rooms: string[]) => {
-		socket.join(rooms);
-	});
-
-	socket.on("disconnect", async (reason: DisconnectReason, _description) => {
-		console.log(socket.id, reason);
-		// await fetch(`${webapp_url}/api/chat/endSession`, {
-		// 	method: "POST",
-		// 	body: JSON.stringify({ id: socket.handshake.auth.userinfo.id }),
-		// })
-		// 	.then((e) => e.json())
-		// 	.then((js) => console.log("user disconnected", js, reason));
-	});
+	// socket.on("disconnect", async (reason: DisconnectReason, _description) => {
+	// 	console.log(socket.id, reason);
+	// 	await fetch(`${webapp_url}/api/chat/endSession`, {
+	// 		method: "POST",
+	// 		body: JSON.stringify({ id: socket.id }),
+	// 	})
+	// 		.then((e) => e.json())
+	// 		.then((js) => console.log("user disconnected", js, reason));
+	// });
 });
 
 app.get("/", (_req, res) => {
