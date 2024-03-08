@@ -86,6 +86,7 @@ describe('registeration, login, logout', () => {
 
     const username = 'trueuser';
     const password = 'testtest'
+    const displayName = 'Test';
 
     cy.get('[name=username]').type(`${username}`);
     cy.get('[name=password]').type(`${password}{enter}`);
