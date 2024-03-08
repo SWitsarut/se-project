@@ -18,10 +18,11 @@ model User {
   isActive      Boolean   @default(true)
   emailVerified DateTime?
 
-  createdAt        DateTime   @default(now())
+  createdAt        DateTime        @default(now())
   publisherId      Int?
-  publisher        Publisher? @relation("PublisherStaff", fields: [publisherId], references: [id])
-  managedPublisher Publisher? @relation("PublisherManager")
+  publisher        Publisher?      @relation("PublisherStaff", fields: [publisherId], references: [id])
+  managedPublisher Publisher?      @relation("PublisherManager")
+  ownedBooks       BookOwnership[]
   cart             CartItem[]
   favorites        Favorite[]
   report           Report[]
@@ -64,12 +65,13 @@ model Book {
   updatedAt DateTime @updatedAt
   isSelling Boolean  @default(true)
 
-  publisher   Publisher  @relation(fields: [publisherId], references: [id])
+  publisher   Publisher       @relation(fields: [publisherId], references: [id])
   publisherId Int
-  category    Category   @relation(fields: [categoryId], references: [id])
+  category    Category        @relation(fields: [categoryId], references: [id])
   categoryId  Int
-  genres      Genre[]    @relation(name: "BookGenres")
-  authors     Author[]   @relation(name: "BookAuthors")
+  genres      Genre[]         @relation(name: "BookGenres")
+  authors     Author[]        @relation(name: "BookAuthors")
+  ownedBooks  BookOwnership[]
   cart        CartItem[]
   favorites   Favorite[]
   reports     Report[]
@@ -79,9 +81,9 @@ model Book {
 }
 
 model CartItem {
-  user     User  @relation(fields: [userId], references: [id])
+  user     User   @relation(fields: [userId], references: [id])
   userId   String
-  book     Book  @relation(fields: [bookIsbn], references: [isbn])
+  book     Book   @relation(fields: [bookIsbn], references: [isbn])
   bookIsbn String
 
   @@id([userId, bookIsbn])
@@ -89,11 +91,24 @@ model CartItem {
 }
 
 model Favorite {
-  id     Int    @id @default(autoincrement())
-  user   User   @relation(fields: [userId], references: [id])
-  book   Book   @relation(fields: [bookId], references: [isbn])
-  userId String
-  bookId String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  book      Book     @relation(fields: [bookIsbn], references: [isbn])
+  bookIsbn  String
+  createdAt DateTime @default(now())
+
+  @@id([userId, bookIsbn])
+}
+
+model BookOwnership {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  book      Book     @relation(fields: [bookIsbn], references: [isbn])
+  userId    String
+  bookIsbn  String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, bookIsbn], name: "OwnershipPair")
 }
 
 model Invoice {
@@ -138,14 +153,14 @@ model Author {
 }
 
 model Report {
-  id         Int      @id @default(autoincrement())
-  user       User     @relation(fields: [userId], references: [id])
-  book       Book     @relation(fields: [bookId], references: [isbn])
+  id         Int          @id @default(autoincrement())
+  user       User         @relation(fields: [userId], references: [id])
+  book       Book         @relation(fields: [bookIsbn], references: [isbn])
   userId     String
-  bookId     String
+  bookIsbn   String
   reason     String
   status     ReportStatus @default(PENDING)
-  createTime DateTime @default(now())
+  createdAt DateTime     @default(now())
 }
 
 enum Role {
