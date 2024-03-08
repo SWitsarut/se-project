@@ -15,7 +15,7 @@ interface BookItemProps {
 
 export default function BookItem({ book }: BookItemProps) {
   const { data: session } = useSession();
-  const { addToCart, check } = useCart();
+  const { addToCart, check, isLoading } = useCart();
   const [ opened, { open, close } ] = useDisclosure(false);
   const router = useRouter();
 
@@ -53,7 +53,7 @@ export default function BookItem({ book }: BookItemProps) {
               <Text size="xs">Rating Count</Text>
             </div>
             <Button
-              disabled={check(book.isbn)}
+              disabled={check(book.isbn) || isLoading}
               onClick={session ? () => addToCart(book.isbn) : () => open()}
               fullWidth
             >
