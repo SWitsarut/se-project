@@ -4,7 +4,7 @@ import { message } from '@/types/message'
 import { NextResponse } from 'next/server'
 
 async function getUserData(userID: string) {
-  const user = await prisma.user.findFirst({
+  const user: UserMsg | null = await prisma.user.findFirst({
     where: { id: userID },
     select: {
       id: true,
@@ -26,8 +26,10 @@ export const POST = async (req: Request) => {
     msg.receiver == undefined
   ) {
     return NextResponse.json({ error: 'bad request' }, { status: 400 })
-  }1
+  }
 
+  const sender: string = msg.sender
+  const receiver: string = msg.receiver
   const res = await prisma.chatMessage.create({
     data: {
       content: msg?.content,
@@ -43,8 +45,10 @@ export const POST = async (req: Request) => {
   })
   const message: message = {
     content: res.content,
-    sender: senderData,
-    receiver: receiverData,
+    sender: sender,
+    receiver: receiver,
+    senderData,
+    receiverData,
   }
   return NextResponse.json({ id: res.id, message, to }, { status: 200 })
 }

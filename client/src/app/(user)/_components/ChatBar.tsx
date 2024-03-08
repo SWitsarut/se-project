@@ -9,45 +9,34 @@ import { useSession } from 'next-auth/react'
 import { message } from '@/types/message'
 import { sendingMSG } from '@/types/chat'
 
-// function session2user(session: any): User {
-//   const { user } = session
-//   const converted: User = {
-//     id: user.id,
-//     avatar: user.avatar,
-//     displayName: user.displayName,
-//     email: user.email,
-//     isActive: true,
-//     role: user.role,
-//     username: user.username,
-//     publisherName: undefined,
-//   }
-//   return converted
-// }
-
 export default function ChatBar({
   initmsg,
   target,
 }: {
-  initmsg: message[] | []
+  initmsg: message[]
   target: string
 }) {
   const session = useSession()
   const socket = useContext(Connection)
 
   const [isConnected, setIsConnected] = useState<boolean>(false)
-  const sendtaget = useRef<string>(target)
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isOpened, setIsOpened] = useState<boolean>(false)
 
   const [text, setText] = useState<string>('')
 
+  const anchor = useRef<HTMLDivElement | null>(null)
+
   const [msgs, setMsgs] = useState<message[] | []>(initmsg)
 
   useEffect(() => {
+    anchor.current?.scrollIntoView()
+  }, [msgs])
+  useEffect(() => {
     if (
       session.status == 'authenticated' &&
-      initmsg?.length != 0 &&
+      initmsg?.length > 0 &&
       !isConnected
     ) {
       socket?.connect()
@@ -82,22 +71,20 @@ export default function ChatBar({
           },
         ).then((data) => data.json())
         setIsConnected(true)
-        console.log(res)
+        console.log('connected to socket with sessionId', res)
       }
 
       const sended = async (confirm: string) => {
         const { id, msg } = await JSON.parse(confirm)
-        console.log('sended', id)
+        console.log('sended', id, msg)
         setMsgs((prev) => {
           return [...prev, msg]
         })
       }
 
-      const receive = async (msg: message) => {
+      const receive = async (msg: [] | message[]) => {
         console.log(msg)
-        setMsgs((prev) => {
-          return [...prev, msg]
-        })
+        setMsgs((prev) => [...prev, ...msg])
       }
 
       socket.on('connect', onConnect)
@@ -123,26 +110,16 @@ export default function ChatBar({
           {!isOpened ? null : (
             <>
               <div className="flex gap-3 flex-col h-[20em] px-5 overflow-y-scroll bg-gray-200 py-3">
+                <div ref={anchor}></div>
                 {msgs?.map((element, index) => {
                   return <ChatChip key={index} message={element} />
                 })}
               </div>
-              <Button
-                onClick={() => {
-                  socket?.connect()
-                }}
-              >
-                Con
-              </Button>
-              <Button
-                onClick={() => {
-                  socket?.disconnect()
-                }}
-              >
-                Dis
-              </Button>
               <form
                 onSubmit={(e) => {
+                  if (!isConnected) {
+                    socket?.connect()
+                  }
                   e.preventDefault()
                   const msg: sendingMSG = {
                     content: text,

@@ -20,12 +20,12 @@ model User {
 
   createdAt        DateTime      @default(now())
   publisherId      Int?
-  publisher        Publisher?  @relation("PublisherStaff", fields: [publisherId], references: [id])
-  managedPublisher Publisher?  @relation("PublisherManager")
+  publisher        Publisher?    @relation("PublisherStaff", fields: [publisherId], references: [id])
+  managedPublisher Publisher?    @relation("PublisherManager")
   carts            CartItem[]
   favorites        Favorite[]
   report           Report[]
-  sender         ChatMessage[] @relation("ChatSender")
+  sender           ChatMessage[] @relation("ChatSender")
   receiver         ChatMessage[] @relation("ChatReceiver")
   UserSession      UserSession[]
 
@@ -82,9 +82,9 @@ model Book {
 }
 
 model CartItem {
-  user     User  @relation(fields: [userId], references: [id])
+  user     User   @relation(fields: [userId], references: [id])
   userId   String
-  book     Book  @relation(fields: [bookIsbn], references: [isbn])
+  book     Book   @relation(fields: [bookIsbn], references: [isbn])
   bookIsbn String
 
   @@id([userId, bookIsbn])
@@ -141,14 +141,14 @@ model Author {
 }
 
 model Report {
-  id         Int      @id @default(autoincrement())
-  user       User     @relation(fields: [userId], references: [id])
-  book       Book     @relation(fields: [bookId], references: [isbn])
+  id         Int          @id @default(autoincrement())
+  user       User         @relation(fields: [userId], references: [id])
+  book       Book         @relation(fields: [bookId], references: [isbn])
   userId     String
   bookId     String
   reason     String
   status     ReportStatus @default(PENDING)
-  createTime DateTime @default(now())
+  createTime DateTime     @default(now())
 }
 
 model ChatMessage {
@@ -158,8 +158,8 @@ model ChatMessage {
   content   String
   timeStamp DateTime @default(now())
 
-  senderRelation   User @relation("ChatSender", fields: [sender], references: [id])
-  receiverRelation User @relation("ChatReceiver", fields: [receiver], references: [id])
+  senderData   User @relation("ChatSender", fields: [sender], references: [id])
+  receiverData User @relation("ChatReceiver", fields: [receiver], references: [id])
 }
 
 model UserSession {
@@ -173,6 +173,7 @@ enum Role {
   ADMIN
   PUBLISHER
 }
+
 enum ReportStatus {
   PENDING
   REVIEWED

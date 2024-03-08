@@ -1,9 +1,8 @@
 import Navbar from '@/components/Navbar'
 import ChatBar from './_components/ChatBar'
-import { message } from '@/types/message'
 import { getCurrentSession } from '@/libs/getCurrentSession'
-import { getCurrentUser } from '@/libs/getCurrentUser'
 import prisma from '@/libs/prisma'
+import { message } from '@/types/message'
 
 export default async function MainLayout({
   children,
@@ -13,10 +12,35 @@ export default async function MainLayout({
   // const {data:session} =useSession()
   const session = await getCurrentSession()
 
-  // const initmsg = await prisma.chatMessage.findMany({
-  //   where: { receiver: session?.user.id },
-  // })
-  const initmsg: [] = []
+  const initmsg: message[] = await prisma.chatMessage.findMany({
+    orderBy: {
+      timeStamp: 'asc',
+    },
+    where: {
+      OR: [{ sender: session?.user.id }, { receiver: session?.user.id }],
+    },
+    include: {
+      receiverData: {
+        select: {
+          id: true,
+          username: true,
+          displayName: true,
+          avatar: true,
+          role: true,
+        },
+      },
+      senderData: {
+        select: {
+          id: true,
+          username: true,
+          displayName: true,
+          avatar: true,
+          role: true,
+        },
+      },
+    },
+  })
+  // console.log('initmsg', initmsg)
 
   const admin = await fetch(
     `${process.env.NEXT_PUBLIC_URL}/api/chat/requestAdmin`,
@@ -26,7 +50,9 @@ export default async function MainLayout({
     <>
       <Navbar />
       <div className="py-16 px-0 md:px-24">{children}</div>
-      <ChatBar initmsg={initmsg} target={admin.id} />
+      {session?.user.role == 'USER' ? (
+        <ChatBar initmsg={initmsg} target={admin.id} />
+      ) : null}
     </>
   )
 }
