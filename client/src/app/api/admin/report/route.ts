@@ -25,7 +25,7 @@ export const GET = async (req: Request) => {
       skip: take * (page - 1)
     });
 
-    const reports: Report[] = result.map((report) => ({
+    const reports = result.map((report) => ({
       id: report.id,
       username: report.user.username,
       avatar: report.user.avatar,

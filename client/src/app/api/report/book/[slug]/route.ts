@@ -13,16 +13,16 @@ export const POST = async (req: Request, { params: { slug } }: { params: { slug:
   const { userId, isbn, reason }: ReportFormType = await req.json();
 
   try {
-    const gay = await prisma.report.create({
-      userId: userId,
-      bookIsbn: isbn,
-      reason: reason,
+    await prisma.report.create({
+      data: {
+        userId: userId,
+        bookIsbn: isbn,
+        reason: reason,
+      }
     })
     return NextResponse.json({ message: "Add report successful" }, { status: 201 });
   } catch (error) {
     console.log("Error at /api/report/book/[slug] POST", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
-
-
 }
