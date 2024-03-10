@@ -40,7 +40,6 @@ export default async function MainLayout({
       },
     },
   })
-  // console.log('initmsg', initmsg)
 
   const admin = await fetch(
     `${process.env.NEXT_PUBLIC_URL}/api/chat/requestAdmin`,

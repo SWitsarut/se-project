@@ -4,8 +4,14 @@ import { Avatar } from '@mantine/core'
 import { useSession } from 'next-auth/react'
 import React from 'react'
 
-export default function ChatChip({ message }: { message: message }) {
-  const adminSend = message.senderData?.role == 'ADMIN'
+export default function ChatChip({
+  message,
+  reverse,
+}: {
+  message: message
+  reverse?: boolean
+}) {
+  const adminSend = reverse ? message.senderData?.role !== 'ADMIN' : message.senderData?.role === 'ADMIN';
   return (
     <div className="flex flex-col">
       <span

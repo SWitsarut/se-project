@@ -13,3 +13,11 @@ export type UserMsg = {
   avatar: string | null
   role: Role
 }
+export type AdminMsg = {
+  id: string
+  username: string
+  displayName: string
+  avatar: string | null
+  role: Role
+  counter: number
+}

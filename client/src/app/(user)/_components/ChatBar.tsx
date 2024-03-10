@@ -122,7 +122,7 @@ export default function ChatBar({
                   }
                   e.preventDefault()
                   const msg: sendingMSG = {
-                    content: text,
+                    content: text.trim(),
                     sender: session.data?.user.id,
                     receiver: target,
                   }

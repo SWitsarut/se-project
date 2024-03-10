@@ -12,7 +12,7 @@ export default async function AdminLayout({ children }: {
   }
 
   return (
-    <Sidebar>
+    <Sidebar >
       {children}
     </Sidebar>
   )
