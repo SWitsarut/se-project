@@ -1,6 +1,6 @@
 import { BookCart } from "@/types/book";
 import CartItem from "./CartItem";
-import { Button, Text } from "@mantine/core";
+import { Text } from "@mantine/core";
 import { IconShoppingCartX } from "@tabler/icons-react";
 
 interface CartListProps {
@@ -28,7 +28,7 @@ export default async function CartList({ userId }: CartListProps) {
     <>
       {cart.length > 0 ? (
         <div className="flex flex-col gap-16">
-          <CartItem cartItem={cart}/>
+          <CartItem cartItems={cart}/>
         </div>
       ) : (
         <div className="py-24 text-center">

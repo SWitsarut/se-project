@@ -9,12 +9,11 @@ interface AddToCartButtonProps {
 }
 
 export default function AddToCartButton({ isbn, price }: AddToCartButtonProps) {
-  const { addToCart, check, isLoading } = useCart();
-
+  const { addToCart, disableAddToCart } = useCart();
   return (
     <>
       <Button
-        disabled={check(isbn) || isLoading}
+        disabled={disableAddToCart(isbn)}
         onClick={() => addToCart(isbn)}
         size="lg"
         radius="xl"
