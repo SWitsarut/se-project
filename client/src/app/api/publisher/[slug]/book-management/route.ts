@@ -50,11 +50,7 @@ export const POST = async (
 ) => {
   const session = await getCurrentSession();
 
-  if(!session || !session.user.publisher || session.user.role !== "PUBLISHER") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  if(session.user.publisher !== slug) {
+  if(!session || !session.user.publisher || session.user.role !== "PUBLISHER" || session.user.publisher !== slug) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

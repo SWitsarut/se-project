@@ -36,6 +36,13 @@ export interface BookCart {
   price: number
 }
 
+export interface BookFavorite {
+  isbn: string
+  title: string
+  cover: string
+  price: number
+}
+
 export type BookResponse = {
   isbn: string
   title: string

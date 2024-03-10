@@ -3,7 +3,7 @@
 import { Button, PasswordInput, Text, TextInput } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginForm() {
@@ -34,7 +34,7 @@ export default function LoginForm() {
       setLoginError(res.error)
     } else {
       setLoginError("");
-      router.push("/");
+      router.refresh();
     }
 
     setIsLoading(false);

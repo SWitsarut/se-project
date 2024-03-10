@@ -1,21 +1,23 @@
 import { getCurrentSession } from "@/libs/getCurrentSession";
-import prisma from "@/libs/prisma";
-import { BookCart } from "@/types/book";
+import { BookFavorite } from "@/types/book";
 import { NextResponse } from "next/server";
+import prisma from "@/libs/prisma";
 
-export const GET = async (req: Request, { params: { userId }}: { params: { userId: string }}) => {
+export const GET = async (req: Request, { params: { userId } }: { params: { userId: string } }) => {
+
   try {
+
     const user = await prisma.user.findUnique({
       where: {
         id: userId
       }
     });
 
-    if(!user) {
+    if (!user) {
       return NextResponse.json({ error: "Not found user" }, { status: 400 });
     }
 
-    const result = await prisma.cartItem.findMany({
+    const result = await prisma.favorite.findMany({
       where: {
         userId,
       },
@@ -31,21 +33,21 @@ export const GET = async (req: Request, { params: { userId }}: { params: { userI
       }
     })
 
-    const carts: BookCart[] = result.map((cart) => ({
-      isbn: cart.book.isbn,
-      title: cart.book.title,
-      cover: cart.book.cover,
-      price: cart.book.price
+    const favorites: BookFavorite[] = result.map((favorite) => ({
+      isbn: favorite.book.isbn,
+      title: favorite.book.title,
+      cover: favorite.book.cover,
+      price: favorite.book.price
     }));
 
-    return NextResponse.json(carts, { status: 200 });
+    return NextResponse.json(favorites, { status: 200 });
   } catch (error) {
-    console.log("Error at /api/cart/[userId]", error);
+    console.log("Error at /api/favorite/[userId]", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-export const POST = async (req: Request, { params: { userId }}: { params: { userId: string }}) => {
+export const POST = async (req: Request, { params: { userId } }: { params: { userId: string } }) => {
   const session = await getCurrentSession();
   
   if(!session || session.user.id !== userId) {
@@ -61,36 +63,47 @@ export const POST = async (req: Request, { params: { userId }}: { params: { user
       }
     });
 
-    if(!user) {
+    if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 400 });
     }
 
-    const existingInCart = await prisma.cartItem.findFirst({
+    const existingInFavorite = await prisma.favorite.findFirst({
       where: {
         userId,
         bookIsbn: isbn,
       }
     })
 
-    if(existingInCart) {
-      return NextResponse.json({ error: "This book is existing in cart" }, { status: 400 });
+    const existingInLibrary = await prisma.bookOwnership.findFirst({
+      where: {
+        userId,
+        bookIsbn: isbn,
+      }
+    });
+
+    if (existingInFavorite) {
+      return NextResponse.json({ error: "This book is existing in favorite list" }, { status: 400 });
     }
-    
-    await prisma.cartItem.create({
+
+    if (!existingInLibrary) {
+      return NextResponse.json({ error: "This book is not existing in library" }, { status: 400 })
+    }
+
+    await prisma.favorite.create({
       data: {
         userId,
         bookIsbn: isbn
       }
     });
 
-    return NextResponse.json({ message: "Add to cart successful" }, { status: 200 });
+    return NextResponse.json({ message: "Add to favorite successful" }, { status: 200 });
   } catch (error) {
-    console.log("Error at /api/cart/[userId] POST", error);
+    console.log("Error at /api/favorite/[userId] POST", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-export const DELETE = async (req: Request, { params: { userId }}: { params: { userId: string }}) => {
+export const DELETE = async (req: Request, { params: { userId } }: { params: { userId: string } }) => {
   const session = await getCurrentSession();
   
   if(!session || session.user.id !== userId) {
@@ -100,17 +113,7 @@ export const DELETE = async (req: Request, { params: { userId }}: { params: { us
   const { isbn } = await req.json();
 
   try {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId
-      }
-    });
-
-    if(!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 400 });
-    }
-
-    const existingInCart = await prisma.cartItem.findUnique({
+    const existingInFavorite = await prisma.favorite.findUnique({
       where: {
         userId_bookIsbn: {
           userId: userId,
@@ -119,22 +122,22 @@ export const DELETE = async (req: Request, { params: { userId }}: { params: { us
       }
     })
 
-    if(!existingInCart) {
+    if (!existingInFavorite) {
       return NextResponse.json({ error: "This book is not existing in cart" }, { status: 400 });
     }
 
-    await prisma.cartItem.delete({
+    await prisma.favorite.delete({
       where: {
         userId_bookIsbn: {
-          userId: userId,
+          userId,
           bookIsbn: isbn,
         }
       }
     })
-    
-    return NextResponse.json({ message: "Remove from cart successful" });
+
+    return NextResponse.json({ message: "Remove from favorite successful" });
   } catch (error) {
-    console.log("Error at /api/cart/[userId]", error);
+    console.log("Error at /api/favorite/[userId]", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import CartList from "./CartList";
-import { getCurrentSession } from "@/libs/getCurrentSession"
 import { Button } from "@mantine/core";
 import { Suspense } from "react";
+import { getCurrentSession } from "@/libs/getCurrentSession";
 
 export default async function CartPage() {
   const session = await getCurrentSession();
@@ -14,8 +14,8 @@ export default async function CartPage() {
       </div>
 
       <div className="py-8 container max-w-4xl mx-auto">
-        {session ? (
-          <Suspense>
+        {session?.user ? (
+          <Suspense fallback={<>Loading...</>}>
             <CartList userId={session.user.id}/>
           </Suspense>
         ) : (

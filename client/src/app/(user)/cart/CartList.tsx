@@ -27,9 +27,9 @@ export default async function CartList({ userId }: CartListProps) {
   return (
     <>
       {cart.length > 0 ? (
-        cart.map((book) => (
-          <CartItem key={book.isbn} book={book}/>
-        ))
+        <div className="flex flex-col gap-16">
+          <CartItem cartItems={cart}/>
+        </div>
       ) : (
         <div className="py-24 text-center">
           <Text c="dark" fw="bold">The shopping cart is currently empty.</Text>
