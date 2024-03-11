@@ -71,7 +71,7 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
     console.log(users)
   }, [users])
   return (
-    <div className="h-full w-full flex flex-row">
+    <div className="w-full h-screen flex flex-row border border-red-500">
       <section className="w-[30%] h-[100%]">
         <div className=" overflow-y-scroll h-[100%]">
           {users?.map((user, index) => {
