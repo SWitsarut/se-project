@@ -39,10 +39,12 @@ export const POST = async (req: Request) => {
   })
   const senderData = await getUserData(msg.sender)
   const receiverData = await getUserData(msg.receiver)
+  const sendTo = msg?.receiver
   const to = await prisma.userSession.findFirst({
-    where: { id: msg.receiver.id },
+    where: { id: sendTo },
     select: { sessionId: true },
   })
+  // console.log('user id sendTo =', sendTo, 'with', to)
   const message: message = {
     content: res.content,
     sender: sender,

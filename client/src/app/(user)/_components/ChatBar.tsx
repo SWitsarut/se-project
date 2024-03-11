@@ -1,6 +1,7 @@
 'use client'
 
 import { Connection } from '@/components/ChatProvider'
+
 import { useContext, useEffect, useRef, useState } from 'react'
 import ChatChip from './ChatChip'
 import { Button, TextInput } from '@mantine/core'
@@ -33,29 +34,6 @@ export default function ChatBar({
   useEffect(() => {
     anchor.current?.scrollIntoView()
   }, [msgs])
-  useEffect(() => {
-    if (
-      session.status == 'authenticated' &&
-      initmsg?.length > 0 &&
-      !isConnected
-    ) {
-      socket?.connect()
-    }
-    const lsOpened = localStorage.getItem('chat-open')
-    if (lsOpened == undefined || lsOpened == null) {
-      localStorage.setItem('chat-open', 'false')
-    }
-    setIsOpened(Boolean(lsOpened))
-    setIsLoading(false)
-  }, [initmsg?.length, isConnected, session, socket])
-
-  const toggleChat = () => {
-    setIsOpened((prev) => {
-      const newState = !prev
-      localStorage.setItem('chat-open', String(newState))
-      return newState
-    })
-  }
 
   useEffect(() => {
     if (socket) {
@@ -82,9 +60,9 @@ export default function ChatBar({
         })
       }
 
-      const receive = async (msg: [] | message[]) => {
-        console.log(msg)
-        setMsgs((prev) => [...prev, ...msg])
+      const receive = async (msg: message) => {
+        console.log('user receive', msg)
+        setMsgs((prev) => [...prev, msg])
       }
 
       socket.on('connect', onConnect)
@@ -97,6 +75,31 @@ export default function ChatBar({
       }
     }
   }, [socket, session])
+
+  useEffect(() => {
+    if (
+      session.status == 'authenticated' &&
+      initmsg?.length > 0 &&
+      !isConnected
+    ) {
+      socket?.connect()
+    }
+    const lsOpened = localStorage.getItem('chat-open')
+    if (lsOpened == undefined || lsOpened == null) {
+      localStorage.setItem('chat-open', 'false')
+    }
+    setIsOpened(Boolean(lsOpened))
+    setIsLoading(false)
+  }, [initmsg?.length, isConnected, session, socket])
+
+  const toggleChat = () => {
+    setIsOpened((prev) => {
+      const newState = !prev
+      localStorage.setItem('chat-open', String(newState))
+      return newState
+    })
+  }
+
   return (
     <>
       {isLoading || session.status == 'unauthenticated' ? null : (

@@ -1,13 +1,13 @@
 'use client'
 import { AdminMsg, sendingMSG } from '@/types/chat'
 import { Button, Loader, TextInput } from '@mantine/core'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import UserChip from './_component/UserChip'
 import { Connection } from '@/components/ChatProvider'
 import { message } from '@/types/message'
 import ChatChip from '@/app/(user)/_components/ChatChip'
 import { IconSend } from '@tabler/icons-react'
-import { getSession, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 
 export default function AdminChat({ users }: { users: AdminMsg[] }) {
   const socket = useContext(Connection)
@@ -16,10 +16,11 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
   const [msgs, setMsgs] = useState<message[] | []>([])
   const [text, setText] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
+  const anchor = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    socket?.connect()
-  }, [socket])
+    anchor.current?.scrollIntoView()
+  }, [msgs])
 
   useEffect(() => {
     const getmsg = async () => {
@@ -53,9 +54,11 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
         })
       }
 
-      const receive = async (msg: message) => {
-        console.log(msg)
-        setMsgs((prev) => [...prev, msg])
+      const receive = (msg: message) => {
+        console.log('admin receive', msg)
+        if (msg.receiver == session.data?.user.id) {
+          setMsgs((prev) => [...prev, msg])
+        }
       }
 
       socket.on('receive-message', receive)
@@ -65,7 +68,7 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
         socket.on('sended', sended)
       }
     }
-  }, [socket])
+  }, [session.data?.user.id, socket])
 
   useEffect(() => {
     console.log(users)
@@ -73,7 +76,7 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
   return (
     <div className="w-full h-screen flex flex-row border border-red-500">
       <section className="w-[30%] h-[100%]">
-        <div className=" overflow-y-scroll h-[100%]">
+        <div className="overflow-y-scroll h-[100%]">
           {users?.map((user, index) => {
             return (
               <UserChip
@@ -96,6 +99,7 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
           ) : (
             <Loader color="blue" className="m-auto" />
           )}
+          <div ref={anchor}></div>
         </div>
         <form
           onSubmit={(e) => {

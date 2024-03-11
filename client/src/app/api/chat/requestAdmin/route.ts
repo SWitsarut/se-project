@@ -11,11 +11,12 @@ function selectOneAdmin(
 }
 
 export async function GET() {
-  prisma.userSession.findMany({ where: { user: { role: 'ADMIN' } } })
+  // prisma.userSession.findMany({ where: { user: { role: 'ADMIN' } } })
   const admins = await prisma.user.findMany({
     where: { role: 'ADMIN' },
     select: { id: true },
   })
+  console.log('admins', admins)
   const admin = selectOneAdmin(admins)
   return NextResponse.json(admin, { status: 200 })
 }
