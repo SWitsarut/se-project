@@ -38,7 +38,7 @@ export const GET = async (
   
     return NextResponse.json({ book }, { status: 200 });
   } catch (error) {
-    console.log("Error at /api/publisher/[slug]/book-management/[isbn] GET")
+    console.log("Error at /api/publisher/[slug]/book-management/[isbn] GET", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
@@ -106,9 +106,10 @@ export const PUT = async (
 
     const existingBook = await prisma.book.findUnique({
       where: {
-        title
+        title,
+        NOT: { isbn}
       }
-    })
+    });
 
     if(existingBook) {
       return NextResponse.json({ error: "Already have a book"}, { status: 400 })
@@ -153,7 +154,7 @@ export const PUT = async (
 
     return NextResponse.json({ message: "Update book successful" }, { status: 200 });
   } catch (error) {
-    console.log("Error at /api/publisher/[slug]/book-management/[isbn] PUT");
+    console.log("Error at /api/publisher/[slug]/book-management/[isbn] PUT", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
@@ -198,7 +199,7 @@ export const DELETE = async (
 
     return NextResponse.json({ message: "Delete book successful" }, { status: 200 });
   } catch (error) {
-    console.log("Error at /api/publisher/[slug]/book-management/[isbn] DELETE");
+    console.log("Error at /api/publisher/[slug]/book-management/[isbn] DELETE", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 };

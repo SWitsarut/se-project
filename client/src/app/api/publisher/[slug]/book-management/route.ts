@@ -38,7 +38,7 @@ export const GET = async (req: Request, { params: { slug }}: { params: { slug: s
 
     return NextResponse.json({ books }, { status: 200 });
   } catch (error) {
-    console.log("Error at /api/publisher/[slug]/book-management GET");
+    console.log("Error at /api/publisher/[slug]/book-management GET", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
