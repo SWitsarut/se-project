@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY!, {
@@ -18,9 +18,6 @@ export const POST = async (req: Request) => {
     }
 
     const event = stripe.webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET!);
-
-    console.log("event", event);
-
     switch (event.type) {
       case "charge.succeeded":
         const charge = event.data.object as Stripe.Charge;

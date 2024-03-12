@@ -28,6 +28,13 @@ services:
       - postgres
     restart: unless-stopped
 
+  stripe-cli:
+    image: stripe/stripe-cli
+    container_name: stripe-cli
+    command: "listen --forward-to http://host.docker.internal:3000/api/webhooks"
+    env_file:
+      - ./client/.env
+
 volumes:
   postgres_data:
   pgadmin_data:

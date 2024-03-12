@@ -79,7 +79,6 @@ export const CartProvider = ({ children } : CartProviderProps) => {
       router.refresh();
     }
   }
-
   
   const fetchCartItem = useCallback(async () => {
     if(session) {

@@ -62,7 +62,7 @@ export const POST = async (req: Request) => {
       currency: "thb",
       automatic_payment_methods: { enabled: true },
     });
-
+    
     return NextResponse.json({ paymentIntent }, { status: 200 });
   }
 }

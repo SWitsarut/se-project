@@ -3,10 +3,12 @@
 import { useCart } from "@/components/CartProvider";
 import { Button } from "@mantine/core";
 import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import { useRouter } from "next/navigation";
 
 export default function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
+  const router = useRouter();
   const { handleSetPaymentIntent } = useCart();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -16,7 +18,7 @@ export default function CheckoutForm() {
       return;
     }
 
-    const { paymentIntent, error } = await stripe.confirmPayment({
+    const { error } = await stripe.confirmPayment({
       elements,
       redirect: "if_required"
     });
@@ -24,7 +26,8 @@ export default function CheckoutForm() {
     if(error) {
       console.log(error);
     } else {
-      handleSetPaymentIntent(null)
+      handleSetPaymentIntent(null);
+      router.push("/success");
     }
   }
 
