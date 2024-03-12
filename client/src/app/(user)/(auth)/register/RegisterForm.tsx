@@ -1,5 +1,6 @@
 "use client";
 
+import { BASE_URL } from "@/utils";
 import { Button, Checkbox, Modal, PasswordInput, Text, TextInput } from "@mantine/core";
 import { hasLength, isEmail, isNotEmpty, matchesField, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -37,7 +38,7 @@ export default function RegisterForm() {
   const registerSubmit = async (userData: typeof form.values) => {
     try {
       setIsLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/auth/register`, {
+      const res = await fetch(`${BASE_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

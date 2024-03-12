@@ -16,13 +16,13 @@ export default function CheckoutForm() {
       return;
     }
 
-    const { error } = await stripe.confirmPayment({
+    const { paymentIntent, error } = await stripe.confirmPayment({
       elements,
       redirect: "if_required"
     });
 
     if(error) {
-      alert(error.message)
+      console.log(error);
     } else {
       handleSetPaymentIntent(null)
     }

@@ -2,7 +2,7 @@ import prisma from "@/libs/prisma";
 import { NextResponse } from "next/server";
 import { AddBookFormType, BookResponse } from "@/types/book";
 import { getCurrentSession } from "@/libs/getCurrentSession";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils";
 
 // get book
 export const GET = async (req: Request, { params: { slug }}: { params: { slug: string }}) => {

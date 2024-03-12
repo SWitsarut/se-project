@@ -1,8 +1,9 @@
 import prisma from "@/libs/prisma";
+import ActionStaffModal from "./ActionStaffModal";
 import { User } from "@/types/user";
 import { Avatar, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core";
-import ActionStaffModal from "./ActionStaffModal";
 import { getCurrentSession } from "@/libs/getCurrentSession";
+import { BASE_URL } from "@/utils";
 
 interface StaffListProps {
   staffId: string
@@ -10,7 +11,7 @@ interface StaffListProps {
 }
 
 async function getStaffByPublisher(publisherName: string): Promise<{ staffs: User[] }>  {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/staff-management`, {
+  const res = await fetch(`${BASE_URL}/api/publisher/${publisherName}/staff-management`, {
     cache: "no-store",
   })
 

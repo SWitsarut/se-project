@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
+import { BASE_URL } from "@/utils";
 import { Alert, Button, Loader, Text } from "@mantine/core";
 import { IconCircleCheckFilled, IconExclamationCircle } from "@tabler/icons-react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -17,7 +18,7 @@ export default function NewVerification() {
   
   const onSubmit = useCallback(async () => {    
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/auth/new-verification?token=${token}`, {
+      const res = await fetch(`${BASE_URL}/api/auth/new-verification?token=${token}`, {
         method: "PUT",
       });
   
