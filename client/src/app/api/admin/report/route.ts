@@ -1,5 +1,6 @@
 import prisma from "@/libs/prisma";
 import { NextResponse } from "next/server";
+import { Report } from "@/types/report";
 
 export const GET = async (req: Request) => {
   const search = new URL(req.url).searchParams.get("search");

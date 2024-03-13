@@ -1,5 +1,3 @@
-import { string } from "zod"
-
 export type Report = {
   id: number
   username: string
@@ -7,7 +5,7 @@ export type Report = {
   role: string
   reason: string
   status: string
-  createAt: string
+  createAt: Date
 }
 
 export interface ReportFormType {
