@@ -1,5 +1,6 @@
 "use client";
 
+import { BASE_URL } from "@/utils";
 import { Button, Modal, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -22,7 +23,7 @@ export default function ActionStaffModal({ publisherName, managerId, staffId, st
   const handleRemove = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/staff-management/${staffId}`, {
+      const res = await fetch(`${BASE_URL}/api/publisher/${publisherName}/staff-management/${staffId}`, {
         method: "PATCH",
       });
       const data = await res.json();

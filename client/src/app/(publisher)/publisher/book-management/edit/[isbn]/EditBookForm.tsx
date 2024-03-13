@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEdgeStore } from "@/libs/edgestore";
 import { BookDetailType, EditBookData } from "@/types/book";
 import { Autocomplete, Button, FileButton, FileInput, Group, NumberInput, Radio, RadioGroup, TagsInput, TextInput, Textarea } from "@mantine/core";
@@ -8,7 +9,7 @@ import { useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/navigation";
 import { IconEye, IconPencil } from "@tabler/icons-react";
-import Link from "next/link";
+import { BASE_URL } from "@/utils";
 
 interface EditBookFormProps {
   publisherName: string
@@ -85,7 +86,7 @@ export default function EditBookForm({ publisherName, bookDetail, bookData }: Ed
     }
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/book-management/${bookData.isbn}`, {
+      const res = await fetch(`${BASE_URL}/api/publisher/${publisherName}/book-management/${bookData.isbn}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

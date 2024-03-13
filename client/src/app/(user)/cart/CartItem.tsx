@@ -1,52 +1,95 @@
 "use client";
 
+import Image from "next/image";
 import { useCart } from "@/components/CartProvider";
 import { BookCart } from "@/types/book";
 import { Button, Checkbox, Text } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import {useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface CartItemProps {
-  cartItem: BookCart[]
+  cartItems: BookCart[]
 }
 
-export default function CartItem({ cartItem }: CartItemProps) {
-  const { removeFromCart } = useCart();
+export default function CartItem({ cartItems }: CartItemProps) {
+  const {
+    selectedItem,
+    handleSetSelectedItem,
+    cart,
+    removeFromCart,
+    paymentIntentId,
+    handleSetPaymentIntent
+  } = useCart();
 
-  const [isCheckAll, setIsCheckAll] = useState<boolean>(true);
-  const [selectedItem, setSelectedItem] = useState<string[]>(cartItem.map((book) => book.isbn));
-  const [totalPrice, setTotalPrice] = useState<number>(cartItem.reduce((acc, book) => acc + book.price, 0));
+  const [isCheckAll, setIsCheckAll] = useState<boolean>(false);
+  const [totalPrice, setTotalPrice] = useState<number>(selectedItem.reduce((acc, book) => acc + book.price, 0))
+  const router = useRouter();
 
-  const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, checked } = e.target;
-    setSelectedItem((prevState) => ([...prevState, id]));
+  const handleCheck = (e: React.ChangeEvent<HTMLInputElement>, data: BookCart) => {
+    const { checked } = e.target;
     if(!checked) {
-      setSelectedItem((prevState) => (prevState.filter((item) => item !== id)))
+      const newSelected = selectedItem.filter((book) => book.isbn !== data.isbn);
+      handleSetSelectedItem(newSelected);
+    } else {
+      handleSetSelectedItem([...selectedItem, data]);
     }
   }
 
   const handleCheckAll = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsCheckAll(!isCheckAll);
-    setSelectedItem(cartItem.map((book) => book.isbn));
     if(!e.target.checked) {
-      setSelectedItem([]);
+      setIsCheckAll(false);
+      handleSetSelectedItem([]);
+    } else {
+      setIsCheckAll(true);
+      handleSetSelectedItem(cartItems)
+    }
+  }
+
+  const proceedToCheckout = () => {
+    if (selectedItem.length > 0) {
+      fetch("/api/payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cartItems: selectedItem,
+          payment_intent_id: paymentIntentId,
+        }),
+      })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        handleSetPaymentIntent(data.paymentIntent.id);
+        router.push(`/checkout?payment-intent-id=${data.paymentIntent.id}`)
+      })
+      .catch((error) => {
+        console.log("Error", error);
+      });
     }
   }
 
   useEffect(() => {
-    const newCartItem = cartItem.filter((book) => selectedItem.includes(book.isbn));
+    handleSetSelectedItem(cartItems);
+  }, [handleSetSelectedItem])
+
+  useEffect(() => {
+    const newCartItem = selectedItem.filter((book) => cart.includes(book.isbn));
     const price = newCartItem.reduce((acc, book) => acc + book.price, 0);
     setTotalPrice(price);
-  }, [cartItem, selectedItem]);
+  }, [cart, selectedItem]);
+
+  useEffect(() => {
+    selectedItem.length === cartItems.length ? setIsCheckAll(true) : setIsCheckAll(false);
+  }, [selectedItem.length, cartItems.length]);
 
   return (
     <>
     <div className="flex flex-col gap-2">
-      {cartItem.map((book) => (
+      {cartItems.map((book) => (
         <div key={book.isbn} className="table w-full gap-2 border-b-2 pb-2">
           <div className="table-cell align-middle">
-            <Checkbox checked={selectedItem.includes(book.isbn)} id={book.isbn} onChange={(e) => handleCheck(e)}/>
+            <Checkbox checked={selectedItem.findIndex((data) => data.isbn === book.isbn) !== -1} onChange={(e) => handleCheck(e, book)}/>
           </div>
           <div className="table-cell align-middle w-20 h-auto">
             <Image
@@ -74,8 +117,9 @@ export default function CartItem({ cartItem }: CartItemProps) {
 
     <div className="flex flex-col items-end gap-4">    
       <div className="bg-slate-50 flex flex-col items-center px-10 py-8 space-y-4 shadow-md rounded-md">
+        <Text fw={700} size="xl">Summary {`(${selectedItem.length} ${selectedItem.length > 1 ? "items" : "item"})`}</Text>
         <Text fw={700} size="xl">Total Price ฿ {totalPrice}</Text>
-        <Button>Checkout</Button>
+        <Button onClick={proceedToCheckout} disabled={selectedItem.length < 1}>Proceed to Checkout</Button>
       </div>
     </div>
   </>

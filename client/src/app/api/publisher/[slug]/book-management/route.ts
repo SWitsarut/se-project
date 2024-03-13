@@ -2,7 +2,7 @@ import prisma from "@/libs/prisma";
 import { NextResponse } from "next/server";
 import { AddBookFormType, BookResponse } from "@/types/book";
 import { getCurrentSession } from "@/libs/getCurrentSession";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils";
 
 // get book
 export const GET = async (req: Request, { params: { slug }}: { params: { slug: string }}) => {
@@ -38,7 +38,7 @@ export const GET = async (req: Request, { params: { slug }}: { params: { slug: s
 
     return NextResponse.json({ books }, { status: 200 });
   } catch (error) {
-    console.log("Error at /api/publisher/[slug]/book-management GET");
+    console.log("Error at /api/publisher/[slug]/book-management GET", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
@@ -50,11 +50,7 @@ export const POST = async (
 ) => {
   const session = await getCurrentSession();
 
-  if(!session || !session.user.publisher || session.user.role !== "PUBLISHER") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  if(session.user.publisher !== slug) {
+  if(!session || !session.user.publisher || session.user.role !== "PUBLISHER" || session.user.publisher !== slug) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

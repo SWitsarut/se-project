@@ -1,9 +1,10 @@
 import prisma from "@/libs/prisma";
 import { BookResponse } from "@/types/book";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils";
 import { NextResponse } from "next/server";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
+
 export const GET = async (req: Request) => {
   try {
     const result = await prisma.book.findMany({

@@ -1,6 +1,5 @@
 import prisma from "@/libs/prisma";
 import { NextResponse } from "next/server";
-import { Report } from "@/types/report";
 
 export const GET = async (req: Request) => {
   const search = new URL(req.url).searchParams.get("search");
@@ -26,7 +25,7 @@ export const GET = async (req: Request) => {
       skip: take * (page - 1)
     });
 
-    const reports: Report[] = result.map((report) => ({
+    const reports = result.map((report) => ({
       id: report.id,
       username: report.user.username,
       avatar: report.user.avatar,

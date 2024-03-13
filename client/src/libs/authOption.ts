@@ -88,7 +88,6 @@ export const authOption: NextAuthOptions = {
           }
         }
       }
-
       return token;
     },
     async session({ session, token }) {
@@ -103,6 +102,6 @@ export const authOption: NextAuthOptions = {
       }
 
       return session;
-    }
+    },
   }
 }

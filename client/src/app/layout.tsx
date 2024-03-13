@@ -6,10 +6,9 @@ import "./globals.css";
 
 import { ColorSchemeScript } from "@mantine/core";
 
-import SessionProvider from "@/components/SessionProvider";
-import { getServerSession } from "next-auth";
-import { authOption } from "@/libs/authOption";
+import SessionProvider from "@/components/SessionProvider";;
 import ProviderWrapper from "@/components/ProviderWrapper";
+import { getCurrentSession } from "@/libs/getCurrentSession";
 
 export const metadata: Metadata = {
   title: "E-book store",
@@ -22,7 +21,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
 
-  const session = await getServerSession(authOption);
+  const session = await getCurrentSession();
 
   return (
     <html lang="en">

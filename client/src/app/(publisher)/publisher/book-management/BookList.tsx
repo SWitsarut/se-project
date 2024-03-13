@@ -4,13 +4,14 @@ import { IconPencil } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import DeleteModal from "./DeleteModal";
+import { BASE_URL } from "@/utils";
 
 interface BookListProps {
   publisherName: string
 }
 
 async function getBookList(publisherName: string): Promise<{ books: BookResponse[] }> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/book-management`, {
+  const res = await fetch(`${BASE_URL}/api/publisher/${publisherName}/book-management`, {
     cache: "no-store",
   });
 
