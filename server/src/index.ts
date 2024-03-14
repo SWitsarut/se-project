@@ -24,6 +24,19 @@ const webapp_url = process.env.WEBAPP_URL;
 
 const server = createServer(app);
 
+type UserInfo = {
+	email: string;
+	id: string;
+	username: string;
+	displayname: string;
+	role: string;
+};
+
+interface messageData {
+  senderId: string
+  content: string
+}
+
 const io = new Server(server, {
 	cors: {
 		origin: ["http://localhost:5173", `${webapp_url}`],
@@ -32,17 +45,14 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-	console.log("New socket connected " + socket.id);
+	const userAuth: UserInfo = socket.handshake.auth.userInfo;
 
-	socket.on("message", (msg: Message) => {
-		console.log("receive from", msg);
+	console.log("New socket connected ", socket.id, "with", userAuth);
 
-		io.to(msg.receiver).emit("receive-message", msg);
+	socket.on("message", (msg: messageData) => {
+		io.emit("receive-message", msg);
 	});
 
-	socket.on("join", (rooms: string[]) => {
-		socket.join(rooms);
-	});
 	socket.on("disconnect", (reason: DisconnectReason, description: any) => {
 		console.log(reason);
 	});
