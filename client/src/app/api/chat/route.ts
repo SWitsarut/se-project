@@ -14,7 +14,7 @@ export const POST = async (req: Request) => {
           connect: receiverId ? { id: receiverId } : undefined,
         },
         content,
-      }
+      },
     });
 
     return NextResponse.json({ message: "Send message success" }, { status: 200 });

@@ -6,6 +6,8 @@ import { BASE_URL } from "@/utils";
 import { useSocket } from "../SocketProvider";
 import MessageInput from "./MessageInput";
 import MessageContent from "./MessageContent";
+import { MessageData } from "@/types/message";
+import { notifications } from "@mantine/notifications";
 
 export default function Chat() {
   const { data: session, status } = useSession();
@@ -19,23 +21,33 @@ export default function Chat() {
     setMessages(data);
   }, [session]);
 
-  const handleSubmit = useCallback(async (messageData: string) => {
+  const handleSubmit = useCallback(async (messageData: MessageData) => {
     if(session) {
-      sendMessage({ content: messageData, senderId: session.user.id });
-      fetchMessages();
+      sendMessage({ content: messageData.content, senderId: messageData.senderId });
+      fetchMessages(); 
     }
-  }, [])
+  }, [session, sendMessage, fetchMessages])
 
   useEffect(() => {
     if(session && isOpen && socket) {
-      socket.connect();
-      fetchMessages();
+      const onReceiveMessage = (messageData: MessageData) => {
+        fetchMessages();
+        if(messageData.senderId !== session.user.id) {
+          notifications.show({ title: "New message", message: messageData.content })
+        }
+      }
+
+      socket.on("receive-message", onReceiveMessage);
 
       return () => {
-        socket.disconnect();
+        socket.off("receive-message", onReceiveMessage);
       }
     }
-  }, [isOpen, session, socket])
+  }, [isOpen, session, socket, fetchMessages])
+
+  useEffect(() => {
+    fetchMessages();
+  }, [fetchMessages])
 
   return (
     <>
@@ -46,7 +58,7 @@ export default function Chat() {
           </div>
           {isOpen && (
             <>
-              <MessageContent messages={messages}/>
+              <MessageContent userId={session.user.id} messages={messages}/>
               <MessageInput handleSubmit={handleSubmit} senderId={session.user.id}/>
             </>
           )}

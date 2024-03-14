@@ -13,9 +13,11 @@ interface MessageInputProps {
 export default function MessageInput({ senderId, receiverId }: MessageInputProps) {
   const { sendMessage } = useSocket();
   const [content, setContent] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setIsLoading(true);
     const res = await fetch(`${BASE_URL}/api/chat`, {
       method: "POST",
       headers: {
@@ -28,12 +30,14 @@ export default function MessageInput({ senderId, receiverId }: MessageInputProps
     console.log(data);
 
     sendMessage({ content, senderId });
+    setContent("");
+    setIsLoading(false);
   }
 
   return (
     <form onSubmit={handleSubmit}>
       <TextInput value={content} onChange={(e) => setContent(e.currentTarget.value)}/>
-      <Button type='submit'>Send</Button>
+      <Button loading={isLoading} type='submit'>Send</Button>
     </form>
   )
 }

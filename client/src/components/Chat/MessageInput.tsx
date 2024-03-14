@@ -4,20 +4,21 @@ import { useState } from "react";
 import { Button, TextInput } from "@mantine/core";
 import { useSocket } from "../SocketProvider";
 import { BASE_URL } from "@/utils";
-import { useRouter } from "next/navigation";
+import { MessageData } from "@/types/message";
 
 interface MessageInputProps {
-  senderId: string | undefined
-  handleSubmit: (message: string) => void
+  senderId: string
+  handleSubmit: (messageData: MessageData) => void
 }
 
 export default function MessageInput({ senderId, handleSubmit }: MessageInputProps) {
   const { socket } = useSocket();
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setIsLoading(true);
     if(socket) {
       const res = await fetch(`${BASE_URL}/api/chat`, {
         method: "POST",
@@ -30,14 +31,16 @@ export default function MessageInput({ senderId, handleSubmit }: MessageInputPro
       const data = await res.json();
       console.log(data);
   
-      handleSubmit(message);
+      handleSubmit({ content: message, senderId });
+      setMessage("");
     }
+    setIsLoading(false);
   }
 
   return (
     <form onSubmit={sendMessage}>
       <TextInput value={message} onChange={(e) => setMessage(e.target.value)}/>
-      <Button type="submit">Send</Button>
+      <Button loading={isLoading} type="submit">Send</Button>
     </form>
   )
 }

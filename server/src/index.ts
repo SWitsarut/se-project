@@ -7,7 +7,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import chalk from "chalk";
 import apiTracker from "./middle ware/apiTracker";
-import { Message } from "./type/Message";
+import { MessageData, UserInfo } from "./type/Message";
 
 dotenv.config();
 const app = express();
@@ -24,19 +24,6 @@ const webapp_url = process.env.WEBAPP_URL;
 
 const server = createServer(app);
 
-type UserInfo = {
-	email: string;
-	id: string;
-	username: string;
-	displayname: string;
-	role: string;
-};
-
-interface messageData {
-  senderId: string
-  content: string
-}
-
 const io = new Server(server, {
 	cors: {
 		origin: ["http://localhost:5173", `${webapp_url}`],
@@ -49,8 +36,9 @@ io.on("connection", (socket) => {
 
 	console.log("New socket connected ", socket.id, "with", userAuth);
 
-	socket.on("message", (msg: messageData) => {
-		io.emit("receive-message", msg);
+	socket.on("message", (messageData: MessageData) => {
+		console.log(messageData)
+		io.emit("receive-message", messageData);
 	});
 
 	socket.on("disconnect", (reason: DisconnectReason, description: any) => {

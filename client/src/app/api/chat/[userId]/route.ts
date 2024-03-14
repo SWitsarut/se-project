@@ -12,6 +12,9 @@ export const GET = async (req: Request, { params: { userId }}: { params: { userI
           receiverId: userId
         }
       ],
+    },
+    orderBy: {
+      timeStamp: "desc"
     }
   });
 

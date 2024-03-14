@@ -42,22 +42,25 @@ export default function SocketProvider({children}: SocketProviderProps) {
   useEffect(() => {
     if(session) {
       socket.auth = { userInfo: session.user };
-      if(session.user.role === "ADMIN") {
-        socket.connect();
-      }
-      socket.on("receive-message", (messageData: MessageData) => {
-        router.refresh()
+      socket.connect();
+
+      const onReceiveMessage = (messageData: MessageData) => {
         if(messageData.senderId !== session.user.id) {
           notifications.show({ title: "New message", message: messageData.content })
         }
-      });
+        router.refresh();
+      }
+
+      if(session.user.role === "ADMIN") {
+        socket.on("receive-message", onReceiveMessage)
+      }
 
       return () => {
-        socket.off("receive-message", () => router.refresh());
+        socket.off("receive-message", onReceiveMessage);
         socket.disconnect();
       }
     }
-  }, [pathname])
+  }, [router, session])
 
   return (
     <SocketContext.Provider value={{ socket, sendMessage }}>

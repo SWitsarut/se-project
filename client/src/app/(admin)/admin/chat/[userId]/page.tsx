@@ -26,17 +26,22 @@ export default async function page({ params: { userId } }: AdminChatPageProps) {
           receiverId: userId
         }
       ],
+    },
+    orderBy: {
+      timeStamp: "desc"
     }
   });
 
   return (
-    <div className="flex flex-col">
-      {messages.map((message) => (
-        <div key={message.id} className={`${message.senderId !== userId && "text-end"}`}>
-          <p>{message.content}</p>
-        </div>
-      ))}
+    <>
+      <div className="flex flex-col-reverse">
+        {messages.map((message) => (
+          <div key={message.id} className={`${message.senderId !== userId && "text-end"}`}>
+            <p>{message.content}</p>
+          </div>
+        ))}
+      </div>
       <MessageInput senderId={session.user.id} receiverId={userId} />
-    </div>
+    </>
   )
 }
