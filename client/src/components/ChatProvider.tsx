@@ -15,7 +15,8 @@ export default function ChatProvider({
 }) {
   const session = useSession()
   const socketRef = useRef<Socket | null>(null)
-  socketRef.current = io('localhost:8080', {
+  const chaturl: string = process.env.CHAT_PUBLIC_URL || ''
+  socketRef.current = io(chaturl, {
     autoConnect: false,
     auth: {
       userinfo: session.data,
