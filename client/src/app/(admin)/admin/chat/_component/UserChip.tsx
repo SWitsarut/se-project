@@ -1,7 +1,7 @@
 import { UserMsg } from '@/types/chat'
-import { Text, Avatar, HoverCard, Center } from '@mantine/core'
+import { Avatar, Center, HoverCard, Text } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
-import { IconClipboard } from '@tabler/icons-react'
+import { IconCopyCheck } from '@tabler/icons-react'
 
 export default function UserChip({
   user,
@@ -55,19 +55,21 @@ export default function UserChip({
 
 function UserInfoChip({ name, value }: { name: string; value: string }) {
   return (
-    <Text
+    <div
       onClick={() => {
         navigator.clipboard.writeText(value)
         notifications.show({
           title: `${name} copied!`,
           message: value,
-          icon: <IconClipboard />,
+          icon: <IconCopyCheck />,
           withBorder: true,
+          color: 'green',
         })
       }}
-      classNames={{ root: 'hover:cursor-pointer' }}
+      className="hover:cursor-copy hover:text-blue-700 flex flex-wrap"
     >
-      {name} : {value.length > 10 ? value.substring(0, 10) + '...' : value}
-    </Text>
+      <Text>{name} :</Text>
+      <Text>{value.length > 10 ? value.substring(0, 10) + '...' : value}</Text>
+    </div>
   )
 }

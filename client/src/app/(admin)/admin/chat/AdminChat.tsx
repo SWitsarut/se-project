@@ -1,14 +1,14 @@
 'use client'
-import { AdminMsg, sendingMSG } from '@/types/chat'
-import { Button, Center, Group, Loader, TextInput } from '@mantine/core'
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import UserChip from './_component/UserChip'
-import { Connection } from '@/components/ChatProvider'
-import { message } from '@/types/message'
 import ChatChip from '@/app/(user)/_components/ChatChip'
+import { Connection } from '@/components/ChatProvider'
+import { AdminMsg, sendingMSG } from '@/types/chat'
+import { message } from '@/types/message'
+import { Button, Center, Loader, TextInput } from '@mantine/core'
+import { useScrollIntoView } from '@mantine/hooks'
 import { IconSend } from '@tabler/icons-react'
 import { useSession } from 'next-auth/react'
-import { useScrollIntoView } from '@mantine/hooks'
+import { useContext, useEffect, useState } from 'react'
+import UserChip from './_component/UserChip'
 
 export default function AdminChat({ users }: { users: AdminMsg[] }) {
   const socket = useContext(Connection)
