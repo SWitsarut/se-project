@@ -16,7 +16,7 @@ export async function GET() {
     where: { role: 'ADMIN' },
     select: { id: true },
   })
-  console.log('admins', admins)
+  // console.log('admins', admins)
   const admin = selectOneAdmin(admins)
   return NextResponse.json(admin, { status: 200 })
 }
