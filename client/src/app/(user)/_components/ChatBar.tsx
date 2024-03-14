@@ -9,6 +9,7 @@ import { IconSend } from '@tabler/icons-react'
 import { useSession } from 'next-auth/react'
 import { message } from '@/types/message'
 import { sendingMSG } from '@/types/chat'
+import { useScrollIntoView } from '@mantine/hooks'
 
 export default function ChatBar({
   initmsg,
@@ -27,13 +28,16 @@ export default function ChatBar({
 
   const [text, setText] = useState<string>('')
 
-  const anchor = useRef<HTMLDivElement | null>(null)
-
+  const { scrollIntoView, targetRef, scrollableRef } = useScrollIntoView<
+    HTMLDivElement,
+    HTMLDivElement
+  >()
   const [msgs, setMsgs] = useState<message[] | []>(initmsg)
 
   useEffect(() => {
-    anchor.current?.scrollIntoView()
-  }, [msgs])
+    // anchor.current?.scrollIntoView()
+    scrollIntoView({ alignment: 'start' })
+  }, [msgs, scrollIntoView])
 
   useEffect(() => {
     if (socket) {
@@ -112,10 +116,19 @@ export default function ChatBar({
           </div>
           {!isOpened ? null : (
             <>
-              <div className="flex gap-3 flex-col h-[20em] px-5 overflow-y-scroll bg-gray-200 py-3">
-                <div ref={anchor}></div>
+              <div
+                ref={scrollableRef}
+                className="flex gap-3 flex-col h-[20em] px-5 overflow-y-scroll bg-gray-200 py-3"
+              >
                 {msgs?.map((element, index) => {
-                  return <ChatChip key={index} message={element} />
+                  return (
+                    <div
+                      key={index}
+                      ref={msgs.length - 1 === index ? targetRef : null}
+                    >
+                      <ChatChip message={element} />
+                    </div>
+                  )
                 })}
               </div>
               <form
