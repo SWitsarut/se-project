@@ -27,6 +27,9 @@ export const POST = async (req: Request) => {
         },
       },
     },
+    orderBy: {
+      timeStamp: 'asc',
+    },
   })
   return NextResponse.json(msgs, { status: 200 })
 }

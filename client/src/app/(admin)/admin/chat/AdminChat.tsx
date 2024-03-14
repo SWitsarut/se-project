@@ -56,6 +56,7 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
       const sended = async (confirm: string) => {
         const { id, msg } = await JSON.parse(confirm)
         console.log('sended', id, msg)
+
         setMsgs((prev) => {
           return [...prev, msg]
         })
@@ -63,7 +64,11 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
 
       const receive = (msg: message) => {
         console.log('admin receive', msg)
-        if (msg.receiver == session.data?.user.id) {
+
+        if (
+          msg.sender != currentUserID &&
+          msg.receiver == session.data?.user.id
+        ) {
           setMsgs((prev) => [...prev, msg])
         }
       }
@@ -75,7 +80,7 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
         socket.on('sended', sended)
       }
     }
-  }, [session.data?.user.id, socket])
+  }, [currentUserID, session.data?.user.id, socket])
 
   useEffect(() => {
     console.log(users)
@@ -141,6 +146,7 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
               onChange={(e) => setText(e.target.value)}
               classNames={{ root: 'w-full' }}
               disabled={!currentUserID}
+              autoComplete="off"
             />
             <Button type="submit" disabled={!currentUserID}>
               <IconSend />

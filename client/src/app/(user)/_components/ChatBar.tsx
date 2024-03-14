@@ -151,6 +151,7 @@ export default function ChatBar({
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   classNames={{ root: 'w-full' }}
+                  autoComplete="off"
                 />
                 <Button type="submit">
                   <IconSend />
