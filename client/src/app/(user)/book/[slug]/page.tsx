@@ -1,11 +1,12 @@
+import AddToCartButton from "./AddToCartButton";
+import Image from "next/image";
 import { BookResponse } from "@/types/book";
 import { Badge, Button, Text } from "@mantine/core";
-import Image from "next/image";
 import { notFound } from "next/navigation";
-import AddToCartButton from "./AddToCartButton";
+import { BASE_URL } from "@/utils";
 
 async function getBookData(slug: string): Promise<BookResponse> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/book/${slug}`, {
+  const res = await fetch(`${BASE_URL}/api/book/${slug}`, {
     cache: "no-store",
   })
 

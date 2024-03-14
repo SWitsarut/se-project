@@ -84,9 +84,9 @@ model Book {
 }
 
 model CartItem {
-  user     User   @relation(fields: [userId], references: [id])
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String
-  book     Book   @relation(fields: [bookIsbn], references: [isbn])
+  book     Book   @relation(fields: [bookIsbn], references: [isbn], onDelete: Cascade)
   bookIsbn String
 
   @@id([userId, bookIsbn])

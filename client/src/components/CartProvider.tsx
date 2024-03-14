@@ -1,6 +1,7 @@
 "use client";
 
 import { BookCart } from "@/types/book";
+import { BASE_URL } from "@/utils";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
@@ -44,7 +45,7 @@ export const CartProvider = ({ children } : CartProviderProps) => {
 
   const addToCart = async (isbn: string) => {
     if(session) {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart/${session.user.id}`, {
+      const res = await fetch(`${BASE_URL}/api/cart/${session.user.id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +62,7 @@ export const CartProvider = ({ children } : CartProviderProps) => {
 
   const removeFromCart = async (isbn: string) => {
     if(session) {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart/${session.user.id}`, {
+      const res = await fetch(`${BASE_URL}/api/cart/${session.user.id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json"
@@ -78,11 +79,10 @@ export const CartProvider = ({ children } : CartProviderProps) => {
       router.refresh();
     }
   }
-
   
   const fetchCartItem = useCallback(async () => {
     if(session) {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart/${session.user.id}/get-isbn`);
+      const res = await fetch(`${BASE_URL}/api/cart/${session.user.id}/get-isbn`);
       const data = await res.json();
       setCart(data);
     } else {

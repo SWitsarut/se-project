@@ -1,6 +1,6 @@
 import prisma from "@/libs/prisma";
 import { BookResponse } from "@/types/book";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
