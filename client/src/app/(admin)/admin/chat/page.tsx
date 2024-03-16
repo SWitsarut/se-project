@@ -1,43 +1,31 @@
 import prisma from '@/libs/prisma'
-import AdminChat from './AdminChat'
+import Link from 'next/link';
+import React from 'react'
 
 export default async function page() {
-  const users = await prisma.chatMessage.findMany({
+  const users = await prisma.user.findMany({
     where: {
-      senderData: {
-        role: {
-          not: 'ADMIN',
-        },
-      },
-    },
-    orderBy: {
-      timeStamp: 'desc',
+      role: "USER",
     },
     include: {
-      senderData: {
-        select: {
-          id: true,
-          username: true,
-          displayName: true,
-          avatar: true,
-          role: true,
-        },
-      },
-    },
-    distinct: ['sender'],
-  })
+      _count: { select: {
+        sender: true
+      } }
+    }
+  });
 
-  const modifiedUsers = users.map((user) => ({
-    ...user,
-    ...user.senderData,
-    senderData: undefined,
-    counter: 0,
-  }))
+  const filteredUsers = users.filter((user) => user._count.sender > 0);
 
-  // console.log('users', 1modifiedUsers)
   return (
-    <>
-      <AdminChat users={modifiedUsers} />
-    </>
+    <div>
+      <h1>Chat</h1>
+      <ul>
+        {filteredUsers.map((user) => (
+          <li key={user.id}>
+            <Link href={`/admin/chat/${user.id}`}>{user.displayName}</Link>
+          </li>
+        ))}
+      </ul>
+    </div>    
   )
 }

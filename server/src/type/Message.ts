@@ -4,8 +4,15 @@ export type Message = {
 	receiver: string;
 };
 
-export type sendingMSG = {
-	content: string;
-	sender: string;
-	receiver: string;
+export interface MessageData {
+  senderId: string
+  content: string
+}
+
+export type UserInfo = {
+	email: string;
+	id: string;
+	username: string;
+	displayname: string;
+	role: string;
 };

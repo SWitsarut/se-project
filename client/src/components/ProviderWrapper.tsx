@@ -1,13 +1,9 @@
-import { EdgeStoreProvider } from '@/libs/edgestore'
-import { theme } from '@/theme'
-import { MantineProvider } from '@mantine/core'
-import { Notifications } from '@mantine/notifications'
-import ChatProvider from './ChatProvider'
-import { CartProvider } from './CartProvider'
-
-interface ProviderWrapperProps {
-  children: React.ReactNode
-}
+import { EdgeStoreProvider } from "@/libs/edgestore";
+import { theme } from "@/theme";
+import { MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
+import { CartProvider } from "./CartProvider";
+import SocketProvider from "./SocketProvider";
 
 export default function ProviderWrapper({
   children,
@@ -19,7 +15,7 @@ export default function ProviderWrapper({
       <MantineProvider theme={theme}>
         <CartProvider>
           <Notifications />
-          <ChatProvider>{children}</ChatProvider>
+          {children}
         </CartProvider>
       </MantineProvider>
     </EdgeStoreProvider>

@@ -26,12 +26,23 @@ model User {
   cart             CartItem[]
   favorites        Favorite[]
   report           Report[]
-  sender           ChatMessage[] @relation("ChatSender")
-  receiver         ChatMessage[] @relation("ChatReceiver")
-  UserSession      UserSession[]
+  sender           ChatMessage[]   @relation("ChatSender")
+  receiver         ChatMessage[]   @relation("ChatReceiver")
 
   @@index([username, email])
   @@map("user")
+}
+
+model ChatMessage {
+  id         Int      @id @default(autoincrement())
+  sender     User     @relation(name: "ChatSender", fields: [senderId], references: [id])
+  senderId   String
+  receiver   User?     @relation(name: "ChatReceiver", fields: [receiverId], references: [id])
+  receiverId String?
+  content    String
+  timeStamp  DateTime @default(now())
+
+  @@map("message")
 }
 
 model VerificationToken {
@@ -156,9 +167,9 @@ model Author {
 }
 
 model Report {
-  id         Int      @id @default(autoincrement())
-  user       User     @relation(fields: [userId], references: [id])
-  book       Book     @relation(fields: [bookIsbn], references: [isbn])
+  id         Int          @id @default(autoincrement())
+  user       User         @relation(fields: [userId], references: [id])
+  book       Book         @relation(fields: [bookIsbn], references: [isbn])
   userId     String
   bookIsbn   String
   reason     String
