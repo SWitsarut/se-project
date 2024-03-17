@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-export const GET = async () => {
+export const GET = async (req: Request) => {
   try {
     const result = await prisma.book.findMany({
       include: {
@@ -20,12 +20,6 @@ export const GET = async () => {
         createdAt: "desc"
       }
     });
-
-    let isOwned;
-    // if(session) {
-    //   isOwned = result.map((book) => book.ownedBooks.some((ownedBook) => ownedBook.userId === session?.user?.id));
-    //   console.log(isOwned)
-    // }
 
     const newBooks: BookResponse[] = result.map((book) => ({
       isbn: book.isbn,
