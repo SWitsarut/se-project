@@ -39,6 +39,7 @@ model VerificationToken {
   expires DateTime
 
   @@unique([email, token])
+  @@map("verification_token")
 }
 
 model Publisher {
@@ -103,14 +104,14 @@ model Favorite {
 }
 
 model BookOwnership {
-  id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   book      Book     @relation(fields: [bookIsbn], references: [isbn])
   userId    String
   bookIsbn  String
   createdAt DateTime @default(now())
 
-  @@unique([userId, bookIsbn], name: "OwnershipPair")
+  @@id([userId, bookIsbn])
+  @@map("book_ownership")
 }
 
 model Invoice {
@@ -160,6 +161,13 @@ model Report {
   bookIsbn  String
   reason    String
   status    ReportStatus @default(PENDING)
+  id        Int          @id @default(autoincrement())
+  user      User         @relation(fields: [userId], references: [id])
+  book      Book         @relation(fields: [bookIsbn], references: [isbn])
+  userId    String
+  bookIsbn  String
+  reason    String
+  status    ReportStatus @default(PENDING)
   createdAt DateTime     @default(now())
 }
 
@@ -173,4 +181,10 @@ enum ReportStatus {
   PENDING
   REVIEWED
   DISMISSED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
 }

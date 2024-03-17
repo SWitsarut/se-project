@@ -23,6 +23,7 @@ export default function CartItem({ cartItems }: CartItemProps) {
   } = useCart();
 
   const [isCheckAll, setIsCheckAll] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [totalPrice, setTotalPrice] = useState<number>(selectedItem.reduce((acc, book) => acc + book.price, 0))
   const router = useRouter();
 
@@ -48,6 +49,7 @@ export default function CartItem({ cartItems }: CartItemProps) {
 
   const proceedToCheckout = () => {
     if (selectedItem.length > 0) {
+      setIsLoading(true);
       fetch("/api/payment-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -60,10 +62,12 @@ export default function CartItem({ cartItems }: CartItemProps) {
         return res.json();
       })
       .then((data) => {
-        handleSetPaymentIntent(data.paymentIntent.id);
-        router.push(`/checkout?payment-intent-id=${data.paymentIntent.id}`)
+        setIsLoading(false);
+        handleSetPaymentIntent(data.id);
+        router.push(`/checkout?payment-intent-id=${data.id}`)
       })
       .catch((error) => {
+        setIsLoading(false);
         console.log("Error", error);
       });
     }
@@ -119,7 +123,7 @@ export default function CartItem({ cartItems }: CartItemProps) {
       <div className="bg-slate-50 flex flex-col items-center px-10 py-8 space-y-4 shadow-md rounded-md">
         <Text fw={700} size="xl">Summary {`(${selectedItem.length} ${selectedItem.length > 1 ? "items" : "item"})`}</Text>
         <Text fw={700} size="xl">Total Price ฿ {totalPrice}</Text>
-        <Button onClick={proceedToCheckout} disabled={selectedItem.length < 1}>Proceed to Checkout</Button>
+        <Button loading={isLoading} onClick={proceedToCheckout} disabled={selectedItem.length < 1 || isLoading}>Proceed to Checkout</Button>
       </div>
     </div>
   </>
