@@ -26,6 +26,7 @@ model User {
   cart             CartItem[]
   favorites        Favorite[]
   report           Report[]
+  invoices         Invoice[]       @relation("UserOrder")
 
   @@index([username, email])
   @@map("user")
@@ -75,6 +76,7 @@ model Book {
   cart        CartItem[]
   favorites   Favorite[]
   reports     Report[]
+  invoices    Invoice[]       @relation("UserOrder")
 
   @@index([title])
   @@map("book")
@@ -112,17 +114,15 @@ model BookOwnership {
 }
 
 model Invoice {
-  id         Int         @id @default(autoincrement())
-  userOrders UserOrder[] @relation("InvoiceUserOrders")
-  createdAt  DateTime    @default(now())
-}
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(name: "UserOrder", fields: [userId], references: [id])
+  book      Book     @relation(name: "UserOrder", fields: [bookIsbn], references: [isbn])
+  userId    String
+  bookIsbn  String
+  createdAt DateTime @default(now())
 
-model UserOrder {
-  id        Int     @id @default(autoincrement())
-  invoice   Invoice @relation("InvoiceUserOrders", fields: [invoiceId], references: [id])
-  invoiceId Int
-
-  @@unique([id, invoiceId])
+  @@map("invoice")
+  @@unique([userId, bookIsbn])
 }
 
 model Category {
@@ -153,13 +153,13 @@ model Author {
 }
 
 model Report {
-  id         Int          @id @default(autoincrement())
-  user       User         @relation(fields: [userId], references: [id])
-  book       Book         @relation(fields: [bookIsbn], references: [isbn])
-  userId     String
-  bookIsbn   String
-  reason     String
-  status     ReportStatus @default(PENDING)
+  id        Int          @id @default(autoincrement())
+  user      User         @relation(fields: [userId], references: [id])
+  book      Book         @relation(fields: [bookIsbn], references: [isbn])
+  userId    String
+  bookIsbn  String
+  reason    String
+  status    ReportStatus @default(PENDING)
   createdAt DateTime     @default(now())
 }
 
