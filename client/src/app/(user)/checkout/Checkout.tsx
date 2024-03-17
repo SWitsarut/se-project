@@ -28,7 +28,8 @@ export default function Checkout() {
 
   useEffect(() => {
     const fetchPaymentIntentId = async () => {
-      const res = await fetch(`${BASE_URL}/api/payment-intent?payment-intent-id=${paymentIntentId}`);
+      const searchParams = new URLSearchParams({ "payment-intent-id": paymentIntentId});
+      const res = await fetch(`${BASE_URL}/api/payment-intent?` + searchParams.toString());
 
       if(res.status == 404) {
         redirect("/cart");

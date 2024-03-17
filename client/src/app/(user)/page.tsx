@@ -1,7 +1,9 @@
 import { Suspense } from "react";
 import BookSection from "./BookSection";
 
-export default async function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default function HomePage() {
   return (
     <>
       <Suspense fallback={<>Loading...</>}>

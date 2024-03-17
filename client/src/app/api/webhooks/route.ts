@@ -1,3 +1,4 @@
+import prisma from "@/libs/prisma";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -10,26 +11,59 @@ export const POST = async (req: Request) => {
     const rawBody = await req.text();
     const signature = req.headers.get("Stripe-Signature");
 
-    console.log("rawBody", rawBody);
-    console.log("signature", signature);
-
     if(!signature){
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
     const event = stripe.webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET!);
     switch (event.type) {
-      case "charge.succeeded":
-        const charge = event.data.object as Stripe.Charge;
-        console.log("charge", charge);
-        break;
-      case "charge.failed":
-        const failedCharge = event.data.object as Stripe.Charge;
-        console.log("failedCharge", failedCharge);
-        break;
-      case "charge.updated":
-        const updatedCharge = event.data.object as Stripe.Charge;
-        console.log("updatedCharge", updatedCharge);
+      case "payment_intent.succeeded":
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        
+        try {
+          await prisma.$transaction(async (prisma) => {
+            const userOrder = await prisma.userOrder.update({
+              where: {
+                paymentIntentId: paymentIntent.id,
+              },
+              data: {
+                status: "SUCCEEDED"
+              },
+              include: {
+                book: true
+              }
+            });
+      
+            await prisma.cartItem.deleteMany({
+              where: {
+                userId: userOrder.userId,
+                bookIsbn: {
+                  in: userOrder.book.map((book) => book.isbn)
+                }
+              }
+            });
+      
+            await Promise.all(userOrder.book.map(async (book) => {
+              await prisma.bookOwnership.create({
+                data: {
+                  userId: userOrder.userId,
+                  bookIsbn: book.isbn
+                }
+              });
+            }));
+          });
+        } catch (error) {
+          await prisma.userOrder.update({
+            where: {
+                paymentIntentId: paymentIntent.id
+            },
+            data: {
+              status: "FAILED"
+            }
+          });
+
+          return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+        }
         break;
     }
 

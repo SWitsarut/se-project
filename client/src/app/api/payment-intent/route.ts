@@ -1,4 +1,5 @@
 import { getCurrentSession } from "@/libs/getCurrentSession";
+import prisma from "@/libs/prisma";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -52,17 +53,80 @@ export const POST = async (req: Request) => {
     const curr = await stripe.paymentIntents.retrieve(payment_intent_id);
     if(curr) {
       const update_intent = await stripe.paymentIntents.update(payment_intent_id, { amount: totalPrice * 100 });
-      return NextResponse.json({ paymentIntent: update_intent });
+      try {
+        await prisma.userOrder.update({
+          where: {
+            paymentIntentId: payment_intent_id
+          },
+          data: {
+            book: {
+              set: cartItems.map((item: any) => ({ isbn: item.isbn }))
+            }
+          }
+        });
+      } catch (error) {
+        console.log("Error at /api/payment-intent POST", error)
+        return NextResponse.json({ error: "Something went wrong" }, { status: 500 })
+      }
+
+      return NextResponse.json({ id: update_intent.id }, { status: 200});
     } else {
       return NextResponse.json({ error: "Not found payment intent" }, { status: 400 });
     }
   } else {
+    const userOrder = await prisma.userOrder.findFirst({
+      where: {
+        userId: session.user.id,
+        status: "PENDING"
+      }
+    });
+
+    if(userOrder) {
+      const update_intent = await stripe.paymentIntents.update(userOrder.paymentIntentId, { amount: totalPrice * 100 });
+      
+      try {
+        await prisma.userOrder.update({
+          where: {
+            paymentIntentId: userOrder.paymentIntentId
+          },
+          data: {
+            book: {
+              set: cartItems.map((item: any) => ({ isbn: item.isbn }))
+            }
+          }
+        });
+      } catch (error) {
+        console.log("Error at /api/payment-intent POST", error)
+        return NextResponse.json({ error: "Something went wrong" }, { status: 500 })
+      }
+      
+      return NextResponse.json({ id: update_intent.id }, { status: 200})
+    }
+    
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalPrice * 100,
       currency: "thb",
-      automatic_payment_methods: { enabled: true },
+      payment_method_types: ["card", "promptpay"],
+    });
+
+    await prisma.invoice.create({
+      data: {
+        userOrders: {
+          create: {
+            user: {
+              connect: {
+                id: session.user.id
+              }
+            },
+            paymentIntentId: paymentIntent.id,
+            book: {
+              connect: cartItems.map((item: any) => ({ isbn: item.isbn }))
+            }
+          }
+        },
+      }
     });
     
-    return NextResponse.json({ paymentIntent }, { status: 200 });
+    return NextResponse.json({ id: paymentIntent.id }, { status: 200 });
   }
 }
