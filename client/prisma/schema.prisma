@@ -114,20 +114,12 @@ model BookOwnership {
   @@map("book_ownership")
 }
 
-// model Invoice {
-//   id         Int         @id @default(autoincrement())
-//   userOrders UserOrder[] @relation("InvoiceUserOrders")
-//   createdAt  DateTime    @default(now())
-
-//   @@map("invoice")
-// }
-
 model UserOrder {
   id              Int           @id @default(autoincrement())
   order           Order[]
   paymentIntentId String        @unique
   status          PaymentStatus @default(PENDING)
-  paidAt          DateTime
+  paidAt          DateTime?
 
   @@map("user_order")
 }
@@ -138,8 +130,8 @@ model Order {
   userId      String
   book        Book      @relation(name: "OrderBook", fields: [bookIsbn], references: [isbn])
   bookIsbn    String
-  total       Float
-  UserOrder   UserOrder @relation(fields: [userOrderId], references: [id])
+  bookPrice   Float
+  UserOrder   UserOrder @relation(fields: [userOrderId], references: [id], onUpdate: Cascade)
   userOrderId Int
 
   @@map("order")

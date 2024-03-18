@@ -1,5 +1,5 @@
 export default function NotFound() {
   return (
-    <div>NotFound</div>
+    <div>NotFound book</div>
   )
 }

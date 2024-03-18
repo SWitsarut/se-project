@@ -3,7 +3,7 @@
 import CheckoutForm from "./CheckoutForm";
 import { Elements } from "@stripe/react-stripe-js";
 import { StripeElementsOptions, loadStripe } from "@stripe/stripe-js";
-import { redirect, useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BookCart } from "@/types/book";
 import { BASE_URL } from "@/utils";
@@ -14,6 +14,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_TEST_STRIPE_PUBLISHABLE
 export default function Checkout() {
   const searchParams = useSearchParams();
   const paymentIntentIdParams = searchParams.get("payment-intent-id");
+  const router = useRouter();
   const [selectedItem, setSelectedItem] = useState<BookCart[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [clientSecret, setClientSecret] = useState("");
@@ -32,7 +33,7 @@ export default function Checkout() {
       const res = await fetch(`${BASE_URL}/api/payment-intent?` + searchParams.toString());
 
       if(res.status == 404) {
-        redirect("/cart");
+        router.push("/");
       }
       
       const data = await res.json();
