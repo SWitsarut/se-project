@@ -26,7 +26,7 @@ model User {
   cart             CartItem[]
   favorites        Favorite[]
   report           Report[]
-  UserOrder        UserOrder[]
+  Order            Order[]
 
   @@index([username, email])
   @@map("user")
@@ -77,7 +77,7 @@ model Book {
   cart        CartItem[]
   favorites   Favorite[]
   reports     Report[]
-  userOrder   UserOrder[]     @relation(name: "UserOrder")
+  Order       Order[]         @relation(name: "OrderBook")
 
   @@index([title])
   @@map("book")
@@ -114,26 +114,35 @@ model BookOwnership {
   @@map("book_ownership")
 }
 
-model Invoice {
-  id         Int         @id @default(autoincrement())
-  userOrders UserOrder[] @relation("InvoiceUserOrders")
-  createdAt  DateTime    @default(now())
+// model Invoice {
+//   id         Int         @id @default(autoincrement())
+//   userOrders UserOrder[] @relation("InvoiceUserOrders")
+//   createdAt  DateTime    @default(now())
 
-  @@map("invoice")
-}
+//   @@map("invoice")
+// }
 
 model UserOrder {
-  id              Int     @id @default(autoincrement())
-  invoice         Invoice @relation("InvoiceUserOrders", fields: [invoiceId], references: [id])
-  invoiceId       Int
-  user            User    @relation(fields: [userId], references: [id])
-  userId          String
-  book            Book[]  @relation(name: "UserOrder")
-  paymentIntentId String  @unique
+  id              Int           @id @default(autoincrement())
+  order           Order[]
+  paymentIntentId String        @unique
   status          PaymentStatus @default(PENDING)
+  paidAt          DateTime
 
-  @@unique([id, invoiceId])
   @@map("user_order")
+}
+
+model Order {
+  id          Int       @id @default(autoincrement())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  book        Book      @relation(name: "OrderBook", fields: [bookIsbn], references: [isbn])
+  bookIsbn    String
+  total       Float
+  UserOrder   UserOrder @relation(fields: [userOrderId], references: [id])
+  userOrderId Int
+
+  @@map("order")
 }
 
 model Category {
