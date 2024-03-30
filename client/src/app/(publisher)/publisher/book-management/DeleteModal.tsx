@@ -1,6 +1,5 @@
 "use client";
 
-import { BASE_URL } from "@/utils";
 import { Button, Modal, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -22,7 +21,7 @@ export default function DeleteModal({ publisherName, isbn, title } : DeleteModal
   const handleDelete = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}/api/publisher/${publisherName}/book-management/${isbn}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/book-management/${isbn}`, {
         method: "DELETE",
       })
 
