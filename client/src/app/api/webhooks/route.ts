@@ -30,24 +30,24 @@ export const POST = async (req: Request) => {
                 status: "SUCCEEDED"
               },
               include: {
-                book: true
+                order: true
               }
             });
-      
+
             await prisma.cartItem.deleteMany({
               where: {
-                userId: userOrder.userId,
+                userId: userOrder.order[0].userId,
                 bookIsbn: {
-                  in: userOrder.book.map((book) => book.isbn)
+                  in: userOrder.order.map((book) => book.bookIsbn)
                 }
               }
-            });
-      
-            await Promise.all(userOrder.book.map(async (book) => {
+            })
+
+            await Promise.all(userOrder.order.map(async (order) => {
               await prisma.bookOwnership.create({
                 data: {
-                  userId: userOrder.userId,
-                  bookIsbn: book.isbn
+                  userId: userOrder.order[0].userId,
+                  bookIsbn: order.bookIsbn
                 }
               });
             }));
@@ -64,7 +64,6 @@ export const POST = async (req: Request) => {
 
           return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
         }
-        break;
     }
 
     return NextResponse.json({ received: true });

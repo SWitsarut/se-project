@@ -26,7 +26,7 @@ model User {
   cart             CartItem[]
   favorites        Favorite[]
   report           Report[]
-  invoices         Invoice[]       @relation("UserOrder")
+  Order            Order[]
 
   @@index([username, email])
   @@map("user")
@@ -77,7 +77,7 @@ model Book {
   cart        CartItem[]
   favorites   Favorite[]
   reports     Report[]
-  invoices    Invoice[]       @relation("UserOrder")
+  Order       Order[]         @relation(name: "OrderBook")
 
   @@index([title])
   @@map("book")
@@ -114,16 +114,27 @@ model BookOwnership {
   @@map("book_ownership")
 }
 
-model Invoice {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(name: "UserOrder", fields: [userId], references: [id])
-  book      Book     @relation(name: "UserOrder", fields: [bookIsbn], references: [isbn])
-  userId    String
-  bookIsbn  String
-  createdAt DateTime @default(now())
+model UserOrder {
+  id              Int           @id @default(autoincrement())
+  order           Order[]
+  paymentIntentId String        @unique
+  status          PaymentStatus @default(PENDING)
+  paidAt          DateTime?
 
-  @@map("invoice")
-  @@unique([userId, bookIsbn])
+  @@map("user_order")
+}
+
+model Order {
+  id          Int       @id @default(autoincrement())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  book        Book      @relation(name: "OrderBook", fields: [bookIsbn], references: [isbn])
+  bookIsbn    String
+  bookPrice   Float
+  UserOrder   UserOrder @relation(fields: [userOrderId], references: [id], onUpdate: Cascade)
+  userOrderId Int
+
+  @@map("order")
 }
 
 model Category {
