@@ -161,13 +161,6 @@ model Report {
   bookIsbn  String
   reason    String
   status    ReportStatus @default(PENDING)
-  id        Int          @id @default(autoincrement())
-  user      User         @relation(fields: [userId], references: [id])
-  book      Book         @relation(fields: [bookIsbn], references: [isbn])
-  userId    String
-  bookIsbn  String
-  reason    String
-  status    ReportStatus @default(PENDING)
   createdAt DateTime     @default(now())
 }
 
