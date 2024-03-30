@@ -14,8 +14,8 @@ export default function SuccessPage({ searchParams }: SuccessPageProps) {
 
   useEffect(() => {
     if(!searchParams.id) {
-      router.push("/")
-    }
+      router.push("/");
+    };
 
     fetch(`/api/payment-intent?payment-intent-id=${searchParams.id}`).then((res) => { 
       if(res.status === 404) {
@@ -26,8 +26,8 @@ export default function SuccessPage({ searchParams }: SuccessPageProps) {
       if(result.error || result.paymentIntent.status !== "succeeded") {
         router.push("/");
       }
-    })
-  }, [router])
+    });
+  }, [router, searchParams.id])
   
   return (
     <>

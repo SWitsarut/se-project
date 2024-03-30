@@ -7,7 +7,8 @@ import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BookCart } from "@/types/book";
 import { BASE_URL } from "@/utils";
-import { Loader } from "@mantine/core";
+import { Loader, Text } from "@mantine/core";
+import Image from "next/image";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_TEST_STRIPE_PUBLISHABLE_KEY!);
 
@@ -61,13 +62,37 @@ export default function Checkout() {
   return (
     <>
       {isLoading ? (
-        <Loader />
+        <div className="w-full max-w-3xl mx-auto flex justify-center">
+          <Loader size="xl" />
+        </div>
       ) : (
         clientSecret && (
           <>
-            {selectedItem.map((data) => (
-              <div key={data.isbn}>{data.title}</div>
-            ))}
+            <div className="flex flex-col gap-4 mx-auto w-full max-w-3xl border p-4 bg-slate-50 rounded-md shadow-sm">
+              <div className="flex justify-between">
+                <Text c={"dark"} fw={800}>Item</Text>
+                <Text c={"dark"} fw={800}>Price</Text>
+              </div>
+              {selectedItem.map((data) => (
+                <div key={data.isbn} className="py-4 flex justify-between border-b">
+                  <div className="flex gap-2">
+                    <Image
+                      className="w-20 h-auto aspect-[1/1.414]"
+                      src={data.cover}
+                      alt={data.title}
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                    />
+                    <Text c={"dark"} fw={600}>{data.title}</Text>
+                  </div>
+                  <Text c={"dark"} fw={600}>{data.price} ฿</Text>
+                </div>
+              ))}
+              <div className="flex justify-end">
+                <Text c={"dark"} fw={800} size="lg">Total price: {selectedItem.reduce((acc, book) => acc + book.price, 0)} ฿</Text>
+              </div>
+            </div>
             <Elements stripe={stripePromise} options={options}>
               <CheckoutForm />
             </Elements>

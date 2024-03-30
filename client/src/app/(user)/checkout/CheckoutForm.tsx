@@ -43,7 +43,7 @@ export default function CheckoutForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="w-full max-w-3xl mx-auto py-8 flex flex-col gap-8" onSubmit={handleSubmit}>
       <PaymentElement options={{layout: 'tabs'}}/>
       <Button loading={isLoading} type="submit" disabled={!stripe || !elements}>Checkout</Button>
     </form>

@@ -75,7 +75,7 @@ export default function CartItem({ cartItems }: CartItemProps) {
 
   useEffect(() => {
     handleSetSelectedItem(cartItems);
-  }, [handleSetSelectedItem])
+  }, [handleSetSelectedItem, cartItems]);
 
   useEffect(() => {
     const newCartItem = selectedItem.filter((book) => cart.includes(book.isbn));
@@ -90,8 +90,8 @@ export default function CartItem({ cartItems }: CartItemProps) {
   return (
     <>
     <div className="flex flex-col gap-2">
-      {cartItems.map((book) => (
-        <div key={book.isbn} className="table w-full gap-2 border-b-2 pb-2">
+      {cartItems.map((book, index) => (
+        <div key={book.isbn} className={`${index % 2 == 0 && "bg-slate-100"} table w-full gap-2 py-2 px-2 border-b`}>
           <div className="table-cell align-middle">
             <Checkbox checked={selectedItem.findIndex((data) => data.isbn === book.isbn) !== -1} onChange={(e) => handleCheck(e, book)}/>
           </div>

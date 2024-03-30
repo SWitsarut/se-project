@@ -136,7 +136,7 @@ export const CartProvider = ({ children } : CartProviderProps) => {
       setCart([]);
     }
     router.refresh();
-  }, [session]);
+  }, [session, router]);
   
   const handleSetPaymentIntent = useCallback((value: string | null) => {
     localStorage.setItem("paymentIntent", JSON.stringify(value));
