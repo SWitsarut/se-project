@@ -13,6 +13,7 @@ export const GET = async (req: Request) => {
         category: true,
         genres: true,
         authors: true,
+        ownedBooks: true
       },
       take: 6,
       orderBy: {

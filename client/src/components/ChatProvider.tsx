@@ -47,9 +47,7 @@ export default function ChatProvider({
     if (session.data?.user.role == 'ADMIN') {
       socketRef.current?.on('connect', onConnect)
       socketRef.current?.on('receive-message', receive)
-      if (socketRef.current) {
-        socketRef.current.connect()
-      }
+      socketRef.current?.connect()
     }
 
     return () => {

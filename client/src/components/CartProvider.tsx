@@ -2,6 +2,7 @@
 
 import { BookCart } from "@/types/book";
 import { BASE_URL } from "@/utils";
+import { notifications } from "@mantine/notifications";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
@@ -12,7 +13,7 @@ interface CartContextType {
   addToCart: (isbn: string) => void
   removeFromCart: (isbn: string) => void
   disableAddToCart: (isbn: string) => boolean
-  resetCart: () => void
+  fetchCartItem: () => void
   paymentIntentId: string | null
   handleSetPaymentIntent: (val: string | null) => void
   handleSetSelectedItem: (isbn: BookCart[]) => void
@@ -33,9 +34,10 @@ export const CartProvider = ({ children } : CartProviderProps) => {
 
   useEffect(() => {
     const getPaymentIntent:any = localStorage.getItem("paymentIntent");
-    const paymentIntent = JSON.parse(getPaymentIntent);
-    
-    setPaymentIntentId(paymentIntent);
+    if (getPaymentIntent && getPaymentIntent !== "null" && getPaymentIntent !== "undefined") {
+      const paymentIntent = JSON.parse(getPaymentIntent);
+      setPaymentIntentId(paymentIntent);
+    }
   }, []);
 
   const disableAddToCart = (isbn: string): boolean => {
@@ -45,38 +47,83 @@ export const CartProvider = ({ children } : CartProviderProps) => {
 
   const addToCart = async (isbn: string) => {
     if(session) {
-      const res = await fetch(`${BASE_URL}/api/cart/${session.user.id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ isbn })
-      });
-      
-      const data = await res.json();
-      console.log(data);
-      setCart((prevState) => ([ ...prevState, isbn]));
-      router.refresh();
+      try {
+        const res = await fetch(`${BASE_URL}/api/cart/${session.user.id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ isbn })
+        });
+        
+        const data = await res.json();
+
+        if(data.error) {
+          notifications.show({
+            color: "red",
+            title: "Error",
+            message: data.error,
+            autoClose: 3000
+          })
+          return;
+        }
+        notifications.show({
+          color: "green",
+          title: "Success",
+          message: data.message,
+          autoClose: 3000
+        })
+        setCart((prevState) => ([ ...prevState, isbn]));
+        router.refresh();
+      } catch (error) {
+        notifications.show({
+          title: "Error",
+          message: "Something went wrong",
+          autoClose: 3000
+        })
+      }
     }
   }
 
   const removeFromCart = async (isbn: string) => {
     if(session) {
-      const res = await fetch(`${BASE_URL}/api/cart/${session.user.id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ isbn })
-      })
-      
-      const data = await res.json();
-      console.log(data);
-      const newCartItem = cart.filter((item) => item !== isbn);
-      const newSelectedItem = selectedItem.filter((book) => book.isbn !== isbn);
-      setSelectedItem(newSelectedItem);
-      setCart(newCartItem);
-      router.refresh();
+      try {
+        const res = await fetch(`${BASE_URL}/api/cart/${session.user.id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ isbn })
+        })
+        
+        const data = await res.json();
+        if(data.error) {
+          notifications.show({
+            color: "red",
+            title: "Error",
+            message: data.error,
+            autoClose: 3000
+          })
+          return;
+        }
+        notifications.show({
+          color: "green",
+          title: "Success",
+          message: data.message,
+          autoClose: 3000
+        })
+        const newCartItem = cart.filter((item) => item !== isbn);
+        const newSelectedItem = selectedItem.filter((book) => book.isbn !== isbn);
+        setSelectedItem(newSelectedItem);
+        setCart(newCartItem);
+        router.refresh();
+      } catch (error) {
+        notifications.show({
+          title: "Error",
+          message: "Something went wrong",
+          autoClose: 3000
+        })
+      }
     }
   }
   
@@ -88,7 +135,8 @@ export const CartProvider = ({ children } : CartProviderProps) => {
     } else {
       setCart([]);
     }
-  }, [session]);
+    router.refresh();
+  }, [session, router]);
   
   const handleSetPaymentIntent = useCallback((value: string | null) => {
     localStorage.setItem("paymentIntent", JSON.stringify(value));
@@ -98,10 +146,6 @@ export const CartProvider = ({ children } : CartProviderProps) => {
   useEffect(() => {
     fetchCartItem();
   }, [fetchCartItem]);
-  
-  const resetCart = async () => {
-    fetchCartItem();
-  }
 
   const handleSetSelectedItem = useCallback((value: BookCart[]) => {
     localStorage.setItem("selectedItem", JSON.stringify(value));
@@ -113,7 +157,7 @@ export const CartProvider = ({ children } : CartProviderProps) => {
     addToCart,
     removeFromCart,
     disableAddToCart,
-    resetCart,
+    fetchCartItem,
     paymentIntentId,
     handleSetPaymentIntent,
     selectedItem,

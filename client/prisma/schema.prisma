@@ -26,10 +26,10 @@ model User {
   cart             CartItem[]
   favorites        Favorite[]
   report           Report[]
+  Order            Order[]
   sender           ChatMessage[] @relation("ChatSender")
   receiver         ChatMessage[] @relation("ChatReceiver")
   UserSession      UserSession[]
-
   @@index([username, email])
   @@map("user")
 }
@@ -41,6 +41,7 @@ model VerificationToken {
   expires DateTime
 
   @@unique([email, token])
+  @@map("verification_token")
 }
 
 model Publisher {
@@ -78,6 +79,7 @@ model Book {
   cart        CartItem[]
   favorites   Favorite[]
   reports     Report[]
+  Order       Order[]         @relation(name: "OrderBook")
 
   @@index([title])
   @@map("book")
@@ -104,28 +106,37 @@ model Favorite {
 }
 
 model BookOwnership {
-  id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   book      Book     @relation(fields: [bookIsbn], references: [isbn])
   userId    String
   bookIsbn  String
   createdAt DateTime @default(now())
 
-  @@unique([userId, bookIsbn], name: "OwnershipPair")
-}
-
-model Invoice {
-  id         Int         @id @default(autoincrement())
-  userOrders UserOrder[] @relation("InvoiceUserOrders")
-  createdAt  DateTime    @default(now())
+  @@id([userId, bookIsbn])
+  @@map("book_ownership")
 }
 
 model UserOrder {
-  id        Int     @id @default(autoincrement())
-  invoice   Invoice @relation("InvoiceUserOrders", fields: [invoiceId], references: [id])
-  invoiceId Int
+  id              Int           @id @default(autoincrement())
+  order           Order[]
+  paymentIntentId String        @unique
+  status          PaymentStatus @default(PENDING)
+  paidAt          DateTime?
 
-  @@unique([id, invoiceId])
+  @@map("user_order")
+}
+
+model Order {
+  id          Int       @id @default(autoincrement())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  book        Book      @relation(name: "OrderBook", fields: [bookIsbn], references: [isbn])
+  bookIsbn    String
+  bookPrice   Float
+  UserOrder   UserOrder @relation(fields: [userOrderId], references: [id], onUpdate: Cascade)
+  userOrderId Int
+
+  @@map("order")
 }
 
 model Category {
@@ -156,9 +167,9 @@ model Author {
 }
 
 model Report {
-  id         Int      @id @default(autoincrement())
-  user       User     @relation(fields: [userId], references: [id])
-  book       Book     @relation(fields: [bookIsbn], references: [isbn])
+  id         Int          @id @default(autoincrement())
+  user       User         @relation(fields: [userId], references: [id])
+  book       Book         @relation(fields: [bookIsbn], references: [isbn])
   userId     String
   bookIsbn   String
   reason     String
@@ -194,4 +205,10 @@ enum ReportStatus {
   PENDING
   REVIEWED
   DISMISSED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
 }
