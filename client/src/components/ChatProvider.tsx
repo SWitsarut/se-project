@@ -44,12 +44,13 @@ export default function ChatProvider({
         autoClose: 2500,
       })
     }
+    console.log('session.data?.user.role', session.data?.user.role)
     if (session.data?.user.role == 'ADMIN') {
-      socketRef.current?.on('connect', onConnect)
-      socketRef.current?.on('receive-message', receive)
       if (socketRef.current) {
         socketRef.current.connect()
       }
+      socketRef.current?.on('connect', onConnect)
+      socketRef.current?.on('receive-message', receive)
     }
 
     return () => {

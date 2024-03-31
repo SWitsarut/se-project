@@ -133,7 +133,7 @@ export default function ChatBar({
               </div>
               <form
                 onSubmit={(e) => {
-                  if (!isConnected) {
+                  if (!socket?.connected) {
                     socket?.connect()
                   }
                   e.preventDefault()
