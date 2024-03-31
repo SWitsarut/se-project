@@ -75,7 +75,7 @@ export default function ChatBar({
       return () => {
         socket.off('connect', onConnect)
         socket.off('receive-message', receive)
-        socket.on('sended', sended)
+        socket.off('sended', sended)
       }
     }
   }, [socket, session])

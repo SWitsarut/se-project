@@ -52,9 +52,10 @@ io.on("connection", (socket) => {
 			method: "POST",
 			body: JSON.stringify(msgContent),
 		}).then((e) => e.json());
-		console.log("saved", saved);
+		// console.log("saved", saved);
 		io.to(socket.id).emit("sended", JSON.stringify({ id: saved.id, msg: saved.message }));
 		io.to(saved.to.sessionId).emit("receive-message", saved.message);
+		io.to(saved.to.sessionId).emit("notify-message", saved.message);
 	});
 
 	// socket.on("disconnect", async (reason: DisconnectReason, _description) => {

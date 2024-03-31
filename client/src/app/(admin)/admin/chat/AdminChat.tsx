@@ -52,41 +52,27 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
   }, [currentUserID])
 
   useEffect(() => {
-    if (socket) {
-      if (!socket.connected) {
-        socket.connect()
-        console.log('socket connected again')
-      }
-      const sended = async (confirm: string) => {
-        const { id, msg } = await JSON.parse(confirm)
-        console.log('sended', id, msg)
+    const sended = async (confirm: string) => {
+      console.log("omg")
+      const { id, msg } = await JSON.parse(confirm)
+      console.log('sended', id, msg)
+      setMsgs((prev) => {
+        return [...prev, msg]
+      })
+    }
 
-        setMsgs((prev) => {
-          return [...prev, msg]
-        })
-      }
+    const receive = (msg: message) => {
+      console.log('admin receive', msg)
+      setMsgs((prev) => [...prev, msg])
+    }
 
-      const receive = (msg: message) => {
-        console.log('admin receive', msg)
+    socket?.on('receive-message', receive)
+    socket?.on('sended', sended)
+    socket?.connect()
 
-        if (
-          msg.sender != currentUserID &&
-          msg.receiver == session.data?.user.id
-        ) {
-          setMsgs((prev) => [...prev, msg])
-        }
-      }
-
-      socket.on('receive-message', receive)
-      // console.log('receive-message binded')
-      socket.on('sended', sended)
-      // console.log('sended binded')
-      return () => {
-        socket.off('receive-message', receive)
-        // console.log('receive-message unbinded')
-        socket.on('sended', sended)
-        // console.log('sended uninded')
-      }
+    return () => {
+      socket?.off('sended', sended)
+      socket?.off('receive-message', receive)
     }
   }, [])
 
@@ -122,14 +108,19 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
         >
           {!loading ? (
             msgs?.map((msg, index) => {
-              return (
-                <div
-                  key={index}
-                  ref={index === msgs.length - 1 ? targetRef : null}
-                >
-                  <ChatChip reverse message={msg} />
-                </div>
-              )
+              // if (
+              //   msg.sender == session.data?.user.id ||
+              //   msg.sender == currentUserID
+              // ) {
+                return (
+                  <div
+                    key={index}
+                    ref={index === msgs.length - 1 ? targetRef : null}
+                  >
+                    <ChatChip reverse message={msg} />
+                  </div>
+                )
+              // }
             })
           ) : (
             <Loader color="blue" className="m-auto" />
@@ -137,13 +128,14 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
         </div>
         <form
           onSubmit={(e) => {
+            if (socket?.connected == false) socket.connect()
             e.preventDefault()
             const msg: sendingMSG = {
               content: text.trim(),
               sender: session.data?.user.id,
               receiver: currentUserID,
             }
-            console.log('socket?.connected', socket?.connected)
+            // console.log('socket?.connected', socket?.connected)
             socket?.emit('message', JSON.stringify(msg))
             setText('')
           }}

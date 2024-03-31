@@ -47,17 +47,17 @@ export default function ChatProvider({
     }
     if (session.data?.user.role == 'ADMIN') {
       socketRef.current?.on('connect', onConnect)
-      socketRef.current?.on('receive-message', receive)
-      socketRef.current?.connect()
+      socketRef.current?.on('notify-message', receive)
     }
+    socketRef.current?.connect()
 
     return () => {
       if (session.data?.user.role == 'ADMIN') {
         socketRef.current?.off('connect', onConnect)
-        socketRef.current?.off('receive-message', receive)
+        socketRef.current?.off('notify-message', receive)
       }
     }
-  }, [session.data?.user.id, session.data?.user.role])
+  }, [])
 
   return (
     <>
