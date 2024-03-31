@@ -31,18 +31,18 @@ const io = new Server(server, {
 	},
 });
 
-type UserInfo = {
-	email: string;
-	id: string;
-	username: string;
-	displayname: string;
-	role: string;
-};
+// type UserInfo = {
+// 	email: string;
+// 	id: string;
+// 	username: string;
+// 	displayname: string;
+// 	role: string;
+// };
 
 io.on("connection", (socket) => {
-	const userAuth: UserInfo = socket.handshake.auth.userinfo;
+	// const userAuth: UserInfo = socket.handshake.auth.userinfo;
 
-	console.log("New socket connected", socket.id, "with ", userAuth);
+	// console.log("New socket connected", socket.id, "with ", userAuth);
 
 	socket.on("message", async (msg: string) => {
 		console.log("receive from", msg);
