@@ -51,30 +51,28 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
     }
   }, [currentUserID])
 
+  const sended = async (confirm: string) => {
+    const { id, msg } = await JSON.parse(confirm)
+    console.log('sended', id, msg)
+    setMsgs((prev) => {
+      return [...prev, msg]
+    })
+  }
+  const receive = async (msg: message) => {
+    console.log('admin receive', msg)
+    setMsgs((prev) => [...prev, msg])
+  }
   useEffect(() => {
-    const sended = async (confirm: string) => {
-      console.log("omg")
-      const { id, msg } = await JSON.parse(confirm)
-      console.log('sended', id, msg)
-      setMsgs((prev) => {
-        return [...prev, msg]
-      })
-    }
-
-    const receive = (msg: message) => {
-      console.log('admin receive', msg)
-      setMsgs((prev) => [...prev, msg])
-    }
-
-    socket?.on('receive-message', receive)
-    socket?.on('sended', sended)
     socket?.connect()
-
+    if (socket) {
+      socket?.on('sended', sended)
+      socket?.on('receive-message', receive)
+    }
     return () => {
       socket?.off('sended', sended)
       socket?.off('receive-message', receive)
     }
-  }, [])
+  }, [socket])
 
   // useEffect(() => {
   //   console.log(users)
@@ -108,10 +106,10 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
         >
           {!loading ? (
             msgs?.map((msg, index) => {
-              // if (
-              //   msg.sender == session.data?.user.id ||
-              //   msg.sender == currentUserID
-              // ) {
+              if (
+                msg.sender == session.data?.user.id ||
+                msg.sender == currentUserID
+              ) {
                 return (
                   <div
                     key={index}
@@ -120,7 +118,9 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
                     <ChatChip reverse message={msg} />
                   </div>
                 )
-              // }
+              } else {
+                return <h1 key={index}>wrong</h1>
+              }
             })
           ) : (
             <Loader color="blue" className="m-auto" />
@@ -137,6 +137,7 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
             }
             // console.log('socket?.connected', socket?.connected)
             socket?.emit('message', JSON.stringify(msg))
+            // setMsgs((prev) => [...prev, msg])
             setText('')
           }}
           className="flex flex-row w"

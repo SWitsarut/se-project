@@ -35,9 +35,9 @@ export default function ChatProvider({
         },
       ).then((data) => data.json())
       console.log('connected to socket with sessionId', res)
-      console.log('connected to socket???', socketRef.current?.connected)
+      // console.log('connected to socket???', socketRef.current?.connected)
     }
-    const receive = (msg: message) => {
+    const notify = (msg: message) => {
       console.log('notify receive', msg)
       notifications.show({
         title: msg.senderData?.displayName,
@@ -47,14 +47,14 @@ export default function ChatProvider({
     }
     if (session.data?.user.role == 'ADMIN') {
       socketRef.current?.on('connect', onConnect)
-      socketRef.current?.on('notify-message', receive)
+      socketRef.current?.on('receive-message', notify)
     }
     socketRef.current?.connect()
 
     return () => {
       if (session.data?.user.role == 'ADMIN') {
         socketRef.current?.off('connect', onConnect)
-        socketRef.current?.off('notify-message', receive)
+        socketRef.current?.off('receive-message', notify)
       }
     }
   }, [])
