@@ -35,6 +35,7 @@ export default function ChatProvider({
         },
       ).then((data) => data.json())
       console.log('connected to socket with sessionId', res)
+      console.log('connected to socket???', socketRef.current?.connected)
     }
     const receive = (msg: message) => {
       console.log('notify receive', msg)
@@ -44,13 +45,14 @@ export default function ChatProvider({
         autoClose: 2500,
       })
     }
-    console.log('session.data?.user.role', session.data?.user.role)
     if (session.data?.user.role == 'ADMIN') {
-      if (socketRef.current) {
-        socketRef.current.connect()
-      }
       socketRef.current?.on('connect', onConnect)
       socketRef.current?.on('receive-message', receive)
+      // if (socketRef.current) {
+      socketRef.current?.connect()
+      console.log('connected to socket???', socketRef.current?.connected)
+      //   console.log("connected to socket???")
+      // }
     }
 
     return () => {

@@ -42,7 +42,7 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
         },
       )
       const msgs: message[] = await response.json()
-      console.log(msgs)
+      // console.log(msgs)
       setMsgs(msgs)
       setLoading(false)
     }
@@ -53,6 +53,10 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
 
   useEffect(() => {
     if (socket) {
+      if (!socket.connected) {
+        socket.connect()
+        console.log('socket connected again')
+      }
       const sended = async (confirm: string) => {
         const { id, msg } = await JSON.parse(confirm)
         console.log('sended', id, msg)
@@ -74,17 +78,21 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
       }
 
       socket.on('receive-message', receive)
+      // console.log('receive-message binded')
       socket.on('sended', sended)
+      // console.log('sended binded')
       return () => {
         socket.off('receive-message', receive)
+        // console.log('receive-message unbinded')
         socket.on('sended', sended)
+        // console.log('sended uninded')
       }
     }
-  }, [currentUserID, session.data?.user.id, socket])
+  }, [])
 
-  useEffect(() => {
-    console.log(users)
-  }, [users])
+  // useEffect(() => {
+  //   console.log(users)
+  // }, [users])
   return (
     <div className="w-full flex flex-row border border-gray-300 rounded-md">
       <section className="flex">
@@ -135,6 +143,7 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
               sender: session.data?.user.id,
               receiver: currentUserID,
             }
+            console.log('socket?.connected', socket?.connected)
             socket?.emit('message', JSON.stringify(msg))
             setText('')
           }}
