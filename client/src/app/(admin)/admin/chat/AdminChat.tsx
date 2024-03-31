@@ -1,6 +1,6 @@
 'use client'
 import { AdminMsg, sendingMSG } from '@/types/chat'
-import { Button, Loader, TextInput } from '@mantine/core'
+import { Button, Center, Loader, TextInput } from '@mantine/core'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import UserChip from './_component/UserChip'
 import { Connection } from '@/components/ChatProvider'
@@ -8,19 +8,26 @@ import { message } from '@/types/message'
 import ChatChip from '@/app/(user)/_components/ChatChip'
 import { IconSend } from '@tabler/icons-react'
 import { useSession } from 'next-auth/react'
+import { useScrollIntoView } from '@mantine/hooks'
 
 export default function AdminChat({ users }: { users: AdminMsg[] }) {
   const socket = useContext(Connection)
   const session = useSession()
   const [currentUser, setCurrentUser] = useState<string>('')
+  const [currentUserData, setCurrentUserData] = useState<AdminMsg | null>(null)
   const [msgs, setMsgs] = useState<message[] | []>([])
   const [text, setText] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
-  const anchor = useRef<HTMLDivElement | null>(null)
+  const { scrollIntoView, targetRef, scrollableRef } = useScrollIntoView<
+    HTMLDivElement,
+    HTMLDivElement
+  >()
 
   useEffect(() => {
-    anchor.current?.scrollIntoView()
-  }, [msgs])
+    scrollIntoView({
+      alignment: 'start',
+    })
+  }, [msgs, scrollIntoView])
 
   useEffect(() => {
     const getmsg = async () => {
@@ -74,37 +81,51 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
     console.log(users)
   }, [users])
   return (
-    <div className="w-full h-screen flex flex-row border border-red-500">
-      <section className="w-[30%] h-[100%]">
-        <div className="overflow-y-scroll h-[100%]">
+    <div className="w-full flex flex-row border border-gray-300 rounded-md">
+      <section className="flex">
+        <div className="overflow-y-scroll h-full">
           {users?.map((user, index) => {
             return (
               <UserChip
                 onClick={() => {
                   setCurrentUser(user.id)
+                  setCurrentUserData(user)
                 }}
                 key={index}
                 user={user}
+                selected={user.id == currentUser}
               />
             )
           })}
         </div>
       </section>
       <section className="w-full h-full">
-        <div className="flex flex-col p-3 w-[100%] gap-3 h-full overflow-y-scroll bg-gray-300">
+        <Center classNames={{ root: 'h-14 font-bold' }}>
+          {currentUserData?.displayName}
+        </Center>
+        <div
+          className="flex flex-col p-3 gap-3 h-96 overflow-y-scroll bg-gray-300"
+          ref={scrollableRef}
+        >
           {!loading ? (
             msgs?.map((msg, index) => {
               if (
                 msg.sender == session.data?.user.id ||
                 msg.sender == currentUser
               ) {
-                return <ChatChip key={index} reverse message={msg} />
+                return (
+                  <div
+                    key={index}
+                    ref={index === msgs.length - 1 ? targetRef : null}
+                  >
+                    <ChatChip reverse message={msg} />
+                  </div>
+                )
               }
             })
           ) : (
             <Loader color="blue" className="m-auto" />
           )}
-          <div ref={anchor}></div>
         </div>
         <form
           onSubmit={(e) => {
@@ -129,15 +150,6 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
               <IconSend />
             </Button>
           </>
-          {/* {currentUser && !loading ? (
-          ) : (
-            <>
-              <TextInput disabled classNames={{ root: 'w-full' }} />
-              <Button disabled>
-                <IconSend />
-              </Button>
-            </>
-          )} */}
         </form>
       </section>
     </div>
