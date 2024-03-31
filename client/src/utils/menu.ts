@@ -23,6 +23,6 @@ export const publisherMenu = [
 
 export const userMenu = [
   { label: "Profile", link: "/my-profile", icon: IconUserCircle },
-  { label: "Wishlists", link: "/my-wishlists", icon: IconHeart },
   { label: "Bookshelf", link: "/my-bookshelf", icon: IconBooks },
+  { label: "Wishlists", link: "/my-wishlists", icon: IconHeart },
 ];

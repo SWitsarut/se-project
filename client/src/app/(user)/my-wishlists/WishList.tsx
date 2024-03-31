@@ -19,11 +19,11 @@ export default function WishList({ userId }: WishListProps) {
     const data = await res.json();
     setWishlists(data);
     setIsLoading(false);
-  }, [])
+  }, [userId])
 
   useEffect(() => {
     getMyWishList();
-  }, [])
+  }, [getMyWishList])
 
   return (
     <>

@@ -53,6 +53,16 @@ export interface BookItemType {
   publisher: string
 }
 
+export interface BookShelfType {
+  isbn: string
+  title: string
+  cover: string
+  category: string
+  pdfUrl: string
+  publisher: string
+  authors: string[]
+}
+
 export interface BookResponse {
   isbn: string
   title: string

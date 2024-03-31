@@ -19,6 +19,9 @@ const config: Config = {
         light: "f8f9fa",
         dark: "var(--mantine-color-dark-6)",
       },
+      screens: {
+        'xs': '375px',
+      }
     },
   },
   plugins: [
