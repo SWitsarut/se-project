@@ -51,7 +51,7 @@ export default async function BookPage({
             className="w-72 h-full aspect-[1/1.414] shadow-2xl border"
           />
         </div>
-        <div className="w-full flex flex-col gap-8 border md:max-w-sm">
+        <div className="w-full flex flex-col gap-8 md:max-w-sm">
           <div className="flex flex-col gap-1">
             <Text fw={700}>author: <Text span>{book.authors.map((author) => author).join(" , ")}</Text></Text>
             <Text fw={700}>publisher: <Text span>{book.publisher}</Text></Text>

@@ -43,7 +43,17 @@ export interface BookWislist {
   price: number
 }
 
-export type BookResponse = {
+export interface BookItemType {
+  isbn: string
+  title: string
+  cover: string
+  price: number
+  authors: string[]
+  category: string
+  publisher: string
+}
+
+export interface BookResponse {
   isbn: string
   title: string
   price: number

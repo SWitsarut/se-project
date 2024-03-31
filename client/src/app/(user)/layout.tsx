@@ -1,3 +1,4 @@
+import { CartProvider } from "@/components/CartProvider";
 import Navbar from "@/components/Navbar";
 
 export default function MainLayout({ children }: {
@@ -5,10 +6,12 @@ export default function MainLayout({ children }: {
 }) {
   return (
     <>
-      <Navbar />
-      <div className="py-16 px-0 md:px-24">
-        {children}
-      </div>
+      <CartProvider>
+        <Navbar />
+        <div className="py-16 px-0 md:px-24">
+          {children}
+        </div>
+      </CartProvider>
     </>
   )
 }

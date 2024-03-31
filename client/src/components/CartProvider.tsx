@@ -39,12 +39,12 @@ export const CartProvider = ({ children } : CartProviderProps) => {
     }
   }, []);
 
-  const disableAddToCart = (isbn: string): boolean => {
+  const disableAddToCart = useCallback((isbn: string): boolean => {
     const existingBook = cart.findIndex((item) => item === isbn);
     return existingBook !== -1;
-  }
+  }, [cart])
 
-  const addToCart = async (isbn: string) => {
+  const addToCart = useCallback(async (isbn: string) => {
     if(session) {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart/${session.user.id}`, {
@@ -82,9 +82,9 @@ export const CartProvider = ({ children } : CartProviderProps) => {
         })
       }
     }
-  }
+  }, [session, router])
 
-  const removeFromCart = async (isbn: string) => {
+  const removeFromCart = useCallback(async (isbn: string) => {
     if(session) {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart/${session.user.id}`, {
@@ -93,7 +93,7 @@ export const CartProvider = ({ children } : CartProviderProps) => {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({ isbn })
-        })
+        });
         
         const data = await res.json();
         if(data.error) {
@@ -124,7 +124,7 @@ export const CartProvider = ({ children } : CartProviderProps) => {
         })
       }
     }
-  }
+  }, [cart, selectedItem, session, router])
   
   const fetchCartItem = useCallback(async () => {
     if(session) {

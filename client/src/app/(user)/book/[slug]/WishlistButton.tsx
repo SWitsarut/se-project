@@ -3,6 +3,7 @@
 import { Button } from "@mantine/core";
 import { IconHeartPlus, IconHeartFilled } from "@tabler/icons-react"
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 interface WishlistButton {
@@ -12,7 +13,9 @@ interface WishlistButton {
 export default function WishlistButton({ isbn }: WishlistButton) {
   const { data: session} = useSession();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isWishlist, setIsWishlist] = useState<boolean>(false);
+  const [isInWishlist, setIsInWishlist] = useState<boolean>(false);
+  const [isInLibrary, setIsInLibrary] = useState<boolean>(false);
+  const router = useRouter();
 
   const handleWishlist = async () => {
     if(session) {
@@ -30,36 +33,37 @@ export default function WishlistButton({ isbn }: WishlistButton) {
       if(data.error) {
         console.error(data.error);
       } else {
-        fetchIsWishlist();
+        fetchIsInWishlist();
       }
       setIsLoading(false);
     }
   }
 
-  const fetchIsWishlist = useCallback(async () => {
+  const fetchIsInWishlist = useCallback(async () => {
     if(session) {
       fetch(`${process.env.NEXT_PUBLIC_URL}/api/wishlist/${session.user.id}/${isbn}`)
       .then((res) => res.json())
       .then((data) => {
-        setIsWishlist(data);
+        setIsInWishlist(data.isInWishlist);
+        setIsInLibrary(data.isInLibrary);
       })
     }
-  }, [isbn, session])
+  }, [isbn, session]);
 
   useEffect(() => {
-    fetchIsWishlist();
-  }, [fetchIsWishlist])
+    fetchIsInWishlist();
+  }, [fetchIsInWishlist]);
 
   return (
     <Button
-      disabled={isLoading}
+      disabled={isLoading || isInLibrary}
       loading={isLoading}
       onClick={handleWishlist}
       radius="xl"
       size="sm"
-      variant="outline"
+      variant="outline" 
     >
-      {isWishlist ? <IconHeartFilled /> : <IconHeartPlus />}
+      {isInWishlist ? <IconHeartFilled /> : <IconHeartPlus />}
     </Button>
   )
 }
