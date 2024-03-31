@@ -36,7 +36,7 @@ export interface BookCart {
   price: number
 }
 
-export interface BookWislist {
+export interface BookFavorite {
   isbn: string
   title: string
   cover: string

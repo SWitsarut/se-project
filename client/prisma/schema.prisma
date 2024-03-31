@@ -24,12 +24,10 @@ model User {
   managedPublisher Publisher?      @relation("PublisherManager")
   ownedBooks       BookOwnership[]
   cart             CartItem[]
-  wishlists        Wishlist[]
+  favorites        Favorite[]
   report           Report[]
   Order            Order[]
-  sender           ChatMessage[] @relation("ChatSender")
-  receiver         ChatMessage[] @relation("ChatReceiver")
-  UserSession      UserSession[]
+
   @@index([username, email])
   @@map("user")
 }
@@ -77,9 +75,9 @@ model Book {
   authors     Author[]        @relation(name: "BookAuthors")
   ownedBooks  BookOwnership[]
   cart        CartItem[]
-  wishlist    Wishlist[]
+  favorites   Favorite[]
   reports     Report[]
-  order       Order[]         @relation(name: "OrderBook")
+  Order       Order[]         @relation(name: "OrderBook")
 
   @@index([title])
   @@map("book")
@@ -95,7 +93,7 @@ model CartItem {
   @@map("cart_item")
 }
 
-model Wishlist {
+model Favorite {
   user      User     @relation(fields: [userId], references: [id])
   userId    String
   book      Book     @relation(fields: [bookIsbn], references: [isbn])
@@ -133,7 +131,7 @@ model Order {
   book        Book      @relation(name: "OrderBook", fields: [bookIsbn], references: [isbn])
   bookIsbn    String
   bookPrice   Float
-  userOrder   UserOrder @relation(fields: [userOrderId], references: [id], onUpdate: Cascade)
+  UserOrder   UserOrder @relation(fields: [userOrderId], references: [id], onUpdate: Cascade)
   userOrderId Int
 
   @@map("order")
@@ -167,32 +165,14 @@ model Author {
 }
 
 model Report {
-  id         Int          @id @default(autoincrement())
-  user       User         @relation(fields: [userId], references: [id])
-  book       Book         @relation(fields: [bookIsbn], references: [isbn])
-  userId     String
-  bookIsbn   String
-  reason     String
-  status     ReportStatus @default(PENDING)
+  id        Int          @id @default(autoincrement())
+  user      User         @relation(fields: [userId], references: [id])
+  book      Book         @relation(fields: [bookIsbn], references: [isbn])
+  userId    String
+  bookIsbn  String
+  reason    String
+  status    ReportStatus @default(PENDING)
   createdAt DateTime     @default(now())
-}
-
-
-model ChatMessage {
-  id        String   @id @default(uuid())
-  sender    String
-  receiver  String
-  content   String
-  timeStamp DateTime @default(now())
-
-  senderData   User @relation("ChatSender", fields: [sender], references: [id])
-  receiverData User @relation("ChatReceiver", fields: [receiver], references: [id])
-}
-
-model UserSession {
-  id        String @id
-  sessionId String
-  user      User?  @relation(fields: [id], references: [id])
 }
 
 enum Role {

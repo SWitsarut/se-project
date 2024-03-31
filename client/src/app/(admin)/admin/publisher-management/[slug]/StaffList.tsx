@@ -1,9 +1,10 @@
 import { User } from "@/types/user";
+import { BASE_URL } from "@/utils";
 import { Avatar, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core";
 
 async function getStaffList(slug: string, page: number, take: number, search: string): Promise<{ staffs: User[] }> {
   const searchParams = new URLSearchParams({ page: page.toString(), take: take.toString(), search });
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/publisher-management/${slug}/staff?` + searchParams, {
+  const res = await fetch(`${BASE_URL}/api/admin/publisher-management/${slug}/staff?` + searchParams, {
     cache: "no-store"
   });
 

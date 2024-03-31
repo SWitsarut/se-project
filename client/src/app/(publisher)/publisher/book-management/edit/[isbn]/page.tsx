@@ -3,6 +3,7 @@ import EditBookForm from "./EditBookForm";
 import { BookDetailType, EditBookData } from "@/types/book";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentSession } from "@/libs/getCurrentSession";
+import { BASE_URL } from "@/utils";
 
 const getBookDetail = async (): Promise<BookDetailType> => {
   try {
@@ -26,7 +27,7 @@ const getBookDetail = async (): Promise<BookDetailType> => {
 }
 
 async function getBookData(publisherName: string, isbn: string): Promise<{ book: EditBookData }> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/book-management/${isbn}`, {
+  const res = await fetch(`${BASE_URL}/api/publisher/${publisherName}/book-management/${isbn}`, {
     cache: "no-store"
   });
 

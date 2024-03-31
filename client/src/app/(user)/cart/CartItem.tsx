@@ -7,7 +7,6 @@ import { Button, Checkbox, Text } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import {useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 interface CartItemProps {
   cartItems: BookCart[]
@@ -96,22 +95,20 @@ export default function CartItem({ cartItems }: CartItemProps) {
           <div className="table-cell align-middle">
             <Checkbox checked={selectedItem.findIndex((data) => data.isbn === book.isbn) !== -1} onChange={(e) => handleCheck(e, book)}/>
           </div>
-          <Link href={`/book/${book.title}`}>
-            <div className="table-cell align-middle w-20 h-auto">
-              <Image
-                src={book.cover}
-                alt={book.title}
-                width={0}
-                height={0}
-                sizes="100vw"
-                className="w-20 h-auto aspect-[1/1.414]"
-              />
-            </div>
-            <div className="table-cell align-top px-2">
-              <Text fw={700} classNames={{ root: "hover:underline w-24 md:w-52 lg:w-80 break-words"}} lineClamp={2}>{book.title}</Text>
-              <Text size="sm">฿ {book.price}</Text>
-            </div>
-          </Link>
+          <div className="table-cell align-middle w-20 h-auto">
+            <Image
+              src={book.cover}
+              alt={book.title}
+              width={0}
+              height={0}
+              sizes="100vw"
+              className="w-20 h-auto aspect-[1/1.414]"
+            />
+          </div>
+          <div className="table-cell align-top px-2">
+            <Text fw={700} classNames={{ root: "w-24 md:w-52 lg:w-80 break-words"}} lineClamp={2}>{book.title}</Text>
+            <Text size="sm">฿ {book.price}</Text>
+          </div>
           <div className="table-cell align-middle w-12">
             <Button onClick={() => removeFromCart(book.isbn)} leftSection={<IconTrash />} size="xs" variant="outline">Remove</Button>
           </div>

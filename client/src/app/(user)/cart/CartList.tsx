@@ -2,13 +2,14 @@ import CartItem from "./CartItem";
 import { BookCart } from "@/types/book";
 import { Text } from "@mantine/core";
 import { IconShoppingCartX } from "@tabler/icons-react";
+import { BASE_URL } from "@/utils";
 
 interface CartListProps {
   userId: string
 }
 
 async function getCartList(userId: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart/${userId}`, {
+  const res = await fetch(`${BASE_URL}/api/cart/${userId}`, {
     cache: "no-store"
   });
 
