@@ -51,28 +51,36 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
     }
   }, [currentUserID])
 
-  const sended = async (confirm: string) => {
-    const { id, msg } = await JSON.parse(confirm)
-    console.log('sended', id, msg)
-    setMsgs((prev) => {
-      return [...prev, msg]
-    })
-  }
-  const receive = async (msg: message) => {
-    console.log('admin receive', msg)
-    setMsgs((prev) => [...prev, msg])
-  }
   useEffect(() => {
-    socket?.connect()
     if (socket) {
-      socket?.on('sended', sended)
-      socket?.on('receive-message', receive)
+      const sended = async (confirm: string) => {
+        const { id, msg } = await JSON.parse(confirm)
+        console.log('sended', id, msg)
+
+        setMsgs((prev) => {
+          return [...prev, msg]
+        })
+      }
+
+      const receive = (msg: message) => {
+        console.log('admin receive', msg)
+
+        // if (
+        //   msg.sender != currentUserID &&
+        //   msg.receiver == session.data?.user.id
+        // ) {
+        setMsgs((prev) => [...prev, msg])
+        // }
+      }
+
+      socket.on('receive-message', receive)
+      socket.on('sended', sended)
+      return () => {
+        socket.off('receive-message', receive)
+        socket.off('sended', sended)
+      }
     }
-    return () => {
-      socket?.off('sended', sended)
-      socket?.off('receive-message', receive)
-    }
-  }, [socket])
+  }, [currentUserID, session.data?.user.id, socket])
 
   // useEffect(() => {
   //   console.log(users)
