@@ -56,16 +56,16 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
 
       const receive = (msg: message) => {
         console.log('admin receive', msg)
-        if (msg.receiver == session.data?.user.id) {
-          setMsgs((prev) => [...prev, msg])
-        }
+        // if (msg.receiver == session.data?.user.id) {
+        setMsgs((prev) => [...prev, msg])
+        // }
       }
 
       socket.on('receive-message', receive)
       socket.on('sended', sended)
       return () => {
         socket.off('receive-message', receive)
-        socket.on('sended', sended)
+        socket.off('sended', sended)
       }
     }
   }, [session.data?.user.id, socket])
@@ -94,7 +94,12 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
         <div className="flex flex-col p-3 w-[100%] gap-3 h-full overflow-y-scroll bg-gray-300">
           {!loading ? (
             msgs?.map((msg, index) => {
-              return <ChatChip key={index} reverse message={msg} />
+              if (
+                msg.sender == session.data?.user.id ||
+                msg.sender == currentUser
+              ) {
+                return <ChatChip key={index} reverse message={msg} />
+              }
             })
           ) : (
             <Loader color="blue" className="m-auto" />
