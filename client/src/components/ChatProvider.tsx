@@ -35,6 +35,7 @@ export default function ChatProvider({
         },
       ).then((data) => data.json())
       console.log('connected to socket with sessionId', res)
+      console.log('connected to socket???', socketRef.current?.connected)
     }
     const receive = (msg: message) => {
       console.log('notify receive', msg)

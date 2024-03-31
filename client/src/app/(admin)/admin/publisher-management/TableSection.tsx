@@ -1,6 +1,5 @@
 
 import { PublisherResponse } from "@/types/publisher";
-import { BASE_URL } from "@/utils";
 import { Button, Table, TableTbody, TableTd, TableTh, TableThead, TableTr } from "@mantine/core";
 import Link from "next/link";
 
@@ -13,7 +12,7 @@ interface TableSectionProps {
 async function getPublisher(take: number, page: number, search: string): Promise<{ publishers: PublisherResponse[] }> {
   const searchParams = new URLSearchParams({ take: take.toString(), page: page.toString(), search });
   
-  const res = await fetch(`${BASE_URL}/api/admin/publisher-management?` + searchParams, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/publisher-management?` + searchParams, {
     cache: "no-store"
   });
   const data = await res.json();

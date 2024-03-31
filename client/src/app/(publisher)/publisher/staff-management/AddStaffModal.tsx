@@ -1,6 +1,5 @@
 "use client";
 
-import { BASE_URL } from "@/utils";
 import { Button, Modal, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -47,7 +46,7 @@ export default function AddStaffModal({ publisherName }: AddStaffModalProps) {
     
     setIsLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}/api/publisher/${publisherName}/staff-management`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/staff-management`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

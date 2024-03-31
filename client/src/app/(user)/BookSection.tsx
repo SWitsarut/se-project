@@ -1,10 +1,9 @@
 import BookItem from "@/components/BookItem";
 import { BookResponse } from "@/types/book";
-import { BASE_URL } from "@/utils";
 
 async function getNewBooks(): Promise<BookResponse[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/book`, {
-    cache: "no-store"
+    cache: "no-store",
   })
 
   const data = await res.json()

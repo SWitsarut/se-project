@@ -2,7 +2,7 @@
 
 import { Connection } from '@/components/ChatProvider'
 
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import ChatChip from './ChatChip'
 import { Button, TextInput } from '@mantine/core'
 import { IconSend } from '@tabler/icons-react'
@@ -133,7 +133,7 @@ export default function ChatBar({
               </div>
               <form
                 onSubmit={(e) => {
-                  if (!isConnected) {
+                  if (!socket?.connected) {
                     socket?.connect()
                   }
                   e.preventDefault()

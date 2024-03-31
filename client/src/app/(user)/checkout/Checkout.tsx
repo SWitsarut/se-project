@@ -6,9 +6,9 @@ import { StripeElementsOptions, loadStripe } from "@stripe/stripe-js";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BookCart } from "@/types/book";
-import { BASE_URL } from "@/utils";
 import { Loader, Text } from "@mantine/core";
 import Image from "next/image";
+import Link from "next/link";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_TEST_STRIPE_PUBLISHABLE_KEY!);
 
@@ -31,7 +31,7 @@ export default function Checkout() {
   useEffect(() => {
     const fetchPaymentIntentId = async () => {
       const searchParams = new URLSearchParams({ "payment-intent-id": paymentIntentId});
-      const res = await fetch(`${BASE_URL}/api/payment-intent?` + searchParams.toString());
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/payment-intent?` + searchParams.toString());
 
       if(res.status == 404) {
         router.push("/");
@@ -75,7 +75,7 @@ export default function Checkout() {
               </div>
               {selectedItem.map((data) => (
                 <div key={data.isbn} className="py-4 flex justify-between border-b">
-                  <div className="flex gap-2">
+                  <Link href={`/book/${data.title}`} target="_blank" className="flex gap-2">
                     <Image
                       className="w-20 h-auto aspect-[1/1.414]"
                       src={data.cover}
@@ -84,8 +84,8 @@ export default function Checkout() {
                       height={0}
                       sizes="100vw"
                     />
-                    <Text c={"dark"} fw={600}>{data.title}</Text>
-                  </div>
+                    <Text className="hover:underline" c={"dark"} fw={600}>{data.title}</Text>
+                  </Link>
                   <Text c={"dark"} fw={600}>{data.price} ฿</Text>
                 </div>
               ))}
