@@ -28,6 +28,57 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
       alignment: 'start',
     })
   }, [msgs, scrollIntoView])
+  // useEffect(() => {
+  //   const getmsg = async () => {
+  //     setLoading(true)
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_URL}/api/chat/getmsgs`,
+  //       {
+  //         method: 'POST',
+  //         body: JSON.stringify({
+  //           user: currentUser,
+  //         }),
+  //       },
+  //     )
+  //     const msgs: message[] = await response.json()
+  //     console.log(msgs)
+  //     setMsgs(msgs)
+  //     setLoading(false)
+  //   }
+  //   if (currentUser !== '') {
+  //     getmsg()
+  //   }
+  // }, [currentUser])
+
+  useEffect(() => {
+    if (socket) {
+      const sended = async (confirm: string) => {
+        const { id, msg } = await JSON.parse(confirm)
+        console.log('sended', id, msg)
+        setMsgs((prev) => {
+          return [...prev, msg]
+        })
+      }
+
+      const receive = (msg: message) => {
+        console.log('admin receive', msg)
+        if (msg.receiver == session.data?.user.id) {
+          setMsgs((prev) => [...prev, msg])
+        }
+      }
+
+      socket.on('receive-message', receive)
+      socket.on('sended', sended)
+      return () => {
+        socket.off('receive-message', receive)
+        socket.off('sended', sended)
+      }
+    }
+  }, [session.data?.user.id, socket])
+
+  // useEffect(() => {
+  //   console.log(users)
+  // }, [users])
 
   useEffect(() => {
     const getmsg = async () => {
@@ -51,36 +102,31 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
     }
   }, [currentUserID])
 
-  useEffect(() => {
-    if (socket) {
-      const sended = async (confirm: string) => {
-        const { id, msg } = await JSON.parse(confirm)
-        console.log('sended', id, msg)
+  // useEffect(() => {
+  //   if (socket) {
+  //     const sended = async (confirm: string) => {
+  //       const { id, msg } = await JSON.parse(confirm)
+  //       console.log('sended', id, msg)
+  //       setMsgs((prev) => {
+  //         return [...prev, msg]
+  //       })
+  //     }
 
-        setMsgs((prev) => {
-          return [...prev, msg]
-        })
-      }
+  //     const receive = (msg: message) => {
+  //       console.log('admin receive', msg)
+  //       if (msg.receiver == session.data?.user.id) {
+  //         setMsgs((prev) => [...prev, msg])
+  //       }
+  //     }
 
-      const receive = (msg: message) => {
-        console.log('admin receive', msg)
-
-        // if (
-        //   msg.sender != currentUserID &&
-        //   msg.receiver == session.data?.user.id
-        // ) {
-        setMsgs((prev) => [...prev, msg])
-        // }
-      }
-
-      socket.on('receive-message', receive)
-      socket.on('sended', sended)
-      return () => {
-        socket.off('receive-message', receive)
-        socket.off('sended', sended)
-      }
-    }
-  }, [currentUserID, session.data?.user.id, socket])
+  //     socket.on('receive-message', receive)
+  //     socket.on('sended', sended)
+  //     return () => {
+  //       socket.off('receive-message', receive)
+  //       socket.off('sended', sended)
+  //     }
+  //   }
+  // }, [session.data?.user.id, socket])
 
   // useEffect(() => {
   //   console.log(users)
