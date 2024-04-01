@@ -3,7 +3,6 @@
 import { Button } from "@mantine/core";
 import { IconHeartPlus, IconHeartFilled } from "@tabler/icons-react"
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 interface WishlistButton {

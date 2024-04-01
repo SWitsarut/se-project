@@ -7,7 +7,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import chalk from "chalk";
 import apiTracker from "./middle ware/apiTracker";
-import { Message } from "./type/Message";
+import { MessageData, UserInfo } from "./type/Message";
 
 dotenv.config();
 const app = express();
@@ -32,17 +32,26 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-	console.log("New socket connected " + socket.id);
+	const userAuth: UserInfo = socket.handshake.auth.userInfo;
 
-	socket.on("message", (msg: Message) => {
-		console.log("receive from", msg);
+	console.log("New socket connected ", socket.id, "with", userAuth);
 
-		io.to(msg.receiver).emit("receive-message", msg);
+	if(userAuth.role !== "ADMIN") {
+		socket.join(`admin${userAuth.id}`);
+	} else {
+		socket.join("admin");
+	}
+
+	socket.on("message", (messageData: MessageData) => {
+		if(messageData.receiverId) {
+			socket.to(`admin${messageData.receiverId}`).emit("receive-message", messageData);
+			return;
+		} else {
+			socket.to("admin").emit("receive-message", messageData);
+			return;
+		}
 	});
 
-	socket.on("join", (rooms: string[]) => {
-		socket.join(rooms);
-	});
 	socket.on("disconnect", (reason: DisconnectReason, description: any) => {
 		console.log(reason);
 	});

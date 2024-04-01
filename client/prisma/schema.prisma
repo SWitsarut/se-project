@@ -26,11 +26,25 @@ model User {
   cart             CartItem[]
   wishlists        Wishlist[]
   report           Report[]
+  sender           ChatMessage[]   @relation("ChatSender")
+  receiver         ChatMessage[]   @relation("ChatReceiver")
   order            Order[]
   comment          Comment[]
 
   @@index([username, email])
   @@map("user")
+}
+
+model ChatMessage {
+  id         Int      @id @default(autoincrement())
+  sender     User     @relation(name: "ChatSender", fields: [senderId], references: [id])
+  senderId   String
+  receiver   User?     @relation(name: "ChatReceiver", fields: [receiverId], references: [id])
+  receiverId String?
+  content    String
+  timeStamp  DateTime @default(now())
+
+  @@map("message")
 }
 
 model VerificationToken {

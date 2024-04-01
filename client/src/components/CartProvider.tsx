@@ -40,8 +40,11 @@ export const CartProvider = ({ children } : CartProviderProps) => {
   }, []);
 
   const disableAddToCart = useCallback((isbn: string): boolean => {
-    const existingBook = cart.findIndex((item) => item === isbn);
-    return existingBook !== -1;
+    if(cart.length > 0) {
+      const existingBook = cart.findIndex((item) => item === isbn);
+      return existingBook !== -1;
+    }
+    return false;
   }, [cart])
 
   const addToCart = useCallback(async (isbn: string) => {
