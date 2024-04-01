@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Button, TextInput } from "@mantine/core";
 import { useSocket } from "../SocketProvider";
-import { BASE_URL } from "@/utils";
 import { MessageData } from "@/types/message";
 
 interface MessageInputProps {
@@ -20,7 +19,7 @@ export default function MessageInput({ senderId, handleSubmit }: MessageInputPro
     e.preventDefault();
     setIsLoading(true);
     if(socket) {
-      const res = await fetch(`${BASE_URL}/api/chat`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -38,7 +37,7 @@ export default function MessageInput({ senderId, handleSubmit }: MessageInputPro
   }
 
   return (
-    <form onSubmit={sendMessage}>
+    <form className="flex gap-2 p-2" onSubmit={sendMessage}>
       <TextInput value={message} onChange={(e) => setMessage(e.target.value)}/>
       <Button loading={isLoading} type="submit">Send</Button>
     </form>

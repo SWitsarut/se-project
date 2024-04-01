@@ -7,5 +7,3 @@ export const formatDate = (date: Date) => {
   
   return formattedDate;
 }
-
-export const BASE_URL = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";

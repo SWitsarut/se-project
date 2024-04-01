@@ -2,29 +2,33 @@
 
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
-import { BASE_URL } from "@/utils";
 import { useSocket } from "../SocketProvider";
 import MessageInput from "./MessageInput";
 import MessageContent from "./MessageContent";
-import { MessageData } from "@/types/message";
+import { ChatHistoryData, MessageData } from "@/types/message";
 import { notifications } from "@mantine/notifications";
+import { Loader, Text } from "@mantine/core";
 
 export default function Chat() {
   const { data: session, status } = useSession();
   const { sendMessage, socket } = useSocket();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [messages, setMessages] = useState<ChatHistoryData[]>([]);
   
   const fetchMessages = useCallback(async () => {
-    const res = await fetch(`${BASE_URL}/api/chat/${session?.user.id}`);
-    const data = await res.json();
-    setMessages(data);
+    if(session) {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/chat/${session.user.id}`);
+      const data = await res.json();
+      setMessages(data);
+      console.log(data)
+    }
   }, [session]);
 
   const handleSubmit = useCallback(async (messageData: MessageData) => {
-    if(session) {
-      sendMessage({ content: messageData.content, senderId: messageData.senderId });
-      fetchMessages(); 
+    if(session && socket) {
+      socket.emit("message", messageData);
+      fetchMessages();
     }
   }, [session, sendMessage, fetchMessages])
 
@@ -46,21 +50,35 @@ export default function Chat() {
   }, [isOpen, session, socket, fetchMessages])
 
   useEffect(() => {
-    fetchMessages();
-  }, [fetchMessages])
+    if(isOpen) {
+      setIsLoading(true);
+      fetchMessages().then(() => setIsLoading(false));
+    }
+  }, [fetchMessages, isOpen])
 
   return (
     <>
-      {status !== "loading" && status !== "unauthenticated" && session && (
-        <div className="fixed bottom-0 right-10 border p-6">
-          <div onClick={() => setIsOpen((prevState) => !prevState)}>
-            Chat with admin
+      {status !== "loading" && status !== "unauthenticated" && session && session.user.role !== "ADMIN" && (
+        <div className="fixed bottom-0 right-10 border w-72 roun">
+          <div
+            onClick={() => setIsOpen((prevState) => !prevState)}
+            className="bg-primary text-white px-6 py-4 w-full"
+          >
+            <Text size="sm" fw={500}>
+              Chat with admin
+            </Text>
           </div>
           {isOpen && (
-            <>
-              <MessageContent userId={session.user.id} messages={messages}/>
+            <div className="flex flex-col gap-2 w-full relative break-words bg-white">
+              {isLoading ? (
+                <div className="flex p-4 justify-center">
+                  <Loader />
+                </div>
+              ) : (
+                <MessageContent userId={session.user.id} messages={messages}/>
+              )}
               <MessageInput handleSubmit={handleSubmit} senderId={session.user.id}/>
-            </>
+            </div>
           )}
         </div>
       )}

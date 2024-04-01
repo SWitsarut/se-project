@@ -7,6 +7,8 @@ import { usePathname } from "next/navigation";
 import { IconHome, IconLogout } from "@tabler/icons-react";
 import { signOut, useSession } from "next-auth/react";
 import { adminMenu, publisherMenu } from "@/utils/menu";
+import Image from "next/image";
+import Logo from "../../public/logo.png";
 
 export default function Sidebar({
   children,
@@ -26,7 +28,9 @@ export default function Sidebar({
       <AppShell.Header>
         <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-          <Link href="/" className="text-xl font-bold">Logo | {session?.user.role === "ADMIN" ? "Admin" : "Publisher"}</Link>
+          <Link href="/" className="flex items-center">
+            <Image className="w-[140px] h-[40px] lg:w-[200px] lg:h-[55px]" src={Logo} alt="logo" />
+          </Link>
         </Group>
       </AppShell.Header>
       <AppShell.Navbar className="gap-6 h-full" p="md">

@@ -1,9 +1,9 @@
 "use client";
 
 import { useSocket } from '@/components/SocketProvider';
-import { BASE_URL } from '@/utils';
 import { Button, TextInput } from '@mantine/core';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface MessageInputProps {
   senderId: string
@@ -18,25 +18,24 @@ export default function MessageInput({ senderId, receiverId }: MessageInputProps
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true);
-    const res = await fetch(`${BASE_URL}/api/chat`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ content, senderId, receiverId  })
-    })
-
+    });
+    
     const data = await res.json();
-    console.log(data);
 
-    sendMessage({ content, senderId });
+    sendMessage({ content, senderId, receiverId});
     setContent("");
     setIsLoading(false);
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <TextInput value={content} onChange={(e) => setContent(e.currentTarget.value)}/>
+    <form className="flex gap-2" onSubmit={handleSubmit}>
+      <TextInput classNames={{ root: "w-full" }} value={content} onChange={(e) => setContent(e.currentTarget.value)}/>
       <Button loading={isLoading} type='submit'>Send</Button>
     </form>
   )

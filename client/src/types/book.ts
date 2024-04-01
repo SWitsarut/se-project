@@ -36,14 +36,34 @@ export interface BookCart {
   price: number
 }
 
-export interface BookFavorite {
+export interface BookWislist {
   isbn: string
   title: string
   cover: string
   price: number
 }
 
-export type BookResponse = {
+export interface BookItemType {
+  isbn: string
+  title: string
+  cover: string
+  price: number
+  authors: string[]
+  category: string
+  publisher: string
+}
+
+export interface BookShelfType {
+  isbn: string
+  title: string
+  cover: string
+  category: string
+  pdfUrl: string
+  publisher: string
+  authors: string[]
+}
+
+export interface BookResponse {
   isbn: string
   title: string
   price: number

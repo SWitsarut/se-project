@@ -1,31 +1,9 @@
-import prisma from '@/libs/prisma'
-import Link from 'next/link';
-import React from 'react'
-
-export default async function page() {
-  const users = await prisma.user.findMany({
-    where: {
-      role: "USER",
-    },
-    include: {
-      _count: { select: {
-        sender: true
-      } }
-    }
-  });
-
-  const filteredUsers = users.filter((user) => user._count.sender > 0);
-
+export default async function AdminChatPage() {
   return (
-    <div>
-      <h1>Chat</h1>
-      <ul>
-        {filteredUsers.map((user) => (
-          <li key={user.id}>
-            <Link href={`/admin/chat/${user.id}`}>{user.displayName}</Link>
-          </li>
-        ))}
-      </ul>
-    </div>    
+    <div className="flex items-center justify-center w-full h-full">
+      <div className="prose">
+        <h1>Chat With User</h1>
+      </div>
+    </div>
   )
 }

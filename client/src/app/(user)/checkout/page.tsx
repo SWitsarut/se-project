@@ -10,6 +10,12 @@ export default async function CheckoutPage() {
   }
 
   return (
-    <Checkout />
+    <>
+      <div className="prose w-full max-w-4xl mx-auto text-center my-8">
+        <h1>Checkout</h1>
+      </div>
+
+      <Checkout />
+    </>
   )
 }
