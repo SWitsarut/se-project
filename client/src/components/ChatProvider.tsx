@@ -3,6 +3,7 @@ import { message } from '@/types/message'
 import { Notification } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import React, { createContext, use, useEffect, useRef, useState } from 'react'
 import { Socket, io } from 'socket.io-client'
 
@@ -21,6 +22,8 @@ export default function ChatProvider({
       userinfo: session.data,
     },
   })
+  const router = useRouter()
+
   useEffect(() => {
     const onConnect = async () => {
       const res = await fetch(
@@ -41,6 +44,10 @@ export default function ChatProvider({
         title: msg.senderData?.displayName,
         message: msg.content,
         autoClose: 2500,
+        onClick:()=>{
+          console.log(`/admin/chat?user=${msg.sender}`)
+          router.push(`/admin/chat?user=${msg.sender}`)
+        }
       })
     }
     if (session.data?.user.role == 'ADMIN') {

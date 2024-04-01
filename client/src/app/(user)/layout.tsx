@@ -49,7 +49,7 @@ export default async function MainLayout({
     <>
       <Navbar />
       <div className="py-16 px-0 md:px-24">{children}</div>
-      {session?.user.role == 'USER' ? (
+      {session?.user.role == 'USER' || session?.user.role == 'PUBLISHER' ? (
         <ChatBar initmsg={initmsg} target={admin.id} />
       ) : null}
     </>

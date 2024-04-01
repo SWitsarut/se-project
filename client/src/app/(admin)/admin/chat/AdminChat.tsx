@@ -9,11 +9,17 @@ import ChatChip from '@/app/(user)/_components/ChatChip'
 import { IconSend } from '@tabler/icons-react'
 import { useSession } from 'next-auth/react'
 import { useScrollIntoView } from '@mantine/hooks'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 export default function AdminChat({ users }: { users: AdminMsg[] }) {
   const socket = useContext(Connection)
   const session = useSession()
-  const [currentUser, setCurrentUser] = useState<string>('')
+
+  const searchParams = useSearchParams()
+
+  const [currentUser, setCurrentUser] = useState<string>(
+    searchParams.get('user')?.toString() || '',
+  )
   const [currentUserData, setCurrentUserData] = useState<AdminMsg | null>(null)
   const [msgs, setMsgs] = useState<message[] | []>([])
   const [text, setText] = useState<string>('')
@@ -22,6 +28,12 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
     HTMLDivElement,
     HTMLDivElement
   >()
+
+  // const [searchValue, setSearchValue] = useState(
+  //   searchParams.get('user')?.toString(),
+  // )
+  const pathname = usePathname()
+  const router = useRouter()
 
   useEffect(() => {
     scrollIntoView({
@@ -46,6 +58,14 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
       setMsgs(msgs)
       setLoading(false)
     }
+    const params = new URLSearchParams(searchParams)
+    if (currentUser) {
+      params.set('user', currentUser)
+    } else {
+      params.delete('user')
+    }
+    router.replace(`${pathname}?${params.toString()}`)
+
     if (currentUser !== '') {
       getmsg()
     }
