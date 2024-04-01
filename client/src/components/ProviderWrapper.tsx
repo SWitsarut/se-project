@@ -12,10 +12,8 @@ export default function ProviderWrapper({
   return (
     <EdgeStoreProvider>
       <MantineProvider theme={theme}>
-        <CartProvider>
-          <Notifications />
-          {children}
-        </CartProvider>
+        <Notifications />
+        {children}
       </MantineProvider>
     </EdgeStoreProvider>
   );

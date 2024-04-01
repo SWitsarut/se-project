@@ -5,6 +5,7 @@ import {
   IconLayoutDashboard,
   IconUser,
   IconUserCircle,
+  IconHeart,
 } from "@tabler/icons-react";
 
 export const adminMenu = [
@@ -23,4 +24,5 @@ export const publisherMenu = [
 export const userMenu = [
   { label: "Profile", link: "/my-profile", icon: IconUserCircle },
   { label: "Bookshelf", link: "/my-bookshelf", icon: IconBooks },
+  { label: "Wishlists", link: "/my-wishlists", icon: IconHeart },
 ];

@@ -1,7 +1,8 @@
 import { getCurrentSession } from "@/libs/getCurrentSession";
-import { BookWislist } from "@/types/book";
+import { BookItemType } from "@/types/book";
 import { NextResponse } from "next/server";
 import prisma from "@/libs/prisma";
+import { revalidatePath } from "next/cache";
 
 export const GET = async (req: Request, { params: { userId } }: { params: { userId: string } }) => {
   try {
@@ -19,23 +20,25 @@ export const GET = async (req: Request, { params: { userId } }: { params: { user
       where: {
         userId,
       },
-      select: {
+      include: {
         book: {
-          select: {
-            isbn: true,
-            title: true,
-            cover: true,
-            price: true,
+          include: {
+            authors: true,
+            category: true,
+            publisher: true
           }
         }
       }
     })
 
-    const wishlists: BookWislist[] = result.map((wishlist) => ({
+    const wishlists: BookItemType[] = result.map((wishlist) => ({
       isbn: wishlist.book.isbn,
       title: wishlist.book.title,
       cover: wishlist.book.cover,
-      price: wishlist.book.price
+      price: wishlist.book.price,
+      authors: wishlist.book.authors.map((author) => author.authorName),
+      category: wishlist.book.category.categoryName,
+      publisher: wishlist.book.publisher.publisherName
     }));
 
     return NextResponse.json(wishlists, { status: 200 });
@@ -72,6 +75,19 @@ export const POST = async (req: Request, { params: { userId } }: { params: { use
       }
     })
 
+    const existingInLibrary  = await prisma.bookOwnership.findUnique({
+      where: {
+        userId_bookIsbn: {
+          userId,
+          bookIsbn: isbn
+        }
+      }
+    });
+
+    if(existingInLibrary) {
+      return NextResponse.json({ error: "This book is already in your library" }, { status: 400 });
+    }
+
     if (existingInWishlit) {
       await prisma.wishlist.delete({
         where: {
@@ -81,6 +97,7 @@ export const POST = async (req: Request, { params: { userId } }: { params: { use
           }
         }
       })
+      revalidatePath("/my-wishlists");
       return NextResponse.json({ message: "Remove from wishlist successful" }, { status: 200 });
     }
 
@@ -91,48 +108,11 @@ export const POST = async (req: Request, { params: { userId } }: { params: { use
       }
     });
 
+    revalidatePath("/my-wishlists");
+
     return NextResponse.json({ message: "Add to wishlist successful" }, { status: 200 });
   } catch (error) {
     console.log("Error at /api/wishlist/[userId] POST", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-  }
-}
-
-export const DELETE = async (req: Request, { params: { userId } }: { params: { userId: string } }) => {
-  const session = await getCurrentSession();
-  
-  if(!session || session.user.id !== userId) {
-    return NextResponse.json({ error: "Forbidden" } ,{ status: 403 });
-  }
-  
-  const { isbn } = await req.json();
-
-  try {
-    const existingInFavorite = await prisma.wishlist.findUnique({
-      where: {
-        userId_bookIsbn: {
-          userId: userId,
-          bookIsbn: isbn
-        }
-      }
-    })
-
-    if (!existingInFavorite) {
-      return NextResponse.json({ error: "This book is not existing in cart" }, { status: 400 });
-    }
-
-    await prisma.wishlist.delete({
-      where: {
-        userId_bookIsbn: {
-          userId,
-          bookIsbn: isbn,
-        }
-      }
-    })
-
-    return NextResponse.json({ message: "Remove from wishlist successful" });
-  } catch (error) {
-    console.log("Error at /api/wishlist/[userId]", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

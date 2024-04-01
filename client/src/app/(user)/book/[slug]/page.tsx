@@ -4,6 +4,8 @@ import { BookResponse } from "@/types/book";
 import { Badge, Button, Rating, Text } from "@mantine/core";
 import { notFound } from "next/navigation";
 import FavoriteButton from "./WishlistButton";
+import { getCurrentSession } from "@/libs/getCurrentSession";
+import Link from "next/link";
 
 async function getBookData(slug: string): Promise<BookResponse> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/book/${slug}`, {
@@ -22,6 +24,14 @@ async function getBookData(slug: string): Promise<BookResponse> {
   return data;
 }
 
+const checkIsOwned = async (slug: string, userId?: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/book/${slug}/${userId}`, {
+    cache: "no-store",
+  });
+
+  return res.json();
+}
+
 export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
   return {
     title: `${decodeURIComponent(slug)}`,
@@ -33,7 +43,10 @@ export default async function BookPage({
 }: {
   params: { slug: string };
 }) {
+  const session = await getCurrentSession();
+
   const book = await getBookData(slug);
+  const isOwned = await checkIsOwned(slug, session?.user.id);
   return (
     <div className="flex flex-col gap-16 px-4 w-full max-w-7xl mx-auto">
       <div className="prose mx-auto">
@@ -51,7 +64,7 @@ export default async function BookPage({
             className="w-72 h-full aspect-[1/1.414] shadow-2xl border"
           />
         </div>
-        <div className="w-full flex flex-col gap-8 border md:max-w-sm">
+        <div className="w-full flex flex-col gap-8 md:max-w-sm">
           <div className="flex flex-col gap-1">
             <Text fw={700}>author: <Text span>{book.authors.map((author) => author).join(" , ")}</Text></Text>
             <Text fw={700}>publisher: <Text span>{book.publisher}</Text></Text>
@@ -59,8 +72,17 @@ export default async function BookPage({
           </div>
           <div className="flex flex-col gap-4">
             <div className="flex gap-4 items-center mx-auto">
-              <Button variant="outline" size="compact-lg" radius="xl">Preview</Button>
-              <AddToCartButton isbn={book.isbn} price={book.price} />
+              {isOwned ? (
+                <Link href={`/book/${slug}/read`}>
+                  <Button variant="filled" size="lg" radius="xl">read</Button>
+                </Link>
+              ) : (
+                <>
+                  <Button variant="outline" size="compact-lg" radius="xl">Preview</Button>
+                  <AddToCartButton isbn={book.isbn} price={book.price} />
+                </>
+              )}
+
             </div>
             <div className="flex flex-col gap-4">
               <Rating size="md" className="mx-auto" readOnly />

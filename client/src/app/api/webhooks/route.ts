@@ -43,6 +43,15 @@ export const POST = async (req: Request) => {
               }
             })
 
+            await prisma.wishlist.deleteMany({
+              where: {
+                userId: userOrder.order[0].userId,
+                bookIsbn: {
+                  in: userOrder.order.map((book) => book.bookIsbn)
+                }
+              }
+            });
+
             await Promise.all(userOrder.order.map(async (order) => {
               await prisma.bookOwnership.create({
                 data: {
