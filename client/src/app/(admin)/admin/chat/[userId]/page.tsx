@@ -34,11 +34,14 @@ export default async function page({ params: { userId } }: AdminChatPageProps) {
         {messages.map((message, index) => (
           <Fragment key={index}>
             <div className={`flex gap-1 flex-col max-w-[50%] ${message.sender.id === userId ? "self-start" : "self-end"}`}>
-              <div className={`flex items-center ${message.sender.id === userId ? "justify-start" : "justify-end"}`}>
-                <Avatar size="md" src={null} alt="sender" />
-                <Text size="xs">{message.sender.displayName}</Text>
+              <div className={`flex items-center gap-1 ${message.sender.id === userId ? "justify-start" : "justify-end flex-row-reverse"}`}>
+                <div className={`flex items-center gap-1 ${message.sender.id === userId ? null : "flex-row-reverse"}`}>
+                  <Avatar size="md" src={null} alt="sender" />
+                  <Text size="xs">{message.sender.displayName}</Text>
+                </div>
+                <Text c="dimmed" classNames={{ root: "text-[10px]" }}>{new Date(message.timeStamp).toLocaleTimeString()}</Text>
               </div>
-              <div className={`break-words text-wrap border p-2 rounded-lg w-fit self-end ${message.sender.id === userId ? "bg-white text-black" : "bg-primary text-white"}`}>
+              <div className={`break-words text-wrap border p-2 rounded-lg w-fit ${message.sender.id === userId ? "bg-white text-black self-start" : "bg-primary text-white self-end"}`}>
                 <Text>{message.content}</Text>
               </div>
             </div>
