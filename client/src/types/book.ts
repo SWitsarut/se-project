@@ -36,13 +36,6 @@ export interface BookCart {
   price: number
 }
 
-export interface BookWislist {
-  isbn: string
-  title: string
-  cover: string
-  price: number
-}
-
 export interface BookItemType {
   isbn: string
   title: string
@@ -51,6 +44,8 @@ export interface BookItemType {
   authors: string[]
   category: string
   publisher: string
+  rating: number
+  ratingCount: number
 }
 
 export interface BookShelfType {
@@ -76,4 +71,21 @@ export interface BookResponse {
   genres: string[]
   authors: string[]
   createdAt: string
+  rating: number
+}
+
+export interface CommentType {
+  content: string
+  rating: number
+  user: {
+    id: string
+    username: string
+    displayName: string
+    avatar: string | null
+  }
+  createdAt: Date
+}
+
+export interface BookResponseWithComments extends BookResponse {
+  comments: CommentType[]
 }

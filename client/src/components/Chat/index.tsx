@@ -21,7 +21,6 @@ export default function Chat() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/chat/${session.user.id}`);
       const data = await res.json();
       setMessages(data);
-      console.log(data)
     }
   }, [session]);
 

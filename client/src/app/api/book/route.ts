@@ -12,11 +12,12 @@ export const GET = async (req: Request) => {
         category: true,
         genres: true,
         authors: true,
+        comment: true
       },
       take: 6,
       orderBy: {
         createdAt: "desc"
-      }
+      },
     });
 
     const newBooks: BookItemType[] = result.map((book) => ({
@@ -27,7 +28,9 @@ export const GET = async (req: Request) => {
       description: book.description,
       authors: book.authors.map((author) => author.authorName),
       category: book.category.categoryName,
-      publisher: book.publisher.publisherName
+      publisher: book.publisher.publisherName,
+      rating: book.comment.length > 0 ? book.comment.reduce((acc, cur) => acc + cur.rating, 0) / book.comment.length : 0,
+      ratingCount: book.comment.length,
     }))
 
     return NextResponse.json(newBooks, { status: 200 });

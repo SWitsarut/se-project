@@ -49,8 +49,8 @@ export default function BookItem({ book }: BookItemProps) {
           </div>
           <div className="w-full flex justify-between gap-4">
             <div>
-              <Rating readOnly value={5} size="xs"/>
-              <Text size="xs">Rating Count</Text>
+              <Rating readOnly value={book.rating} fractions={2} size="xs"/>
+              <Text size="xs">{book.ratingCount > 0 ? `${book.ratingCount} Rating` : `No Rating` }</Text>
             </div>
             <Button
               disabled={disableAddToCart(book.isbn)}

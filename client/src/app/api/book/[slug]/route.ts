@@ -1,5 +1,5 @@
 import prisma from "@/libs/prisma";
-import { BookResponse } from "@/types/book";
+import { BookResponseWithComments } from "@/types/book";
 import { formatDate } from "@/utils";
 import { NextResponse } from "next/server";
 
@@ -15,14 +15,19 @@ export const GET = async (req: Request, { params: { slug }}: { params: { slug: s
         authors: true,
         category: true,
         publisher: true,
-      }
+        comment: {
+          include: {
+            user: true
+          }
+        },
+      },
     });
 
     if(!result) {
       return NextResponse.json({ error: "Not found book" }, { status: 404 });
     }
 
-    const book:BookResponse = {
+    const book: BookResponseWithComments = {
       isbn: result.isbn,
       title: result.title,
       price: result.price,
@@ -34,7 +39,19 @@ export const GET = async (req: Request, { params: { slug }}: { params: { slug: s
       authors: result.authors.map((author) => author.authorName),
       category: result.category.categoryName,
       createdAt: formatDate(result.createdAt),
-      publisher: result.publisher.publisherName
+      publisher: result.publisher.publisherName,
+      comments: result.comment.map((comment) => ({
+        content: comment.content,
+        rating: comment.rating,
+        user: {
+          id: comment.user.id,
+          username: comment.user.username,
+          displayName: comment.user.displayName,
+          avatar: comment.user.avatar || null,
+        },
+        createdAt: comment.createdAt,
+      })),
+      rating: result.comment.length > 0 ? result.comment.reduce((acc, cur) => acc + cur.rating, 0) / result.comment.length : 0,
     }
 
     return NextResponse.json(book, { status: 200 });

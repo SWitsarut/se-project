@@ -7,13 +7,13 @@ import { useCallback, useEffect, useState } from "react";
 
 interface WishlistButton {
   isbn: string
+  isOwned: boolean
 }
 
-export default function WishlistButton({ isbn }: WishlistButton) {
+export default function WishlistButton({ isbn, isOwned }: WishlistButton) {
   const { data: session} = useSession();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isInWishlist, setIsInWishlist] = useState<boolean>(false);
-  const [isInLibrary, setIsInLibrary] = useState<boolean>(false);
 
   const handleWishlist = async () => {
     if(session) {
@@ -43,7 +43,6 @@ export default function WishlistButton({ isbn }: WishlistButton) {
       .then((res) => res.json())
       .then((data) => {
         setIsInWishlist(data.isInWishlist);
-        setIsInLibrary(data.isInLibrary);
       })
     }
   }, [isbn, session]);
@@ -54,7 +53,7 @@ export default function WishlistButton({ isbn }: WishlistButton) {
 
   return (
     <Button
-      disabled={isLoading || isInLibrary}
+      disabled={isLoading || isOwned}
       loading={isLoading}
       onClick={handleWishlist}
       radius="xl"

@@ -29,6 +29,7 @@ model User {
   sender           ChatMessage[]   @relation("ChatSender")
   receiver         ChatMessage[]   @relation("ChatReceiver")
   order            Order[]
+  comment          Comment[]
 
   @@index([username, email])
   @@map("user")
@@ -92,9 +93,24 @@ model Book {
   wishlist    Wishlist[]
   reports     Report[]
   order       Order[]         @relation(name: "OrderBook")
+  comment     Comment[]
 
   @@index([title])
   @@map("book")
+}
+
+model Comment {
+  user      User          @relation(fields: [userId], references: [id])
+  userId    String
+  book      Book          @relation(fields: [bookIsbn], references: [isbn])
+  bookIsbn  String
+  commenter      BookOwnership @relation(fields: [userId, bookIsbn], references: [userId, bookIsbn], onDelete: Cascade)
+  content   String
+  rating    Float
+  createdAt DateTime      @default(now())
+
+  @@id([userId, bookIsbn])
+  @@map("comment")
 }
 
 model CartItem {
@@ -118,11 +134,12 @@ model Wishlist {
 }
 
 model BookOwnership {
-  user      User     @relation(fields: [userId], references: [id])
-  book      Book     @relation(fields: [bookIsbn], references: [isbn])
+  user      User      @relation(fields: [userId], references: [id])
+  book      Book      @relation(fields: [bookIsbn], references: [isbn])
   userId    String
   bookIsbn  String
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  Comment   Comment[]
 
   @@id([userId, bookIsbn])
   @@map("book_ownership")

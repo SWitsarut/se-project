@@ -20,18 +20,9 @@ export const GET = async (req: Request, { params: { userId, isbn } }: { params: 
           bookIsbn: isbn
         }
       }
-    })
-
-    const isInLibrary = await prisma.bookOwnership.findUnique({
-      where: {
-        userId_bookIsbn: {
-          userId,
-          bookIsbn: isbn
-        }
-      }
     });
 
-    return NextResponse.json({ isInWishlist: isInWishlist ? true : false, isInLibrary: isInLibrary ? true : false }, { status: 200 });
+    return NextResponse.json({ isInWishlist: isInWishlist ? true : false }, { status: 200 });
   } catch (error) {
     console.log("Error at /api/wishlist/[userId]/[isbn]", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

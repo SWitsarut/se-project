@@ -10,17 +10,18 @@ interface MessageContentProps {
 }
 
 export default function MessageContent({ messages, userId }: MessageContentProps) {
-  console.log(messages)
   return (
     <div className={`flex flex-col-reverse gap-2 w-full h-96 relative overflow-y-auto p-2`}>
       {messages.map((message, index: number) => (
         <Fragment key={index}>
           <div className={`${message.sender.id === userId ? "self-end" : "self-start"} max-w-[70%]`}>
-            <div className="flex items-center justify-end">
-              <Avatar size="sm" src={null} alt="sender" />
-              <Text size="xs">{message.sender.id === userId ? "You" : "Admin" }</Text>
+            <div className={`flex items-center gap-2 ${message.sender.id === userId ? "flex-row-reverse" : "justify-start"}`}>
+              <div className={`flex items-center ${message.sender.id === userId ? "flex-row-reverse" : "justify-start"}`}>
+                <Avatar size="sm" src={message.sender.id === userId ? message.sender.avatar : null} alt={message.sender.username} />
+                <Text size="xs">{message.sender.id === userId ? "You" : "Admin" }</Text>
+              </div>
             </div>
-            <div className={`break-words text-wrap border p-2 rounded-lg ${message.sender.id === userId ? "bg-primary text-white" : "bg-white text-black" }`}>
+            <div className={`text-end break-words text-wrap border p-2 rounded-lg ${message.sender.id === userId ? "bg-primary text-white" : "bg-white text-black" }`}>
               <Text>{message.content}</Text>
             </div>
           </div>

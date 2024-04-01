@@ -17,6 +17,9 @@ export default function MessageInput({ senderId, handleSubmit }: MessageInputPro
 
   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if(!message) {
+      return;
+    }
     setIsLoading(true);
     if(socket) {
       const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/chat`, {
@@ -28,7 +31,6 @@ export default function MessageInput({ senderId, handleSubmit }: MessageInputPro
       })
   
       const data = await res.json();
-      console.log(data);
   
       handleSubmit({ content: message, senderId });
       setMessage("");

@@ -17,6 +17,10 @@ export default function MessageInput({ senderId, receiverId }: MessageInputProps
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if(!content) {
+      return;
+    }
+
     setIsLoading(true);
     const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/chat`, {
       method: "POST",

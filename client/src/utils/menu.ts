@@ -6,6 +6,7 @@ import {
   IconUser,
   IconUserCircle,
   IconHeart,
+  IconMessage,
 } from "@tabler/icons-react";
 
 export const adminMenu = [
@@ -13,6 +14,7 @@ export const adminMenu = [
   { label: "Book management", link: "/admin/book-management", icon: IconBook2 },
   { label: "User management", link: "/admin/user-management", icon: IconUser },
   { label: "Publisher management", link: "/admin/publisher-management", icon: IconCopyright },
+  { label: "Chat", link: "/admin/chat", icon: IconMessage },
 ];
 
 export const publisherMenu = [

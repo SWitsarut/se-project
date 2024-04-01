@@ -1,13 +1,21 @@
 import AddToCartButton from "./AddToCartButton";
 import Image from "next/image";
-import { BookResponse } from "@/types/book";
+import FavoriteButton from "./WishlistButton";
+import Link from "next/link";
+import ReviewInput from "./ReviewInput";
+import { BookResponseWithComments } from "@/types/book";
 import { Badge, Button, Rating, Text } from "@mantine/core";
 import { notFound } from "next/navigation";
-import FavoriteButton from "./WishlistButton";
 import { getCurrentSession } from "@/libs/getCurrentSession";
-import Link from "next/link";
+import CommentCard from "./CommentCard";
 
-async function getBookData(slug: string): Promise<BookResponse> {
+export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
+  return {
+    title: `${decodeURIComponent(slug)}`,
+  }
+}
+
+async function getBookData(slug: string): Promise<BookResponseWithComments> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/book/${slug}`, {
     cache: "no-store",
   })
@@ -25,17 +33,15 @@ async function getBookData(slug: string): Promise<BookResponse> {
 }
 
 const checkIsOwned = async (slug: string, userId?: string) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/book/${slug}/${userId}`, {
-    cache: "no-store",
-  });
-
-  return res.json();
-}
-
-export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
-  return {
-    title: `${decodeURIComponent(slug)}`,
+  if(userId) {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/book/${slug}/${userId}`, {
+      cache: "no-store",
+    });
+  
+    return res.json();
   }
+  
+  return false;
 }
 
 export default async function BookPage({
@@ -45,8 +51,8 @@ export default async function BookPage({
 }) {
   const session = await getCurrentSession();
 
-  const book = await getBookData(slug);
-  const isOwned = await checkIsOwned(slug, session?.user.id);
+  const [book, isOwned] = await Promise.all([getBookData(slug), checkIsOwned(slug, session?.user.id)]);
+
   return (
     <div className="flex flex-col gap-16 px-4 w-full max-w-7xl mx-auto">
       <div className="prose mx-auto">
@@ -82,12 +88,11 @@ export default async function BookPage({
                   <AddToCartButton isbn={book.isbn} price={book.price} />
                 </>
               )}
-
             </div>
             <div className="flex flex-col gap-4">
-              <Rating size="md" className="mx-auto" readOnly />
+              <Rating size="md" fractions={2} value={book.rating} className="mx-auto" readOnly />
               <div className="flex mx-auto">
-                <FavoriteButton isbn={book.isbn}/>
+                <FavoriteButton isbn={book.isbn} isOwned={isOwned}/>
               </div>
             </div>
           </div>
@@ -104,7 +109,15 @@ export default async function BookPage({
       </div>
 
       <div className="w-full whitespace-break-spaces">
-        {book.description}
+        <Text>{book.description}</Text>
+      </div>
+      
+      <ReviewInput existingReview={book.comments.some((comment) => comment.user.username === session?.user.username)} isOwned={isOwned} isbn={book.isbn} userId={session?.user.id} />
+      
+      <div className="flex flex-col gap-4">
+        {book.comments.map((comment) => (
+          <CommentCard key={comment.user.id} data={comment} />
+        ))}
       </div>
     </div>
   );

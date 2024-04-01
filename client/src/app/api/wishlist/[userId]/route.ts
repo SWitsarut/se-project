@@ -25,7 +25,8 @@ export const GET = async (req: Request, { params: { userId } }: { params: { user
           include: {
             authors: true,
             category: true,
-            publisher: true
+            publisher: true,
+            comment: true
           }
         }
       }
@@ -38,7 +39,9 @@ export const GET = async (req: Request, { params: { userId } }: { params: { user
       price: wishlist.book.price,
       authors: wishlist.book.authors.map((author) => author.authorName),
       category: wishlist.book.category.categoryName,
-      publisher: wishlist.book.publisher.publisherName
+      publisher: wishlist.book.publisher.publisherName,
+      rating: wishlist.book.comment.length > 0 ? wishlist.book.comment.reduce((acc, cur) => acc + cur.rating, 0) / wishlist.book.comment.length : 0,
+      ratingCount: wishlist.book.comment.length,
     }));
 
     return NextResponse.json(wishlists, { status: 200 });

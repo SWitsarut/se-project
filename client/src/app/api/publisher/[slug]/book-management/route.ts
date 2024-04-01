@@ -17,7 +17,8 @@ export const GET = async (req: Request, { params: { slug }}: { params: { slug: s
         publisher: true,
         genres: true,
         authors: true,
-        category: true
+        category: true,
+        comment: true
       }
     });
 
@@ -33,7 +34,8 @@ export const GET = async (req: Request, { params: { slug }}: { params: { slug: s
       authors: book.authors.map((author) => author.authorName),
       category: book.category.categoryName,
       createdAt: formatDate(book.createdAt),
-      publisher: book.publisher.publisherName
+      publisher: book.publisher.publisherName,
+      rating: book.comment.length > 0 ? book.comment.reduce((acc, cur) => acc + cur.rating, 0) / book.comment.length : 0,
     }));
 
     return NextResponse.json({ books }, { status: 200 });
