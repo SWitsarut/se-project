@@ -3,9 +3,3 @@ export type Message = {
 	sender: string;
 	receiver: string;
 };
-
-export type sendingMSG = {
-	content: string;
-	sender: string;
-	receiver: string;
-};

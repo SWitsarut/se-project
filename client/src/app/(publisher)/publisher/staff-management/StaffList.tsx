@@ -1,7 +1,7 @@
 import prisma from "@/libs/prisma";
+import ActionStaffModal from "./ActionStaffModal";
 import { User } from "@/types/user";
 import { Avatar, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core";
-import ActionStaffModal from "./ActionStaffModal";
 import { getCurrentSession } from "@/libs/getCurrentSession";
 
 interface StaffListProps {

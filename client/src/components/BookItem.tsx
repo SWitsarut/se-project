@@ -1,6 +1,6 @@
 "use client";
 
-import { BookResponse } from "@/types/book";
+import { BookItemType } from "@/types/book";
 import { Button, Modal, Rating, Text, Tooltip } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +10,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
 
 interface BookItemProps {
-  book: BookResponse
+  book: BookItemType
 }
 
 export default function BookItem({ book }: BookItemProps) {

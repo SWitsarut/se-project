@@ -45,7 +45,6 @@ export default function ChatProvider({
         message: msg.content,
         autoClose: 2500,
         onClick:()=>{
-          console.log(`/admin/chat?user=${msg.sender}`)
           router.push(`/admin/chat?user=${msg.sender}`)
         }
       })

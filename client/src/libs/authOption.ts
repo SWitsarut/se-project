@@ -5,7 +5,6 @@ import { PrismaClientKnownRequestError} from "@prisma/client/runtime/library.js"
 import { compare } from "bcrypt";
 import { generateVerificationToken } from "./tokens";
 import { sendVerificationEmail } from "./mail";
-import { revalidatePath } from "next/cache";
 
 export const authOption: NextAuthOptions = {
   session: {

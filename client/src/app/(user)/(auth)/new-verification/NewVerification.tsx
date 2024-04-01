@@ -1,8 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { Alert, Button, Loader, Text } from "@mantine/core";
 import { IconCircleCheckFilled, IconExclamationCircle } from "@tabler/icons-react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 

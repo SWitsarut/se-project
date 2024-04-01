@@ -63,8 +63,10 @@ export default function AddBookForm({ publisherName, bookDetail }: AddBookFormPr
     let cover, pdfUrl;
 
     try {
-      cover = await edgestore.publicImages.upload({ file: imageFile }).then((res) => res.url);
-      pdfUrl = await edgestore.publicFiles.upload({ file: pdfFile }).then((res) => res.url);
+      [cover, pdfUrl] = await Promise.all([
+        edgestore.publicImages.upload({ file: imageFile }).then((res) => res.url), 
+        edgestore.publicFiles.upload({ file: pdfFile }).then((res) => res.url)
+      ])
     } catch (error) {
       notifications.show({
         title: "Error",

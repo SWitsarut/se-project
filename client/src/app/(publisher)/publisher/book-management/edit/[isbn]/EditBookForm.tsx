@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEdgeStore } from "@/libs/edgestore";
 import { BookDetailType, EditBookData } from "@/types/book";
 import { Autocomplete, Button, FileButton, FileInput, Group, NumberInput, Radio, RadioGroup, TagsInput, TextInput, Textarea } from "@mantine/core";
@@ -8,7 +9,6 @@ import { useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/navigation";
 import { IconEye, IconPencil } from "@tabler/icons-react";
-import Link from "next/link";
 
 interface EditBookFormProps {
   publisherName: string
