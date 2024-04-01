@@ -1,8 +1,7 @@
-'use client'
+"use client"
 
-import { Avatar, Button, Group, Text } from '@mantine/core'
-import { Session } from 'next-auth'
-import Link from 'next/link'
+import { Avatar, Group, Text } from "@mantine/core";
+import { Session } from "next-auth";
 
 interface ProfileProps {
   session: Session
@@ -11,7 +10,7 @@ interface ProfileProps {
 export default function Profile({ session }: ProfileProps) {
   return (
     <>
-      <div className="border flex justify-between items-center p-3">
+      <div className="border">
         <Group>
           <Avatar src={session.user.image} size={128} />
           <div>
@@ -19,9 +18,6 @@ export default function Profile({ session }: ProfileProps) {
             <Text>Display name: {session.user.displayName}</Text>
           </div>
         </Group>
-        <Link href={'/edit-profile'}>
-          <Button>edit profile</Button>
-        </Link>
       </div>
     </>
   )

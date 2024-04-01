@@ -1,19 +1,18 @@
 import BookItem from "@/components/BookItem";
-import { BookResponse } from "@/types/book";
-import { BASE_URL } from "@/utils";
+import { BookItemType } from "@/types/book";
 
-async function getNewBooks(): Promise<BookResponse[]> {
-  const res = await fetch(`${BASE_URL}/api/book`, {
+async function getNewBooks(): Promise<BookItemType[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/book`, {
     cache: "no-store",
   })
 
-  const data = await res.json()
+  const data = await res.json();
 
-  if (data.error) {
-    throw new Error(data.error)
+  if(data.error) {
+    throw new Error(data.error);
   }
 
-  return data
+  return data;
 }
 
 export default async function BookSection() {

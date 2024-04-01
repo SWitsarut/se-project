@@ -1,7 +1,6 @@
 "use client";
 
 import { BookCart } from "@/types/book";
-import { BASE_URL } from "@/utils";
 import { notifications } from "@mantine/notifications";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -40,15 +39,15 @@ export const CartProvider = ({ children } : CartProviderProps) => {
     }
   }, []);
 
-  const disableAddToCart = (isbn: string): boolean => {
+  const disableAddToCart = useCallback((isbn: string): boolean => {
     const existingBook = cart.findIndex((item) => item === isbn);
     return existingBook !== -1;
-  }
+  }, [cart])
 
-  const addToCart = async (isbn: string) => {
+  const addToCart = useCallback(async (isbn: string) => {
     if(session) {
       try {
-        const res = await fetch(`${BASE_URL}/api/cart/${session.user.id}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart/${session.user.id}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -83,18 +82,18 @@ export const CartProvider = ({ children } : CartProviderProps) => {
         })
       }
     }
-  }
+  }, [session, router])
 
-  const removeFromCart = async (isbn: string) => {
+  const removeFromCart = useCallback(async (isbn: string) => {
     if(session) {
       try {
-        const res = await fetch(`${BASE_URL}/api/cart/${session.user.id}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart/${session.user.id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({ isbn })
-        })
+        });
         
         const data = await res.json();
         if(data.error) {
@@ -125,11 +124,11 @@ export const CartProvider = ({ children } : CartProviderProps) => {
         })
       }
     }
-  }
+  }, [cart, selectedItem, session, router])
   
   const fetchCartItem = useCallback(async () => {
     if(session) {
-      const res = await fetch(`${BASE_URL}/api/cart/${session.user.id}/get-isbn`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/cart/${session.user.id}/get-isbn`);
       const data = await res.json();
       setCart(data);
     } else {

@@ -1,13 +1,13 @@
 import express from "express";
 import { createServer } from "http";
-import { Server } from "socket.io";
+import { DisconnectReason, Server } from "socket.io";
 import cors from "cors";
 
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import chalk from "chalk";
 import apiTracker from "./middle ware/apiTracker";
-import { sendingMSG } from "./type/Message";
+import { Message } from "./type/Message";
 
 dotenv.config();
 const app = express();
@@ -26,49 +26,29 @@ const server = createServer(app);
 
 const io = new Server(server, {
 	cors: {
-		origin: ["*", "*:*", `${webapp_url}`],
-		methods: ["*"],
+		origin: ["http://localhost:5173", `${webapp_url}`],
+		methods: ["GET", "POST"],
 	},
 });
 
-type UserInfo = {
-	email: string;
-	id: string;
-	username: string;
-	displayname: string;
-	role: string;
-};
-
 io.on("connection", (socket) => {
-	const userAuth: UserInfo = socket.handshake.auth.userinfo;
+	console.log("New socket connected " + socket.id);
 
-	console.log("New socket connected", socket.id, "with ", userAuth);
-
-	socket.on("message", async (msg: string) => {
+	socket.on("message", (msg: Message) => {
 		console.log("receive from", msg);
-		const msgContent: sendingMSG = await JSON.parse(msg);
-		// console.log("to json", msg);
-		const saved = await fetch(`${webapp_url}/api/chat/newmsg`, {
-			method: "POST",
-			body: JSON.stringify(msgContent),
-		}).then((e) => e.json());
-		console.log("saved", saved);
-		io.to(socket.id).emit("sended", JSON.stringify({ id: saved.id, msg: saved.message }));
-		io.to(saved.to.sessionId).emit("receive-message", saved.message);
+
+		io.to(msg.receiver).emit("receive-message", msg);
 	});
 
-	// socket.on("disconnect", async (reason: DisconnectReason, _description) => {
-	// 	console.log(socket.id, reason);
-	// 	await fetch(`${webapp_url}/api/chat/endSession`, {
-	// 		method: "POST",
-	// 		body: JSON.stringify({ id: socket.id }),
-	// 	})
-	// 		.then((e) => e.json())
-	// 		.then((js) => console.log("user disconnected", js, reason));
-	// });
+	socket.on("join", (rooms: string[]) => {
+		socket.join(rooms);
+	});
+	socket.on("disconnect", (reason: DisconnectReason, description: any) => {
+		console.log(reason);
+	});
 });
 
-app.get("/", (_req, res) => {
+app.get("/", (req, res) => {
 	res.status(200).send("hello!");
 });
 app.get("*", (_, res) => {

@@ -1,6 +1,5 @@
 import prisma from "@/libs/prisma";
-import { BookResponse } from "@/types/book";
-import { formatDate } from "@/utils";
+import { BookItemType } from "@/types/book";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +12,6 @@ export const GET = async (req: Request) => {
         category: true,
         genres: true,
         authors: true,
-        ownedBooks: true
       },
       take: 6,
       orderBy: {
@@ -21,18 +19,14 @@ export const GET = async (req: Request) => {
       }
     });
 
-    const newBooks: BookResponse[] = result.map((book) => ({
+    const newBooks: BookItemType[] = result.map((book) => ({
       isbn: book.isbn,
       title: book.title,
       price: book.price,
       cover: book.cover,
-      pdfUrl: book.pdfUrl,
-      isSelling: book.isSelling,
       description: book.description,
-      genres: book.genres.map((genre) => genre.genreName),
       authors: book.authors.map((author) => author.authorName),
       category: book.category.categoryName,
-      createdAt: formatDate(book.createdAt),
       publisher: book.publisher.publisherName
     }))
 
