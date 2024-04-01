@@ -65,6 +65,19 @@ export const POST = async (req: Request, { params: { userId }}: { params: { user
       return NextResponse.json({ message: "User not found" }, { status: 400 });
     }
 
+    const isOwned = await prisma.bookOwnership.findUnique({
+      where: {
+        userId_bookIsbn: {
+          userId,
+          bookIsbn: isbn
+        }
+      }
+    })
+
+    if(isOwned) {
+      return NextResponse.json({ error: "You already owned this book" }, { status: 400 });
+    }
+
     const existingInCart = await prisma.cartItem.findFirst({
       where: {
         userId,

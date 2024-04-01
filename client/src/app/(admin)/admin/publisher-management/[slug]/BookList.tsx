@@ -1,5 +1,5 @@
 import { BookResponse } from "@/types/book";
-import { HoverCard, HoverCardDropdown, HoverCardTarget, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text, Tooltip } from "@mantine/core";
+import { HoverCard, HoverCardDropdown, HoverCardTarget, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -11,8 +11,8 @@ interface BookListProps {
 }
 
 async function getBookList(slug: string, page: number, take: number, search: string): Promise<{ books: BookResponse[] }> {
-  const searchParams = `?page=${page}&take=${take}&search=${search}`
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/publisher-management/${slug}/book${searchParams}`, {
+  const searchParams = new URLSearchParams({ page: page.toString(), take: take.toString(), search });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/publisher-management/${slug}/book?` + searchParams, {
     cache: "no-store",
   });
 

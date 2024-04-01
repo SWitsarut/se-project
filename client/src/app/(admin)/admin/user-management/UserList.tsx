@@ -4,7 +4,8 @@ import ActionUserModal from "./ActionUserModal";
 import prisma from "@/libs/prisma";
 
 async function getUser(page: number, take: number, search: string): Promise<{ users: User[] }> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/user-management?page=${page}&take=${take}&search=${search}`, {
+  const searchParams = new URLSearchParams({ page: page.toString(), take: take.toString(), search });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/user-management?` + searchParams, {
     cache: "no-store"
   });
   const data = await res.json();

@@ -1,20 +1,20 @@
-import Navbar from '@/components/Navbar'
-import ChatBar from './_components/ChatBar'
-import { getCurrentSession } from '@/libs/getCurrentSession'
-import prisma from '@/libs/prisma'
-import { message } from '@/types/message'
+import { CartProvider } from "@/components/CartProvider";
+import Navbar from "@/components/Navbar";
+import { getCurrentSession } from "@/libs/getCurrentSession";
+import prisma from "@/libs/prisma";
+import { message } from "@/types/message";
+import ChatBar from "./_components/ChatBar";
 
 export default async function MainLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  // const {data:session} =useSession()
-  const session = await getCurrentSession()
+  const session = await getCurrentSession();
 
   const initmsg: message[] = await prisma.chatMessage.findMany({
     orderBy: {
-      timeStamp: 'asc',
+      timeStamp: "asc",
     },
     where: {
       OR: [{ sender: session?.user.id }, { receiver: session?.user.id }],
@@ -39,19 +39,21 @@ export default async function MainLayout({
         },
       },
     },
-  })
+  });
 
   const admin = await fetch(
     `${process.env.NEXT_PUBLIC_URL}/api/chat/requestAdmin`,
-  ).then((e) => e.json())
+  ).then((e) => e.json());
 
   return (
     <>
-      <Navbar />
-      <div className="py-16 px-0 md:px-24">{children}</div>
-      {session?.user.role == 'USER' || session?.user.role == 'PUBLISHER' ? (
+      <CartProvider>
+        <Navbar />
+        <div className="py-16 px-0 md:px-24">{children}</div>
+      </CartProvider>
+      {session?.user.role != "ADMIN" ? (
         <ChatBar initmsg={initmsg} target={admin.id} />
       ) : null}
     </>
-  )
+  );
 }

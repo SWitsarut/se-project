@@ -1,5 +1,5 @@
-import { BookCart } from "@/types/book";
 import CartItem from "./CartItem";
+import { BookCart } from "@/types/book";
 import { Text } from "@mantine/core";
 import { IconShoppingCartX } from "@tabler/icons-react";
 

@@ -1,105 +1,106 @@
-'use client'
-import { AdminMsg, sendingMSG } from '@/types/chat'
-import { Button, Center, Loader, TextInput } from '@mantine/core'
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import UserChip from './_component/UserChip'
-import { Connection } from '@/components/ChatProvider'
-import { message } from '@/types/message'
-import ChatChip from '@/app/(user)/_components/ChatChip'
-import { IconSend } from '@tabler/icons-react'
-import { useSession } from 'next-auth/react'
-import { useScrollIntoView } from '@mantine/hooks'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+"use client";
+import { AdminMsg, sendingMSG } from "@/types/chat";
+import { Button, Center, Loader, TextInput } from "@mantine/core";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import UserChip from "./_component/UserChip";
+import { Connection } from "@/components/ChatProvider";
+import { message } from "@/types/message";
+import ChatChip from "@/app/(user)/_components/ChatChip";
+import { IconSend } from "@tabler/icons-react";
+import { useSession } from "next-auth/react";
+import { useScrollIntoView } from "@mantine/hooks";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function AdminChat({ users }: { users: AdminMsg[] }) {
-  const socket = useContext(Connection)
-  const session = useSession()
+  const socket = useContext(Connection);
+  const session = useSession();
 
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
 
   const [currentUser, setCurrentUser] = useState<string>(
-    searchParams.get('user')?.toString() || '',
-  )
-  const [currentUserData, setCurrentUserData] = useState<AdminMsg | null>(null)
-  const [msgs, setMsgs] = useState<message[] | []>([])
-  const [text, setText] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(false)
+    searchParams.get("user")?.toString() || "",
+  );
+  const [currentUserData, setCurrentUserData] = useState<AdminMsg | null>(null);
+  const [msgs, setMsgs] = useState<message[] | []>([]);
+  const [text, setText] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const { scrollIntoView, targetRef, scrollableRef } = useScrollIntoView<
     HTMLDivElement,
     HTMLDivElement
-  >()
+  >();
 
   // const [searchValue, setSearchValue] = useState(
   //   searchParams.get('user')?.toString(),
   // )
-  const pathname = usePathname()
-  const router = useRouter()
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     scrollIntoView({
-      alignment: 'start',
-    })
-  }, [msgs, scrollIntoView])
+      alignment: "start",
+    });
+  }, [msgs, scrollIntoView]);
 
   useEffect(() => {
     const getmsg = async () => {
-      setLoading(true)
+      setLoading(true);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_URL}/api/chat/getmsgs`,
         {
-          method: 'POST',
+          method: "POST",
           body: JSON.stringify({
             user: currentUser,
           }),
         },
-      )
-      const msgs: message[] = await response.json()
-      console.log(msgs)
-      setMsgs(msgs)
-      setLoading(false)
-    }
-    const params = new URLSearchParams(searchParams)
+      );
+      const msgs: message[] = await response.json();
+      console.log(msgs);
+      setMsgs(msgs);
+      setLoading(false);
+    };
+    const params = new URLSearchParams(searchParams);
     if (currentUser) {
-      params.set('user', currentUser)
+      params.set("user", currentUser);
     } else {
-      params.delete('user')
+      params.delete("user");
     }
-    router.replace(`${pathname}?${params.toString()}`)
+    router.replace(`${pathname}?${params.toString()}`);
 
-    if (currentUser !== '') {
-      getmsg()
+    if (currentUser !== "") {
+      getmsg();
     }
-  }, [currentUser])
+  }, [currentUser]);
 
   useEffect(() => {
     if (socket) {
       const sended = async (confirm: string) => {
-        const { id, msg } = await JSON.parse(confirm)
-        console.log('sended', id, msg)
+        const { id, msg } = await JSON.parse(confirm);
+        console.log("sended", id, msg);
         setMsgs((prev) => {
-          return [...prev, msg]
-        })
-      }
+          return [...prev, msg];
+        });
+      };
 
       const receive = (msg: message) => {
-        console.log('admin receive', msg)
+        console.log("admin receive", msg);
         // if (msg.receiver == session.data?.user.id) {
-        setMsgs((prev) => [...prev, msg])
+        setMsgs((prev) => [...prev, msg]);
         // }
-      }
+      };
 
-      socket.on('receive-message', receive)
-      socket.on('sended', sended)
+      console.log("binding socket events");
+      socket.on("receive-message", receive);
+      socket.on("sended", sended);
       return () => {
-        socket.off('receive-message', receive)
-        socket.off('sended', sended)
-      }
+        socket.off("receive-message", receive);
+        socket.off("sended", sended);
+      };
     }
-  }, [session.data?.user.id, socket])
+  }, [session.data?.user.id, socket]);
 
   useEffect(() => {
-    console.log(users)
-  }, [users])
+    console.log(users);
+  }, [users]);
   return (
     <div className="w-full flex flex-row border border-gray-300 rounded-md">
       <section className="flex">
@@ -108,19 +109,19 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
             return (
               <UserChip
                 onClick={() => {
-                  setCurrentUser(user.id)
-                  setCurrentUserData(user)
+                  setCurrentUser(user.id);
+                  setCurrentUserData(user);
                 }}
                 key={index}
                 user={user}
                 selected={user.id == currentUser}
               />
-            )
+            );
           })}
         </div>
       </section>
       <section className="w-full h-full">
-        <Center classNames={{ root: 'h-14 font-bold' }}>
+        <Center classNames={{ root: "h-14 font-bold" }}>
           {currentUserData?.displayName}
         </Center>
         <div
@@ -140,7 +141,7 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
                   >
                     <ChatChip reverse message={msg} />
                   </div>
-                )
+                );
               }
             })
           ) : (
@@ -149,14 +150,14 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
         </div>
         <form
           onSubmit={(e) => {
-            e.preventDefault()
+            e.preventDefault();
             const msg: sendingMSG = {
               content: text.trim(),
               sender: session.data?.user.id,
               receiver: currentUser,
-            }
-            socket?.emit('message', JSON.stringify(msg))
-            setText('')
+            };
+            socket?.emit("message", JSON.stringify(msg));
+            setText("");
           }}
           className="flex flex-row w"
         >
@@ -164,7 +165,7 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
             <TextInput
               value={text}
               onChange={(e) => setText(e.target.value)}
-              classNames={{ root: 'w-full' }}
+              classNames={{ root: "w-full" }}
             />
             <Button type="submit">
               <IconSend />
@@ -173,5 +174,5 @@ export default function AdminChat({ users }: { users: AdminMsg[] }) {
         </form>
       </section>
     </div>
-  )
+  );
 }

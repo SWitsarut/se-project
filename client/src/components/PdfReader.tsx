@@ -66,17 +66,17 @@ export default function PdfReader({ pdfUrl }: PdfReaderProps) {
     <div className="flex overflow-x-auto py-2">
       <Document className="flex flex-col gap-6 mx-auto" file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
         <Page className="prevent-select border " pageNumber={currentPage} />
-        <div className="flex gap-6 mx-auto">
-        <div className="flex gap-2">
-          <Button onClick={firstPage}><IconChevronsLeft /></Button>
-          <Button disabled={numPages && currentPage <= 1 ? true : false} onClick={prevPage}><IconChevronLeft /></Button>
+        <div className="flex items-center gap-6 mx-auto">
+          <div className="flex gap-2">
+            <Button onClick={firstPage}><IconChevronsLeft /></Button>
+            <Button disabled={numPages && currentPage <= 1 ? true : false} onClick={prevPage}><IconChevronLeft /></Button>
+          </div>
+          <Text>{currentPage} / {numPages}</Text>
+          <div className="flex gap-2">
+            <Button disabled={numPages && currentPage >= numPages ? true : false} onClick={nextPage}><IconChevronRight /></Button>
+            <Button onClick={lastPage}><IconChevronsRight /></Button>
+          </div>
         </div>
-        <Text>{currentPage} / {numPages}</Text>
-        <div className="flex gap-2">
-          <Button disabled={numPages && currentPage >= numPages ? true : false} onClick={nextPage}><IconChevronRight /></Button>
-          <Button onClick={lastPage}><IconChevronsRight /></Button>
-        </div>
-      </div>
       </Document>
     </div>
   )

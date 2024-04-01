@@ -1,8 +1,8 @@
-import prisma from '@/libs/prisma'
-import { NextResponse } from 'next/server'
+import prisma from "@/libs/prisma";
+import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
-  const { user } = await req.json()
+  const { user } = await req.json();
   const msgs = await prisma.chatMessage.findMany({
     where: {
       OR: [{ sender: user }, { receiver: user }],
@@ -27,6 +27,6 @@ export const POST = async (req: Request) => {
         },
       },
     },
-  })
-  return NextResponse.json(msgs, { status: 200 })
-}
+  });
+  return NextResponse.json(msgs, { status: 200 });
+};

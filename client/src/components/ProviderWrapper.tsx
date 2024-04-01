@@ -1,27 +1,21 @@
-import { EdgeStoreProvider } from '@/libs/edgestore'
-import { theme } from '@/theme'
-import { MantineProvider } from '@mantine/core'
-import { Notifications } from '@mantine/notifications'
-import ChatProvider from './ChatProvider'
-import { CartProvider } from './CartProvider'
-
-interface ProviderWrapperProps {
-  children: React.ReactNode
-}
+import { EdgeStoreProvider } from "@/libs/edgestore";
+import { theme } from "@/theme";
+import { MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
+import { CartProvider } from "./CartProvider";
+import ChatProvider from "./ChatProvider";
 
 export default function ProviderWrapper({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <EdgeStoreProvider>
       <MantineProvider theme={theme}>
-        <CartProvider>
-          <Notifications />
-          <ChatProvider>{children}</ChatProvider>
-        </CartProvider>
+        <Notifications />
+        <ChatProvider>{children}</ChatProvider>
       </MantineProvider>
     </EdgeStoreProvider>
-  )
+  );
 }
