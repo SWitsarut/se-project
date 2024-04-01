@@ -54,7 +54,7 @@ export default function ChatBar({
           },
         ).then((data) => data.json());
         setIsConnected(true);
-        console.log("user connected to socket with sessionId", res);
+        console.log("connected to socket with sessionId", res);
       };
 
       const sended = async (confirm: string) => {
@@ -73,6 +73,7 @@ export default function ChatBar({
       socket.on("connect", onConnect);
       socket.on("receive-message", receive);
       socket.on("sended", sended);
+      socket.connect();
       return () => {
         socket.off("connect", onConnect);
         socket.off("receive-message", receive);
@@ -95,7 +96,7 @@ export default function ChatBar({
     }
     setIsOpened(Boolean(lsOpened));
     setIsLoading(false);
-  }, [initmsg?.length, isConnected, session, socket]);
+  }, []);
 
   const toggleChat = () => {
     setIsOpened((prev) => {
@@ -134,6 +135,7 @@ export default function ChatBar({
               </div>
               <form
                 onSubmit={(e) => {
+                  console.log("socket?.connected", socket?.connected);
                   if (!isConnected) {
                     socket?.connect();
                   }
