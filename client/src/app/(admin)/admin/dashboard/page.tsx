@@ -20,7 +20,6 @@ export default async function AdminDashboard() {
     { name: "Publisher", value: publisherCount, color: "yellow.6" },
   ];
   const totalBook = await prisma.book.count();
-  console.log(totalUser);
   return (
     <>
       <div className="prose">
