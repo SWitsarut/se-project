@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEdgeStore } from "@/libs/edgestore";
 import { AddBookFormType, BookDetailType } from "@/types/book";
-import { Autocomplete, Button, FileButton, FileInput, NumberInput, TagsInput, TextInput, Textarea } from "@mantine/core";
+import { Autocomplete, Button, FileButton, FileInput, NumberInput, TagsInput, Text, TextInput, Textarea } from "@mantine/core";
 import { useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/navigation";
@@ -28,7 +28,7 @@ const initialForm: AddBookFormType = {
 
 export default function AddBookForm({ publisherName, bookDetail }: AddBookFormProps) {
   const [form, setForm] = useState<AddBookFormType>(initialForm);
-  const [previewImg, setPreviewImage] = useState<string>();
+  const [previewImg, setPreviewImage] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -190,14 +190,14 @@ export default function AddBookForm({ publisherName, bookDetail }: AddBookFormPr
           <FileButton accept="image/*" onChange={(e) => handleImageUpload(e) }>
             {(props) => <Button {...props}>Upload Cover</Button>}
           </FileButton>
-          <FileInput accept="application/pdf" onChange={setPdfFile} value={pdfFile} label="Upload PDF" placeholder="Upload file"/>
+          <FileInput clearable variant="default" accept="application/pdf" onChange={setPdfFile} value={pdfFile} label="Upload PDF" placeholder="Upload file"/>
         </div>
       </div>
-      <div className="flex items-center justify-center">
+      <div className="flex items-start py-16 justify-center">
         <div className="w-[350px] shadow-2xl flex items-center">
-          {/* Todo placeholder image */}
-          <Image
-            src={previewImg || "https://cdn-local.mebmarket.com/meb/server1/265529/Thumbnail/book_detail_large.gif?2"}
+          {previewImg ? (
+            <Image
+            src={previewImg}
             alt="bookCover"
             width={0}
             height={0}
@@ -205,6 +205,11 @@ export default function AddBookForm({ publisherName, bookDetail }: AddBookFormPr
             className="w-full h-auto aspect-[1/1.414]"
             priority
           />
+          ) : (
+            <div className="bg-slate-100 w-full h-auto aspect-[1/1.414]">
+              <Text size="xl" classNames={{ root: "flex justify-center items-center h-full" }}>No Image</Text>
+            </div>
+          )}
         </div>
       </div>
       <div className="flex w-full justify-center lg:justify-end col-span-1 lg:col-span-2">

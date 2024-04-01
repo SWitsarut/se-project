@@ -72,6 +72,7 @@ export interface BookResponse {
   authors: string[]
   createdAt: string
   rating: number
+  ratingCount: number
 }
 
 export interface CommentType {

@@ -52,6 +52,7 @@ export const GET = async (req: Request, { params: { slug }}: { params: { slug: s
         createdAt: comment.createdAt,
       })),
       rating: result.comment.length > 0 ? result.comment.reduce((acc, cur) => acc + cur.rating, 0) / result.comment.length : 0,
+      ratingCount: result.comment.length,
     }
 
     return NextResponse.json(book, { status: 200 });
