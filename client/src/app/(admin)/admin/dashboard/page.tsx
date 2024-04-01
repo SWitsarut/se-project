@@ -1,8 +1,7 @@
 import prisma from "@/libs/prisma";
 import { Metadata } from "next";
-import { DonutChart, PieChart } from "@mantine/charts";
-import { Box, Center, Paper } from "@mantine/core";
-import { root } from "postcss";
+import { DonutChart } from "@mantine/charts";
+import { Center, Paper } from "@mantine/core";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard | E-book store",
@@ -45,8 +44,8 @@ export default async function AdminDashboard() {
               />
               <div>
                 <div className="w-full max-w-lg flex flex-row justify-between">
-                  <h4>Total Book</h4>
-                  <h4>{totalBook}</h4>
+                  <h4>Total User</h4>
+                  <h4>{totalCount}</h4>
                 </div>
               </div>
             </div>
