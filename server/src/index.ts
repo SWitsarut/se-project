@@ -42,7 +42,12 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
 	// const userAuth: UserInfo = socket.handshake.auth.userinfo;
 
-	console.log("New socket connected", socket.id, "with ", socket.handshake.auth.userinfo.user.displayName);
+	console.log(
+		"New socket connected",
+		socket.id,
+		"with ",
+		socket.handshake.auth.userinfo?.user.displayName
+	);
 
 	socket.on("message", async (msg: string) => {
 		console.log("receive from", msg);
