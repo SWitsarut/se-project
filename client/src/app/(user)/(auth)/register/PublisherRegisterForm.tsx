@@ -1,5 +1,6 @@
 "use client";
 
+import { isValidString } from "@/utils";
 import { Button, Checkbox, Modal, PasswordInput, Text, TextInput } from "@mantine/core";
 import { hasLength, isEmail, isNotEmpty, matchesField, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -19,9 +20,9 @@ export default function PublisherRegisterForm() {
     },
     validate: {
       email: isNotEmpty("Email is required") && isEmail("Invalid email"),
-      username: isNotEmpty("Username is required.") && hasLength({ max: 30 }, "The length of the username must not exceed 30 characters."),
-      publisherName: isNotEmpty("Publisher name is required") && hasLength({ max: 30}, "The length of the publisher name must not exceed 30 characters."),
-      displayName: isNotEmpty("Display name is required.")  && hasLength({ max: 30 }, "The length of the display name must not exceed 30 characters."),
+      username: (value) => !isValidString(value) ? "Special character isn't allowed. Please use only underscores (_), hyphens (-), and periods (.)" : null && isNotEmpty("Username is required.") && hasLength({ max: 30 }, "The length of the username must not exceed 30 characters."),
+      publisherName: (value) => !isValidString(value) ? "Special character isn't allowed. Please use only underscores (_), hyphens (-), and periods (.)" : null && isNotEmpty("Publisher name is required") && hasLength({ max: 30}, "The length of the publisher name must not exceed 30 characters."),
+      displayName: (value) => !isValidString(value) ? "Special character isn't allowed. Please use only underscores (_), hyphens (-), and periods (.)" : null && isNotEmpty("Display name is required.")  && hasLength({ max: 30 }, "The length of the display name must not exceed 30 characters."),
       password: isNotEmpty("Password is required") && hasLength({ min: 8 }, "Password must be at least 8 character"),
       confirmPassword: matchesField(
         "password",

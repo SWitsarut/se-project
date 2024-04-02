@@ -1,5 +1,5 @@
-import { getCurrentSession } from "@/libs/getCurrentSession";
 import prisma from "@/libs/prisma";
+import { getCurrentSession } from "@/libs/getCurrentSession";
 import { EditBookData } from "@/types/book";
 import { NextResponse } from "next/server";
 
@@ -10,7 +10,7 @@ export const GET = async (
   try {
     const result = await prisma.book.findUnique({
       where: {
-        isbn
+        isbn: isbn
       },
       include: {
         authors: true,
@@ -107,7 +107,7 @@ export const PUT = async (
     const existingBook = await prisma.book.findUnique({
       where: {
         title,
-        NOT: { isbn}
+        NOT: { isbn }
       }
     });
 
@@ -120,8 +120,8 @@ export const PUT = async (
         isbn: book.isbn
       },
       data: {
-        title,
-        price: Number(price),
+        title: title.trim(),
+        price: price,
         description,
         cover,
         isSelling: isSelling,

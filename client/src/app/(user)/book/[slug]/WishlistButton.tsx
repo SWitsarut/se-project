@@ -59,7 +59,7 @@ export default function WishlistButton({ isbn, isOwned }: WishlistButton) {
 
   return (
     <>
-      <Modal centered opened={opened} onClose={close}>
+      <Modal zIndex={1000} centered opened={opened} onClose={close}>
         <div className="flex flex-col items-center justify-center">
           <IconAlertCircle className="size-20 text-orange-300"/>
           <div className="flex flex-col">

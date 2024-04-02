@@ -8,7 +8,7 @@ export interface AddBookFormType {
   isbn: string
   title: string
   cover: string
-  price: number | string
+  price: number
   categoryName: string
   authorNames: string[]
   genreNames: string[]
@@ -20,7 +20,7 @@ export interface EditBookData {
   isbn: string
   title: string
   cover: string
-  price: number | string
+  price: number
   categoryName: string
   authorNames: string[]
   genreNames: string[]

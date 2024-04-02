@@ -34,3 +34,15 @@ export const formatDateToAgo = (date: Date): string => {
     return `${yearsAgo} year${yearsAgo === 1 ? "" : "s"} ago`;
   }
 };
+
+export const isValidString = (str: string): boolean => {
+  const regex = /^[^\/][a-zA-Z0-9_.-]*$/;
+
+  return regex.test(str);
+}
+
+export const isNotStartWithSpecialChar = (str: string): boolean => {
+  const regex = /^(?!\/|#|\\|\?|\s)/;
+
+  return regex.test(str);
+}

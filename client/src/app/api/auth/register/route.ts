@@ -3,12 +3,17 @@ import { sendVerificationEmail } from "@/libs/mail";
 import { generateVerificationToken } from "@/libs/tokens";
 import { hash } from "bcrypt";
 import { NextResponse } from "next/server";
+import { isValidString } from "@/utils";
 
 export const POST = async (req: Request) => {
   const { username, email, displayName, password, confirmPassword } = await req.json();
 
   if(!username || !email || !password || !displayName || !confirmPassword) {
     return NextResponse.json({ error: "Please fill your information completely" }, { status: 400 });
+  }
+
+  if(!isValidString(username) || !isValidString(displayName)) {
+    return NextResponse.json({ error: "Username and Display Name must not contain special characters" }, { status: 400 });
   }
 
   if(password.length < 8) {
@@ -23,8 +28,8 @@ export const POST = async (req: Request) => {
     const userExisting = await prisma.user.findFirst({
       where: {
         OR: [
-          { email: email.toLowerCase() },
-          { username: username.toLowerCase() }
+          { email: email.toLowerCase().trim() },
+          { username: username.toLowerCase().trim() }
         ]
       }
     });
@@ -38,9 +43,9 @@ export const POST = async (req: Request) => {
 
     await prisma.user.create({
       data: {
-        username: username.toLowerCase(),
-        email: email.toLowerCase(),
-        displayName,
+        username: username.toLowerCase().trim(),
+        email: email.toLowerCase().trim(),
+        displayName: displayName.trim(),
         password: hashedPassword,
       }
     });

@@ -97,8 +97,8 @@ export const POST = async (
     const existingBook = await prisma.book.findFirst({
       where: {
         OR: [
-          { isbn },
-          { title },
+          { isbn: isbn.trim() },
+          { title: title.trim() },
         ]
       }
     });
@@ -109,9 +109,9 @@ export const POST = async (
 
     await prisma.book.create({
       data: {
-        isbn,
-        title,
-        price: Number(price),
+        isbn: isbn.trim(),
+        title: title.trim(),
+        price: Number(price.toFixed(2)),
         description,
         cover,
         pdfUrl,

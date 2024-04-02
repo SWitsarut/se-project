@@ -8,6 +8,7 @@ import { useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/navigation";
 import { IconPlus } from "@tabler/icons-react";
+import { isNotStartWithSpecialChar } from "@/utils";
 
 interface AddBookFormProps {
   publisherName: string
@@ -18,7 +19,7 @@ const initialForm: AddBookFormType = {
   isbn: "",
   title: "",
   cover: "",
-  price: "",
+  price: 0,
   categoryName: "",
   authorNames: [],
   genreNames: [],
@@ -42,6 +43,16 @@ export default function AddBookForm({ publisherName, bookDetail }: AddBookFormPr
       notifications.show({
         title: "Error",
         message: "Please fill in complete information.",
+        color: "red",
+        autoClose: 3000,
+      })
+      return;
+    }
+
+    if(!isNotStartWithSpecialChar(form.isbn) || !isNotStartWithSpecialChar(form.title)) {
+      notifications.show({
+        title: "Error",
+        message: "ISBN and Title cannot start with special characters",
         color: "red",
         autoClose: 3000,
       })
@@ -167,7 +178,7 @@ export default function AddBookForm({ publisherName, bookDetail }: AddBookFormPr
           label="Price"
           placeholder="0.00"
           value={form.price}
-          onChange={(e) => setForm((prevState) => ({ ...prevState, price: e }))}
+          onChange={(e) => setForm((prevState) => ({ ...prevState, price: Number(e) }))}
         />
         <TagsInput
           placeholder="Genres"

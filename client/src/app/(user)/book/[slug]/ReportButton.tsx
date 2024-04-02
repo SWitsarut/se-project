@@ -55,7 +55,14 @@ export default function ReportButton({ isbn, userId, isOwned, bookTitle }: Repor
 
   return (
     <>
-      <Modal centered opened={opened} classNames={{ title: "font-semibold" }} onClose={close} title={`Report ${bookTitle}`}>
+      <Modal
+        zIndex={1000}
+        centered
+        opened={opened}
+        classNames={{ title: "font-semibold" }}
+        onClose={close}
+        title={`Report ${bookTitle}`}
+      >
         {isOwned ? (
           <>
             <Text size="sm" fw={500}>Why do you want to report this book?</Text>
@@ -78,7 +85,7 @@ export default function ReportButton({ isbn, userId, isOwned, bookTitle }: Repor
         )}
       </Modal>
     
-      <Text onClick={open} classNames={{ root: "flex items-center gap-1" }} size="sm" c={"primary"}>Report <IconAlertCircle size="16px" /></Text>
+      <Text onClick={open} classNames={{ root: "flex items-center gap-1 cursor-pointer" }} size="sm" c={"primary"}>Report <IconAlertCircle size="16px" /></Text>
     </>
   )
 }

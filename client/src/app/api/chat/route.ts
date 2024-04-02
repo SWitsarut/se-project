@@ -17,7 +17,7 @@ export const POST = async (req: Request) => {
         receiver: {
           connect: receiverId ? { id: receiverId } : undefined,
         },
-        content,
+        content: content.trim(),
       },
     });
 

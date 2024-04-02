@@ -37,12 +37,12 @@ export const authOption: NextAuthOptions = {
           }
         }
   
-        if(!user) throw new Error("Login Failed: Your email or password is incorrect");
+        if(!user) throw new Error("Login Failed: Your username or password is incorrect");
 
-        if(!user.isActive) throw new Error("Login Failed: Your email or password is incorrect");
+        if(!user.isActive) throw new Error("Login Failed: Your username or password is incorrect");
 
         const isValidPassword =  await compare(password, user.password);
-        if(!isValidPassword) throw Error("Login Failed: Your email or password is incorrect");
+        if(!isValidPassword) throw Error("Login Failed: Your username or password is incorrect");
 
         if(!user.emailVerified) {
           const verificationToken = await generateVerificationToken(user.email);

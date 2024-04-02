@@ -1,5 +1,6 @@
 import { getCurrentSession } from "@/libs/getCurrentSession";
 import prisma from "@/libs/prisma";
+import { isValidString } from "@/utils";
 import { NextResponse } from "next/server";
 
 export const PATCH = async (req: Request) => {
@@ -10,6 +11,10 @@ export const PATCH = async (req: Request) => {
 
     if(!session || session.user.id !== userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if(!isValidString(displayName)) {
+      return NextResponse.json({ error: "Display name must not contain special characters" }, { status: 400 });
     }
 
     const result = await prisma.user.update({

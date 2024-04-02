@@ -1,7 +1,8 @@
 "use client"
 
 import { useEdgeStore } from "@/libs/edgestore";
-import { Avatar, Button, FileButton, Group, Text, TextInput, Title } from "@mantine/core";
+import { isValidString } from "@/utils";
+import { Avatar, Button, FileButton, TextInput, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
@@ -31,7 +32,16 @@ export default function Profile({ session }: ProfileProps) {
   }
 
   const handleSaveProfile = async () => {
+    if(!isValidString(displayName) || !displayName) {
+      return;
+    }
+
+    if(!imageFile && displayName === session.user.displayName) {
+      return;
+    }
+
     setIsLoading(true);
+
     let avatar;
     if(imageFile) {
       try {
