@@ -1,6 +1,6 @@
 "use client"
 
-import { AppShell, Avatar, Burger, Button, Divider, Group, Text } from "@mantine/core"
+import { AppShell, Avatar, Burger, Button, Divider, Group, ScrollArea, Text } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -33,73 +33,75 @@ export default function Sidebar({
           </Link>
         </Group>
       </AppShell.Header>
-      <AppShell.Navbar className="gap-6 h-full" p="md">
-        <Group>
-          <Avatar
-            className="md:mx-auto"
-            size="xl"
-            src={session?.user.image}
-            alt={session?.user.displayName}
-          />
-          <div className="md:mx-auto md:text-center">
-            <Text size="xl" fw={700}>{session?.user.displayName}</Text>
-            <Text c="dimmed" size="md">{session?.user.email}</Text>
-          </div>
-        </Group>
-        <Divider />
-        <Link href="/">
+      <AppShell.Navbar p="sm">
+        <AppShell.Section grow classNames={{ section: "flex flex-col gap-4"}}>
+          <Group>
+            <Avatar
+              className="md:mx-auto"
+              size="xl"
+              src={session?.user.avatar}
+              alt={session?.user.displayName}
+            />
+            <div className="md:mx-auto md:text-center">
+              <Text size="xl" fw={700}>{session?.user.displayName}</Text>
+              <Text c="dimmed" size="md">{session?.user.email}</Text>
+            </div>
+          </Group>
+          <Divider />
+          <Link href="/">
+            <Button
+              size="lg"
+              leftSection={<IconHome />}
+              justify="left"
+              variant="subtle"
+              fullWidth
+            >
+              Home
+            </Button>
+          </Link>
+          {/* Publisher Menu */}
+          {session?.user.role === "PUBLISHER" && (
+            publisherMenu.map((menu, index) => (
+              <Link onClick={() => close()} key={index} href={menu.link}>
+                <Button
+                  size="lg"
+                  leftSection={<menu.icon />}
+                  justify="left"
+                  variant={pathname === menu.link ? "light" : "subtle"}
+                  fullWidth
+                >
+                  {menu.label}
+                </Button>
+              </Link>
+            ))
+          )}
+          {/* Admin Menu */}
+          {session?.user.role === "ADMIN" && (
+            adminMenu.map((menu, index) => (
+              <Link onClick={() => close()} key={index} href={menu.link}>
+                <Button
+                  size="lg"
+                  leftSection={<menu.icon />}
+                  justify="left"
+                  variant={pathname === menu.link ? "light" : "subtle"}
+                  fullWidth
+                >
+                  {menu.label}
+                </Button>
+              </Link>
+            ))
+          )}
           <Button
             size="lg"
-            leftSection={<IconHome />}
+            leftSection={<IconLogout />}
+            onClick={() => signOut()}
             justify="left"
+            color="red"
             variant="subtle"
-            fullWidth
           >
-            Home
+            Log out
           </Button>
-        </Link>
-        {/* Publisher Menu */}
-        {session?.user.role === "PUBLISHER" && (
-          publisherMenu.map((menu, index) => (
-            <Link onClick={() => close()} key={index} href={menu.link}>
-              <Button
-                size="lg"
-                leftSection={<menu.icon />}
-                justify="left"
-                variant={pathname === menu.link ? "light" : "subtle"}
-                fullWidth
-              >
-                {menu.label}
-              </Button>
-            </Link>
-          ))
-        )}
-        {/* Admin Menu */}
-        {session?.user.role === "ADMIN" && (
-          adminMenu.map((menu, index) => (
-            <Link onClick={() => close()} key={index} href={menu.link}>
-              <Button
-                size="lg"
-                leftSection={<menu.icon />}
-                justify="left"
-                variant={pathname === menu.link ? "light" : "subtle"}
-                fullWidth
-              >
-                {menu.label}
-              </Button>
-            </Link>
-          ))
-        )}
-        <Button
-          size="lg"
-          leftSection={<IconLogout />}
-          onClick={() => signOut()}
-          justify="left"
-          color="red"
-          variant="subtle"
-        >
-          Log out
-        </Button>
+        </AppShell.Section>
       </AppShell.Navbar>
       <AppShell.Main><div className="flex flex-col gap-4 md:px-12 md:py-6">{children}</div></AppShell.Main>
     </AppShell>

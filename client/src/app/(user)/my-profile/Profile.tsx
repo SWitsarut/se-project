@@ -111,7 +111,7 @@ export default function Profile({ session }: ProfileProps) {
           <div className="flex w-full mx-auto py-8">
             <div className="w-full max-w-sm mx-auto flex flex-col gap-4">
               <TextInput label="Username:" disabled value={session.user.username} />
-              <TextInput label="Email:" disabled value={session.user.username} />
+              <TextInput label="Email:" disabled value={session.user.email} />
               <TextInput label="Display name:" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
               <Button loading={isLoading} onClick={handleSaveProfile} className="self-start">Save</Button>
             </div>

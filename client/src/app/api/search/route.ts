@@ -3,6 +3,8 @@ import { BookResponse } from "@/types/book";
 import { formatDate } from "@/utils";
 import { NextResponse } from "next/server"
 
+export const dynamic = "force-dynamic";
+
 export const GET = async (req: Request) => {
   try {
     const searchBy = new URL(req.url).searchParams.get("search-by") || "book-title";
@@ -78,40 +80,6 @@ export const GET = async (req: Request) => {
                     contains: searchQuery,
                     mode: "insensitive"
                   }
-                }
-              }
-            },
-          })
-        ]);
-        break;
-      }
-      case "category": {
-        [result, count] = await Promise.all([
-          await prisma.book.findMany({
-            where: {
-              category: {
-                categoryName: {
-                  contains: searchQuery,
-                  mode: "insensitive"
-                }
-              }
-            },
-            include: {
-              category: true,
-              genres: true,
-              authors: true,
-              publisher: true,
-              comment: true
-            },
-            take,
-            skip: (page - 1) * take
-          }),
-          await prisma.book.count({
-            where: {
-              category: {
-                categoryName: {
-                  contains: searchQuery,
-                  mode: "insensitive"
                 }
               }
             },

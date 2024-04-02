@@ -1,36 +1,34 @@
 import prisma from "@/libs/prisma";
 import { NextResponse } from "next/server";
 
-export const GET = async (req: Request, { params }: { params: { slug: string }}) => {
+export const GET = async () => {
   try {
     const result = await prisma.comment.findMany({
-      where: {
-        book: {
-          publisher: {
-            publisherName: params.slug
-          }
-        }
-      },
       include: {
         user: true,
         book: true,
       },
+      take: 5,
       orderBy: {
-        createdAt: "desc"
-      }
+        createdAt: "desc",
+      },
     });
-
+    
     const comments = result.map((comment) => ({
-      title: comment.book.title,
-      username: comment.user.displayName,
-      rating: comment.rating,
+      id: comment.userId + comment.bookIsbn,
+      user: {
+        displayName: comment.user.displayName,
+        avatar: comment.user.avatar,
+      },
+      bookTitle: comment.book.title,
       content: comment.content,
-      date: comment.createdAt
-    }));
+      rating: comment.rating,
+      date: comment.createdAt,
+    }))
 
     return NextResponse.json(comments, { status: 200 });
   } catch (error) {
-    console.log("Error at GET /api/publisher/[slug]/comment route: ", error);
+    console.log("Error at GET /api/admin/comment: ", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -4,7 +4,7 @@ import { useCart } from "@/components/CartProvider";
 import { Button, Loader, Text, Title } from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
 
 interface SuccessPageProps {
@@ -43,7 +43,7 @@ export default function SuccessPage({ searchParams }: SuccessPageProps) {
     } else {
       router.push("/")
     }
-  }, [router, searchParams.id])
+  }, [router, searchParams.id, handleSetPaymentIntent, paymentIntentId, session])
   
   return (
     <>
