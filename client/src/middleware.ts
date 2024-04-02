@@ -6,7 +6,6 @@ export async function middleware(request: Request) {
     !request.url.includes("edgestore") &&
     request.headers.get("user-agent") != "node"
   ) {
-    const body = await request.json();
 
     fetch(`${process.env.NEXT_PUBLIC_URL}/api/log`, {
       method: "POST",
@@ -17,7 +16,6 @@ export async function middleware(request: Request) {
         url: request.url,
         method: request.method,
         agent: request.headers.get("user-agent"),
-        body,
       }),
     });
   }

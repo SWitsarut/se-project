@@ -211,11 +211,10 @@ model Report {
 
 model Log {
   id        String   @id @default(cuid())
-  timnStamp DateTime @default(now())
+  timeStamp DateTime @default(now())
   url       String
   method    String
   agent     String
-  body      String?
 
   @@map("log")
 }
