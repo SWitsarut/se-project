@@ -1,22 +1,39 @@
 import { BookResponse } from "@/types/book";
-import { Button, HoverCard, HoverCardDropdown, HoverCardTarget, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core";
+import {
+  Button,
+  HoverCard,
+  HoverCardDropdown,
+  HoverCardTarget,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
+  Text,
+} from "@mantine/core";
 import { IconPencil } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import DeleteModal from "./DeleteModal";
 
 interface BookListProps {
-  publisherName: string
+  publisherName: string;
 }
 
-async function getBookList(publisherName: string): Promise<{ books: BookResponse[] }> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/book-management`, {
-    cache: "no-store",
-  });
+async function getBookList(
+  publisherName: string,
+): Promise<{ books: BookResponse[] }> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/book-management`,
+    {
+      cache: "no-store",
+    },
+  );
 
   const data = await res.json();
 
-  if(data.error) {
+  if (data.error) {
     throw new Error(data.error);
   }
 
@@ -28,7 +45,13 @@ export default async function BookList({ publisherName }: BookListProps) {
 
   return (
     <>
-      <Table layout="auto" striped highlightOnHover withTableBorder withColumnBorders>
+      <Table
+        layout="auto"
+        striped
+        highlightOnHover
+        withTableBorder
+        withColumnBorders
+      >
         <TableThead>
           <TableTr>
             <TableTh>ISBN</TableTh>
@@ -66,14 +89,24 @@ export default async function BookList({ publisherName }: BookListProps) {
               </TableTd>
               <TableTd>฿ {book.price}</TableTd>
               <TableTd>{book.category}</TableTd>
-              <TableTd>{book.isSelling ? <Text c="green">Selling</Text> : <Text c="red">Closing</Text>}</TableTd>
+              <TableTd>
+                {book.isSelling ? (
+                  <Text c="green">Selling</Text>
+                ) : (
+                  <Text c="red">Closing</Text>
+                )}
+              </TableTd>
               <TableTd>{book.createdAt}</TableTd>
               <TableTd>
                 <div className="flex gap-4">
                   <Link href={`book-management/edit/${book.isbn}`}>
                     <Button leftSection={<IconPencil />}>Edit</Button>
                   </Link>
-                  <DeleteModal publisherName={publisherName} isbn={book.isbn} title={book.title} />
+                  <DeleteModal
+                    publisherName={publisherName}
+                    isbn={book.isbn}
+                    title={book.title}
+                  />
                 </div>
               </TableTd>
             </TableTr>
@@ -81,5 +114,5 @@ export default async function BookList({ publisherName }: BookListProps) {
         </TableTbody>
       </Table>
     </>
-  )
+  );
 }

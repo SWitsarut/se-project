@@ -20,14 +20,13 @@ app.use(apiTracker);
 
 const port = process.env.API_PORT;
 const public_url = process.env.PUBLIC_URL;
-const webapp_url = process.env.WEBAPP_URL;
+// const webapp_url = process.env.WEBAPP_URL;
 
 const server = createServer(app);
 
 const io = new Server(server, {
 	cors: {
-		origin: ["http://localhost:5173", `${webapp_url}`],
-		methods: ["GET", "POST"],
+		origin: "*",
 	},
 });
 
@@ -36,14 +35,14 @@ io.on("connection", (socket) => {
 
 	console.log("New socket connected ", socket.id, "with", userAuth);
 
-	if(userAuth.role !== "ADMIN") {
+	if (userAuth.role !== "ADMIN") {
 		socket.join(`admin${userAuth.id}`);
 	} else {
 		socket.join("admin");
 	}
 
 	socket.on("message", (messageData: MessageData) => {
-		if(messageData.receiverId) {
+		if (messageData.receiverId) {
 			socket.to(`admin${messageData.receiverId}`).emit("receive-message", messageData);
 			return;
 		} else {
