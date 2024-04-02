@@ -131,6 +131,7 @@ model Wishlist {
   createdAt DateTime @default(now())
 
   @@id([userId, bookIsbn])
+  @@map("wishlist")
 }
 
 model BookOwnership {
@@ -204,6 +205,19 @@ model Report {
   reason    String
   status    ReportStatus @default(PENDING)
   createdAt DateTime     @default(now())
+
+  @@map("report")
+}
+
+model Log {
+  id        String   @id @default(cuid())
+  timnStamp DateTime @default(now())
+  url       String
+  method    String
+  agent     String
+  body      String?
+
+  @@map("log")
 }
 
 enum Role {
@@ -222,13 +236,4 @@ enum PaymentStatus {
   PENDING
   SUCCEEDED
   FAILED
-}
-
-model Log {
-  id        String   @id @default(cuid())
-  timnStamp DateTime @default(now())
-  url      String
-  method    String
-  agent   String
-  body      String?
 }
