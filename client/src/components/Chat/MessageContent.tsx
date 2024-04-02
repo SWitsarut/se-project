@@ -29,7 +29,7 @@ export default function MessageContent({ messages, userId }: MessageContentProps
                   <Text c="dimmed" classNames={{ root: "text-[10px]" }}>{new Date(message.timeStamp).toLocaleTimeString()}</Text>
                 </div>
               </div>
-              <div className={`break-words text-wrap border p-2 rounded-lg ${message.sender.id === userId ? "bg-primary text-white" : "bg-white text-black" }`}>
+              <div className={`break-words w-fit text-wrap border p-2 rounded-lg ${message.sender.id === userId ? "bg-primary text-white" : "bg-white text-black" }`}>
                 <Text>{message.content}</Text>
               </div>
             </div>
