@@ -1,5 +1,6 @@
 "use client";
 
+import { useCart } from "@/components/CartProvider";
 import { Button, Loader, Text, Title } from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
@@ -15,6 +16,7 @@ interface SuccessPageProps {
 export default function SuccessPage({ searchParams }: SuccessPageProps) {
   const [isLoading, setIsLoading] = useState(true);
   
+  const { handleSetPaymentIntent, paymentIntentId } = useCart();
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -32,6 +34,9 @@ export default function SuccessPage({ searchParams }: SuccessPageProps) {
       }).then((result) => {
         if(result.error || result.paymentIntent.status !== "succeeded" || result.userId !== session.user.id) {
           router.push("/");
+        }
+        if(paymentIntentId === result.paymentIntent.id) {
+          handleSetPaymentIntent(null);
         }
         setIsLoading(false);
       });

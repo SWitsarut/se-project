@@ -3,7 +3,7 @@
 import { adminMenu, publisherMenu, userMenu } from "@/utils/menu";
 import { Avatar, Button, Divider, Drawer, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks"
-import { IconLogout } from "@tabler/icons-react";
+import { IconLogout, IconUser } from "@tabler/icons-react";
 import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
@@ -90,8 +90,9 @@ export default function ProfileDrawer({ session }: ProfileDrawerProps) {
           </Button>
         </div>
       </Drawer>
-
-      <Button classNames={{ root: "w-full max-w-40" }}onClick={open}>{session.user.displayName}</Button>
+      
+      <Button classNames={{ root: "w-full max-w-40 hidden md:block" }} onClick={open}>{session.user.displayName}</Button>
+      <Button classNames={{ root: "block md:hidden" }} onClick={open}><IconUser /></Button>
     </>
   )
 }

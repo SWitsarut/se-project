@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Indicator, Loader } from "@mantine/core";
+import { Button, Indicator } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import ProfileDrawer from "./ProfileDrawer";
@@ -8,6 +8,7 @@ import { IconShoppingCart } from "@tabler/icons-react";
 import { useCart } from "../CartProvider";
 import Image from "next/image";
 import Logo from "../../../public/logo.png";
+import SearchBar from "./SearchBar";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
@@ -21,7 +22,7 @@ export default function Navbar() {
             <Image className="w-[140px] h-[40px] lg:w-[230px] lg:h-[65px]" src={Logo} alt="logo"/>
           </Link>
         </div>
-        <div className="w-full flex items-center justify-end gap-4">
+        <div className="w-full flex items-center justify-end gap-1 md:gap-4">
           <Link href={"/cart"}>
             <Indicator
               color="red"
@@ -35,15 +36,12 @@ export default function Navbar() {
               </Button>
             </Indicator>
           </Link>
+          <SearchBar />
           {!(status === "loading") ? (
             session ? (
-              <>
-                <ProfileDrawer session={session} />
-              </>
+              <ProfileDrawer session={session} />
             ) : (
-              <>
-                <Link href={"/login"}><Button>Login</Button></Link>
-              </>
+              <Link href={"/login"}><Button>Login</Button></Link>
             )
           ) : (
             <>

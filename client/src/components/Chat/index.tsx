@@ -58,7 +58,7 @@ export default function Chat() {
   return (
     <>
       {status !== "loading" && status !== "unauthenticated" && session && session.user.role !== "ADMIN" && (
-        <div className="fixed -bottom-1 right-10 border-2 w-72 z-50 rounded-t-xl overflow-hidden shadow-md">
+        <div className="hidden md:block fixed -bottom-1 right-10 border-2 w-72 z-50 rounded-t-xl overflow-hidden shadow-md">
           <div
             onClick={() => setIsOpen((prevState) => !prevState)}
             className="bg-primary text-white px-6 py-4 w-full"
