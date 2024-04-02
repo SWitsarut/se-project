@@ -1,3 +1,5 @@
+import { PaymentStatus } from "@prisma/client"
+
 export type User = {
   id: string
   username: string
@@ -7,4 +9,15 @@ export type User = {
   isActive: boolean
   role: string
   publisherName: string | undefined
+}
+
+export interface OrderHistoryData {
+  id: number
+  paidAt: Date | null
+  status: PaymentStatus
+  order: {
+    bookIsbn: string
+    bookTitle: string
+    bookPrice: number
+  }[]
 }

@@ -22,11 +22,12 @@ export default function ProfileDrawer({ session }: ProfileDrawerProps) {
         size={"xs"}
         opened={opened}
         onClose={close}
+        zIndex={1000}
       >
         <div className="flex flex-col gap-8">
           <Group>
             <Avatar
-              src={session.user.image}
+              src={session.user.avatar}
               size="xl"
             />
             <div className="flex flex-col gap-2">

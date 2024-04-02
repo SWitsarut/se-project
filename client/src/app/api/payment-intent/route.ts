@@ -64,6 +64,7 @@ export const POST = async (req: Request) => {
               createMany: {
                 data: cartItems.map((item: any) => ({
                   bookIsbn: item.isbn,
+                  bookTitle: item.title,
                   userId: session.user.id,
                   bookPrice: item.price,
                 })),
@@ -105,6 +106,7 @@ export const POST = async (req: Request) => {
               createMany: {
                 data: cartItems.map((item: any) => ({
                   bookIsbn: item.isbn,
+                  bookTitle: item.title,
                   userId: session.user.id,
                   bookPrice: item.price,
                 })),
@@ -133,6 +135,7 @@ export const POST = async (req: Request) => {
           createMany: {
             data: cartItems.map((item: any) => ({
               bookIsbn: item.isbn,
+              bookTitle: item.title,
               userId: session.user.id,
               bookPrice: item.price,
             })),

@@ -15,7 +15,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="overflow-hidden w-full h-20 bg-white/75 backdrop-blur-md flex border shadow-md px-4 md:px-8 sticky top-0 z-50">
+      <header className="overflow-hidden w-full h-20 bg-white/75 backdrop-blur-md flex border shadow-md px-4 md:px-8 sticky top-0 z-[999]">
         <div className="w-full flex items-center">
           <Link scroll={false} href={"/"} className="flex items-center justify-start">
             <Image className="w-[140px] h-[40px] lg:w-[230px] lg:h-[65px]" src={Logo} alt="logo"/>

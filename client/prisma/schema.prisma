@@ -39,7 +39,7 @@ model ChatMessage {
   id         Int      @id @default(autoincrement())
   sender     User     @relation(name: "ChatSender", fields: [senderId], references: [id])
   senderId   String
-  receiver   User?     @relation(name: "ChatReceiver", fields: [receiverId], references: [id])
+  receiver   User?    @relation(name: "ChatReceiver", fields: [receiverId], references: [id])
   receiverId String?
   content    String
   timeStamp  DateTime @default(now())
@@ -104,7 +104,7 @@ model Comment {
   userId    String
   book      Book          @relation(fields: [bookIsbn], references: [isbn])
   bookIsbn  String
-  commenter      BookOwnership @relation(fields: [userId, bookIsbn], references: [userId, bookIsbn], onDelete: Cascade)
+  commenter BookOwnership @relation(fields: [userId, bookIsbn], references: [userId, bookIsbn], onDelete: Cascade)
   content   String
   rating    Float
   createdAt DateTime      @default(now())
@@ -161,6 +161,7 @@ model Order {
   userId      String
   book        Book      @relation(name: "OrderBook", fields: [bookIsbn], references: [isbn])
   bookIsbn    String
+  bookTitle   String
   bookPrice   Float
   userOrder   UserOrder @relation(fields: [userOrderId], references: [id], onUpdate: Cascade)
   userOrderId Int
