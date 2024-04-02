@@ -1,6 +1,6 @@
 "use client";
 
-import { BookResponse } from "@/types/book";
+import { BookItemType } from "@/types/book";
 import { Button, Modal, Rating, Text, Tooltip } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +10,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
 
 interface BookItemProps {
-  book: BookResponse
+  book: BookItemType
 }
 
 export default function BookItem({ book }: BookItemProps) {
@@ -49,8 +49,8 @@ export default function BookItem({ book }: BookItemProps) {
           </div>
           <div className="w-full flex justify-between gap-4">
             <div>
-              <Rating readOnly value={5} size="xs"/>
-              <Text size="xs">Rating Count</Text>
+              <Rating readOnly value={book.rating} fractions={2} size="xs"/>
+              <Text size="xs">{book.ratingCount > 0 ? `${book.ratingCount} Rating` : `No Rating` }</Text>
             </div>
             <Button
               disabled={disableAddToCart(book.isbn)}

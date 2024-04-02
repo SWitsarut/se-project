@@ -3,10 +3,10 @@ import "@mantine/notifications/styles.css";
 
 import type { Metadata } from "next";
 import "./globals.css";
-
+import "@mantine/charts/styles.css";
 import { ColorSchemeScript } from "@mantine/core";
 
-import SessionProvider from "@/components/SessionProvider";;
+import SessionProvider from "@/components/SessionProvider";
 import ProviderWrapper from "@/components/ProviderWrapper";
 import { getCurrentSession } from "@/libs/getCurrentSession";
 
@@ -20,7 +20,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   const session = await getCurrentSession();
 
   return (
@@ -31,9 +30,7 @@ export default async function RootLayout({
       <body>
         <SessionProvider refetchOnWindowFocus={false} session={session}>
           <ProviderWrapper>
-            <main className="bg-light">
-              {children}
-            </main>
+            <main className="bg-light">{children}</main>
           </ProviderWrapper>
         </SessionProvider>
       </body>

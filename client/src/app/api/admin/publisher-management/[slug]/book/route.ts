@@ -42,7 +42,8 @@ export const GET = async (
         category: true,
         genres: true,
         authors: true,
-        publisher: true
+        publisher: true,
+        comment: true
       },
       take,
       skip: take * (page - 1)
@@ -60,7 +61,8 @@ export const GET = async (
       genres: book.genres.map((genre) => genre.genreName),
       authors: book.authors.map((author) => author.authorName),
       createdAt: formatDate(book.createdAt),
-      publisher: book.publisher.publisherName
+      publisher: book.publisher.publisherName,
+      rating: book.comment.length > 0 ? book.comment.reduce((acc, cur) => acc + cur.rating, 0) / book.comment.length : 0,
     }))
 
     return NextResponse.json({ books }, { status: 200 });

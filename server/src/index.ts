@@ -36,9 +36,20 @@ io.on("connection", (socket) => {
 
 	console.log("New socket connected ", socket.id, "with", userAuth);
 
+	if(userAuth.role !== "ADMIN") {
+		socket.join(`admin${userAuth.id}`);
+	} else {
+		socket.join("admin");
+	}
+
 	socket.on("message", (messageData: MessageData) => {
-		console.log(messageData)
-		io.emit("receive-message", messageData);
+		if(messageData.receiverId) {
+			socket.to(`admin${messageData.receiverId}`).emit("receive-message", messageData);
+			return;
+		} else {
+			socket.to("admin").emit("receive-message", messageData);
+			return;
+		}
 	});
 
 	socket.on("disconnect", (reason: DisconnectReason, description: any) => {

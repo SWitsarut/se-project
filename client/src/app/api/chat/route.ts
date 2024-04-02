@@ -4,6 +4,10 @@ import { NextResponse } from "next/server"
 export const POST = async (req: Request) => {
   try {
     const { senderId, content, receiverId } = await req.json();
+
+    if(!senderId || !content) {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
     
     await prisma.chatMessage.create({
       data: {

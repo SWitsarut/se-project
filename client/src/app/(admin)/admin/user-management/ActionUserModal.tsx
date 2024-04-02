@@ -1,7 +1,6 @@
 "use client";
 
 import { User } from "@/types/user";
-import { BASE_URL } from "@/utils";
 import { Button, Modal, Select, Text, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -31,7 +30,7 @@ export default function ActionUserModal({ user, publisherName }: ActionUserModal
     
     setIsLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}/api/admin/user-management/${user.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/user-management/${user.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -70,7 +69,7 @@ export default function ActionUserModal({ user, publisherName }: ActionUserModal
   const handlerDelete = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}/api/admin/user-management/${user.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/user-management/${user.id}`, {
         method: "DELETE",
       });
       const data = await res.json();

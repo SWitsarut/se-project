@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { Request, Response, NextFunction } from "express";
 
-export default function apiTracker(req: Request, _res: Response, next: NextFunction) {
+export default function apiTracker(req: Request, res: Response, next: NextFunction) {
 	const timestamp = new Date().toISOString();
 	const method = req.method;
 	const url = req.url;

@@ -3,7 +3,7 @@
 import { MessageData } from "@/types/message";
 import { notifications } from "@mantine/notifications";
 import { useSession } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect } from "react";
 import { Socket, io } from "socket.io-client";
 
@@ -32,11 +32,13 @@ export const useSocket = () => {
 
 export default function SocketProvider({children}: SocketProviderProps) {
   const router = useRouter();
-  const pathname = usePathname();
   const { data: session } = useSession();
 
-  const sendMessage: ISocketContext['sendMessage'] = useCallback((msg) => {
-    socket.emit("message", msg);
+  const sendMessage: ISocketContext["sendMessage"] = useCallback((messageData) => {
+    if(session) {
+      socket.emit("message", messageData);
+      router.refresh();
+    } 
   }, []);
 
   useEffect(() => {
@@ -45,14 +47,14 @@ export default function SocketProvider({children}: SocketProviderProps) {
       socket.connect();
 
       const onReceiveMessage = (messageData: MessageData) => {
-        if(messageData.senderId !== session.user.id) {
+        if(messageData.senderId !== session.user.id && session.user.role === "ADMIN") {
           notifications.show({ title: "New message", message: messageData.content })
         }
         router.refresh();
       }
 
       if(session.user.role === "ADMIN") {
-        socket.on("receive-message", onReceiveMessage)
+        socket.on("receive-message", onReceiveMessage);
       }
 
       return () => {

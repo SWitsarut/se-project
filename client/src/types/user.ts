@@ -1,7 +1,7 @@
 export type User = {
   id: string
   username: string
-  email: string | undefined | null
+  email: string
   displayName: string
   avatar: string | null
   isActive: boolean

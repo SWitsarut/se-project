@@ -2,11 +2,10 @@ import { User } from "@/types/user";
 import { Avatar, Table, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core";
 import ActionUserModal from "./ActionUserModal";
 import prisma from "@/libs/prisma";
-import { BASE_URL } from "@/utils";
 
 async function getUser(page: number, take: number, search: string): Promise<{ users: User[] }> {
   const searchParams = new URLSearchParams({ page: page.toString(), take: take.toString(), search });
-  const res = await fetch(`${BASE_URL}/api/admin/user-management?` + searchParams, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/admin/user-management?` + searchParams, {
     cache: "no-store"
   });
   const data = await res.json();
