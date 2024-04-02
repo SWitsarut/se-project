@@ -9,33 +9,30 @@ export const GET = async (req: Request) => {
   try {
     const result = await prisma.report.findMany({
       include: {
-        user: true
-      },
-      where: {
-        user: {
-          username: {
-            contains: search || ""
-          }
-        }
+        user: true,
+        book: true
       },
       orderBy: {
         createdAt: "desc"
       },
-      take: take,
-      skip: take * (page - 1)
     });
 
     const reports = result.map((report) => ({
       id: report.id,
-      username: report.user.username,
-      avatar: report.user.avatar,
-      role: report.user.role,
+      book: {
+        isbn: report.book.isbn,
+        title: report.book.title,
+      },
+      user: {
+        username: report.user.username,
+        avatar: report.user.avatar,
+      },
       reason: report.reason,
       status: report.status,
       createAt: report.createdAt,
     }))
 
-    return NextResponse.json({ reports }, { status: 200 });
+    return NextResponse.json(reports, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

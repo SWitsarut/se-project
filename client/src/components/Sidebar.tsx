@@ -34,7 +34,7 @@ export default function Sidebar({
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="sm">
-        <AppShell.Section grow classNames={{ section: "flex flex-col gap-4"}}>
+        <AppShell.Section grow classNames={{ section: "flex flex-col gap-2"}}>
           <Group>
             <Avatar
               className="md:mx-auto"
