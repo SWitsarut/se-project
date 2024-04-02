@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Indicator } from "@mantine/core";
+import { Button, Indicator, Loader } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import ProfileDrawer from "./ProfileDrawer";
@@ -35,7 +35,7 @@ export default function Navbar() {
               </Button>
             </Indicator>
           </Link>
-          {!(status === "loading") && (
+          {!(status === "loading") ? (
             session ? (
               <>
                 <ProfileDrawer session={session} />
@@ -45,6 +45,10 @@ export default function Navbar() {
                 <Link href={"/login"}><Button>Login</Button></Link>
               </>
             )
+          ) : (
+            <>
+              <Button loading classNames={{ root: "max-w-40 w-full"}}/>
+            </>
           )}
         </div>
       </header>

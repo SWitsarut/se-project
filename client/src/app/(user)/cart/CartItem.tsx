@@ -109,7 +109,7 @@ export default function CartItem({ cartItems }: CartItemProps) {
             </div>
             <div className="table-cell align-top px-2">
               <Text fw={700} classNames={{ root: "hover:underline w-24 md:w-52 lg:w-80 break-words"}} lineClamp={2}>{book.title}</Text>
-              <Text size="sm">฿ {book.price}</Text>
+              <Text size="sm">฿ {book.price.toFixed(2)}</Text>
             </div>
           </Link>
           <div className="table-cell align-middle w-12">
@@ -125,7 +125,7 @@ export default function CartItem({ cartItems }: CartItemProps) {
     <div className="flex flex-col items-end gap-4">    
       <div className="bg-slate-50 flex flex-col items-center px-10 py-8 space-y-4 shadow-md rounded-md">
         <Text fw={700} size="xl">Summary {`(${selectedItem.length} ${selectedItem.length > 1 ? "items" : "item"})`}</Text>
-        <Text fw={700} size="xl">Total Price ฿ {totalPrice}</Text>
+        <Text fw={700} size="xl">Total Price: ฿ {totalPrice.toFixed(2)}</Text>
         <Button loading={isLoading} onClick={proceedToCheckout} disabled={selectedItem.length < 1 || isLoading}>Proceed to Checkout</Button>
       </div>
     </div>

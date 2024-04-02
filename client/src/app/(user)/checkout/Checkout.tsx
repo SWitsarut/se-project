@@ -86,11 +86,11 @@ export default function Checkout() {
                     />
                     <Text className="hover:underline" c={"dark"} fw={600}>{data.title}</Text>
                   </Link>
-                  <Text c={"dark"} fw={600}>{data.price} ฿</Text>
+                  <Text c={"dark"} fw={600}>฿ {data.price.toFixed(2)}</Text>
                 </div>
               ))}
               <div className="flex justify-end">
-                <Text c={"dark"} fw={800} size="lg">Total price: {selectedItem.reduce((acc, book) => acc + book.price, 0)} ฿</Text>
+                <Text c={"dark"} fw={800} size="lg">Total price: ฿ {selectedItem.reduce((acc, book) => acc + book.price, 0)}</Text>
               </div>
             </div>
             <Elements stripe={stripePromise} options={options}>

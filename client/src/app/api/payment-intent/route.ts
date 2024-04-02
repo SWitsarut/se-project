@@ -23,7 +23,20 @@ export const GET = async (req: Request) => {
 
   try {
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-    return NextResponse.json({ paymentIntent });
+    const userOrder = await prisma.userOrder.findFirst({
+      where: {
+        paymentIntentId: paymentIntent.id,
+      },
+      select: {
+        order: {
+          select: {
+            userId: true
+          }
+        }
+      }
+    })
+
+    return NextResponse.json({ paymentIntent, userId: userOrder?.order[0].userId }, { status: 200});
   } catch (error) {
     if(error instanceof stripe.errors.StripeInvalidRequestError) {
       if(error.statusCode == 404) {

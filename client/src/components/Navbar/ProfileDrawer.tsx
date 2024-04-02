@@ -24,33 +24,35 @@ export default function ProfileDrawer({ session }: ProfileDrawerProps) {
         onClose={close}
         zIndex={1000}
       >
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-4">
           <Group>
             <Avatar
               src={session.user.avatar}
               size="xl"
             />
             <div className="flex flex-col gap-2">
-              <Text fw={700} lineClamp={1}>Email: <Text span>{session.user.email}</Text></Text>
-              <Text c="dark" fw={700} lineClamp={1}>Display name: <Text span fw={400}>{session.user.displayName}</Text></Text>
+              <Text lineClamp={1} fw={700}>Email: <Text span classNames={{root: "text-wrap break-words"}}>{session.user.email}</Text></Text>
+              <Text lineClamp={1} c="dark" fw={700}>Display name: <Text span fw={400} classNames={{root: "text-wrap break-words"}}>{session.user.displayName}</Text></Text>
               {session.user.role === "PUBLISHER" && (
-                <Text c="dark" fw={700} lineClamp={1}>Publisher name: <Text span fw={400}>{session.user.publisher}</Text></Text>
+                <Text lineClamp={1} c="dark" fw={700}>Publisher name: <Text span fw={400} classNames={{root: "text-wrap break-words"}}>{session.user.publisher}</Text></Text>
               )}
             </div>
           </Group>
           <Divider />
           <Group>
+            <Text c="dimmed" fw={500} className="w-full">Menu</Text>
             {userMenu.map((data, index) => (
               <Link className="w-full flex" key={index} href={data.link}>
-              <Button onClick={close} justify="left" fullWidth leftSection={<data.icon />} variant="subtle">
-                {data.label}
-              </Button>
-            </Link>
+                <Button onClick={close} justify="left" fullWidth leftSection={<data.icon />} variant="subtle">
+                  {data.label}
+                </Button>
+              </Link>
             ))}
           </Group>
           {session.user.role === "ADMIN" && (
             <>
               <Divider />
+              <Text c="dimmed" fw={500} className="w-full">Admin Menu</Text>
               <Group>
               {adminMenu.map((data, index) => (
                 <Link className="w-full flex" key={index} href={data.link}>
@@ -65,6 +67,7 @@ export default function ProfileDrawer({ session }: ProfileDrawerProps) {
           {session.user.role === "PUBLISHER" && (
             <>
               <Divider />
+              <Text c="dimmed" fw={500} className="w-full">Publisher Menu</Text>
               <Group>
               {publisherMenu.map((data, index) => (
                 <Link className="w-full flex" key={index} href={data.link}>
@@ -88,7 +91,7 @@ export default function ProfileDrawer({ session }: ProfileDrawerProps) {
         </div>
       </Drawer>
 
-      <Button onClick={open}>{session.user.displayName}</Button>
+      <Button classNames={{ root: "w-full max-w-40" }}onClick={open}>{session.user.displayName}</Button>
     </>
   )
 }
