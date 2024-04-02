@@ -29,7 +29,7 @@ export const GET = async (req: Request, { params }: { params: { slug: string }})
 
     const comments = result.map((comment) => ({
       title: comment.book.title,
-      username: comment.user.username,
+      username: comment.user.displayName,
       rating: comment.rating,
       content: comment.content,
       date: comment.createdAt

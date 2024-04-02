@@ -55,7 +55,7 @@ export default async function ChartSection({ publisherName }: ChartSectionProps)
       <div className="grid md:grid-cols-2 gap-3">
         <Paper shadow="lg" p="xs" classNames={{ root: "w-full" }}>
           <Center classNames={{ root: "flex flex-col" }}>
-            <h3>User ratio</h3>
+            <h3>Selling ratio</h3>
             <div>
               <PieChart
                 data={chartData}
@@ -69,7 +69,7 @@ export default async function ChartSection({ publisherName }: ChartSectionProps)
               />
               <div>
                 <div className="w-full max-w-lg flex flex-row justify-between">
-                  <h4>Total Book Sold</h4>
+                  <h4>Book Sold</h4>
                   <h4>{bookSold}</h4>
                 </div>
               </div>

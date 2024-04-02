@@ -23,16 +23,21 @@ interface CommentData {
 }
 
 async function getComments(publisherName: string): Promise<CommentData[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/comment`, {
-    cache: "no-store"
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/comment`,
+    {
+      cache: "no-store",
+    },
+  );
 
   if (!res.ok) throw new Error("Failed to fetch comments");
 
   return res.json();
 }
 
-export default async function CommentTable({ publisherName }: CommentTableProps) {
+export default async function CommentTable({
+  publisherName,
+}: CommentTableProps) {
   const comments = await getComments(publisherName);
   return (
     <div className="w-full">
