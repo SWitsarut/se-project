@@ -1,7 +1,4 @@
 import {
-  HoverCard,
-  HoverCardDropdown,
-  HoverCardTarget,
   Rating,
   Table,
   TableTbody,
@@ -13,24 +10,30 @@ import {
 import Link from "next/link";
 import React from "react";
 
-type Comment = {
-  content: string;
-  user: {
-    username: string;
-  };
-  book: {
-    title: string;
-  };
-  createdAt: Date;
+interface CommentTableProps {
+  publisherName: string;
+}
+
+interface CommentData {
+  title: string;
+  username: string;
   rating: number;
-};
+  content: string;
+  date: Date;
+}
 
-type tableProps = {
-  comments: Comment[];
-};
+async function getComments(publisherName: string): Promise<CommentData[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/publisher/${publisherName}/comment`, {
+    cache: "no-store"
+  });
 
-export default function CommentTable(props: tableProps) {
-  const { comments } = props;
+  if (!res.ok) throw new Error("Failed to fetch comments");
+
+  return res.json();
+}
+
+export default async function CommentTable({ publisherName }: CommentTableProps) {
+  const comments = await getComments(publisherName);
   return (
     <div className="w-full">
       <Table
@@ -42,11 +45,11 @@ export default function CommentTable(props: tableProps) {
       >
         <TableThead>
           <TableTr>
-            <TableTh>title</TableTh>
-            <TableTh>user</TableTh>
-            <TableTh>rating</TableTh>
-            <TableTh>content</TableTh>
-            <TableTh>date</TableTh>
+            <TableTh>Book title</TableTh>
+            <TableTh>User</TableTh>
+            <TableTh>Rating</TableTh>
+            <TableTh>Content</TableTh>
+            <TableTh>Date</TableTh>
           </TableTr>
         </TableThead>
         <TableTbody>
@@ -55,60 +58,19 @@ export default function CommentTable(props: tableProps) {
               <TableTd>
                 <Link
                   key={index}
-                  href={`/book/${comment.book.title}`}
+                  href={`/book/${comment.title}`}
                   target="_blank"
+                  className="hover:underline"
                 >
-                  {comment.book.title}
+                  {comment.title}
                 </Link>
               </TableTd>
-              <TableTd>{comment.user.username}</TableTd>
+              <TableTd>{comment.username}</TableTd>
               <TableTd>
                 <Rating fractions={2} value={comment.rating} readOnly />
-                {/* {comment.rating} */}
               </TableTd>
               <TableTd>{comment.content}</TableTd>
-              <TableTd>{String(comment.createdAt).substring(0, 10)}</TableTd>
-              {/* <TableTd className="hover:underline">
-                <HoverCard position="left">
-                  <HoverCardTarget>
-                    <Link href={`/book/${book.title}`} target="_blank">
-                      {book.title}
-                    </Link>
-                  </HoverCardTarget>
-                  <HoverCardDropdown>
-                    <div className="w-24 aspect-[1/1.414] relative">
-                      <Image
-                        className="w-full h-full"
-                        src={book.cover}
-                        alt={book.title}
-                        fill
-                        priority
-                      />
-                    </div>
-                  </HoverCardDropdown>
-                </HoverCard>
-              </TableTd> */}
-              {/* <TableTd>
-                {book.isSelling ? (
-                  <Text c="green">Selling</Text>
-                ) : (
-                  <Text c="red">Closing</Text>
-                )}
-              </TableTd> */}
-              {/* <TableTd>{book.createdAt}</TableTd> */}
-              {/* <TableTd>
-                <div className="flex gap-4">
-                  <Link href={`book-management/edit/${book.isbn}`}>
-                    <Button leftSection={<IconPencil />}>Edit</Button>
-                  </Link>
-                  <DeleteModal
-                    publisherName={publisherName}
-                    isbn={book.isbn}
-                    title={book.title}
-                  />
-                </div>
-              </TableTd> */}
-              {/* // </Link> */}
+              <TableTd>{new Date(comment.date).toLocaleDateString()}</TableTd>
             </TableTr>
           ))}
         </TableTbody>

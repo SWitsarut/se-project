@@ -19,7 +19,17 @@ export default async function CartPage() {
           </Suspense>
         ) : (
           <>
-            <Link href={`/login`}><Button>Login</Button></Link>
+            <div className="prose w-full max-w-4xl mx-auto text-center">
+              <h2>You are not logged in</h2>
+              <p>
+                Please <Link href="/login">login</Link> to view your cart
+              </p>
+            </div>
+            <div className="flex justify-center mt-4">
+              <Link href="/login">
+                <Button>Login</Button>
+              </Link>
+            </div>
           </>
         )}
       </div>

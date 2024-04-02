@@ -18,6 +18,7 @@ export default function AddToCartButton({ isbn, price }: AddToCartButtonProps) {
         size="lg"
         radius="xl"
         classNames={{ root: "px-1"}}
+        fullWidth
       >
         ฿ {price.toFixed(2)}
       </Button>

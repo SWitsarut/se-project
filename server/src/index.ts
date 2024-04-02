@@ -20,7 +20,6 @@ app.use(apiTracker);
 
 const port = process.env.API_PORT;
 const public_url = process.env.PUBLIC_URL;
-// const webapp_url = process.env.WEBAPP_URL;
 
 const server = createServer(app);
 

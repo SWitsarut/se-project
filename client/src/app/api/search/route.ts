@@ -85,6 +85,40 @@ export const GET = async (req: Request) => {
         ]);
         break;
       }
+      case "category": {
+        [result, count] = await Promise.all([
+          await prisma.book.findMany({
+            where: {
+              category: {
+                categoryName: {
+                  contains: searchQuery,
+                  mode: "insensitive"
+                }
+              }
+            },
+            include: {
+              category: true,
+              genres: true,
+              authors: true,
+              publisher: true,
+              comment: true
+            },
+            take,
+            skip: (page - 1) * take
+          }),
+          await prisma.book.count({
+            where: {
+              category: {
+                categoryName: {
+                  contains: searchQuery,
+                  mode: "insensitive"
+                }
+              }
+            },
+          })
+        ]);
+        break;
+      }
       case "genre": {
         [result, count] = await Promise.all([
           await prisma.book.findMany({

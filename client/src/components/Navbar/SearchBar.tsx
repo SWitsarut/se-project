@@ -12,6 +12,7 @@ export default function SearchBar() {
 
   const handleSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    router.refresh();
     router.push(`/search?q=${search}`);
     setOpened(false)
     setSearch("");

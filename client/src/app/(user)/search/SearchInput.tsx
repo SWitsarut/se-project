@@ -1,6 +1,6 @@
 "use client";
 
-import { Tabs, TextInput } from "@mantine/core";
+import { Select, Tabs, TextInput } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -54,6 +54,7 @@ export default function SearchInput({ searchBy }: SearchInputProps) {
           <Tabs.Tab value={"book-title"}>Book title</Tabs.Tab>
           <Tabs.Tab value={"publisher"}>Publisher</Tabs.Tab>
           <Tabs.Tab value={"author"}>Author</Tabs.Tab>
+          <Tabs.Tab value={"category"}>Category</Tabs.Tab>
           <Tabs.Tab value={"genre"}>Genre</Tabs.Tab>
         </Tabs.List>
       </Tabs>
@@ -66,9 +67,20 @@ export default function SearchInput({ searchBy }: SearchInputProps) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          {/* <Button classNames={{ root: "hidden" }} type="submit"><IconSearch /></Button> */}
         </form>
       </div>
+      <Select
+          label="Amount displayed"
+          data={["20", "30", "40", "50"]}
+          allowDeselect={false}
+          className="mx-auto"
+          defaultValue={searchParams.get("take")?.toString() || "20"}
+          onChange={(value) => {
+            const params = new URLSearchParams(searchParams);
+            params.set("take", `${value}`)
+            router.replace(`${pathname}?${params.toString()}`)
+          }}
+        />
     </div>
   )
 }

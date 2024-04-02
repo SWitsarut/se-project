@@ -9,6 +9,7 @@ import { BookResponseWithComments } from "@/types/book";
 import { Badge, Button, Rating, Text } from "@mantine/core";
 import { notFound } from "next/navigation";
 import { getCurrentSession } from "@/libs/getCurrentSession";
+import { Fragment } from "react";
 
 export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
   return {
@@ -73,9 +74,11 @@ export default async function BookPage({
         </div>
         <div className="w-full flex flex-col gap-8 max-w-xs mx-auto md:mx-0">
           <div className="flex flex-col gap-1 items-center md:items-start">
-            <Text fw={700}>author: <Text span>{book.authors.map((author) => author).join(" , ")}</Text></Text>
-            <Text fw={700}>publisher: <Text span>{book.publisher}</Text></Text>
-            <Text fw={700}>category: <Text span>{book.category}</Text></Text>
+            <Text fw={700}>author: <Text span>{book.authors.map((author, index) => (
+              <Fragment key={index}><Link href={`/search?q=${author}&search-by=author`}>{author}</Link>{index !== book.authors.length - 1 && ", "}</Fragment>
+            ))}</Text></Text>
+            <Text fw={700}>publisher: <Text span><Link href={`/search?q=${book.publisher}&search-by=publisher`}>{book.publisher}</Link></Text></Text>
+            <Text fw={700}>category: <Text span><Link href={`/search?q=${book.category}&search-by=category`}>{book.category}</Link></Text></Text>
           </div>
           <div className="flex flex-col gap-4">
             <div className="flex gap-4 items-center mx-auto w-full">
@@ -84,8 +87,7 @@ export default async function BookPage({
                   <Button fullWidth variant="filled" size="lg" radius="xl">Read</Button>
                 </Link>
               ) : (
-                <div className="w-full grid grid-cols-2 gap-3 items-center">
-                  <Button classNames={{ root: "w-2/3 mx-auto" }} variant="outline" size="compact-lg" radius="xl">Preview</Button>
+                <div className="w-full flex max-w-36 mx-auto">
                   <AddToCartButton isbn={book.isbn} price={book.price} />
                 </div>
               )}
@@ -115,7 +117,7 @@ export default async function BookPage({
 
       <div className="flex gap-2">
         {book.genres.map((genre, index) => (
-          <Badge key={index} variant="outline">{genre}</Badge>
+          <Link key={index} href={`/search?q=${genre}&search-by=genre`}><Badge variant="outline">{genre}</Badge></Link>
         ))}
       </div>
 
