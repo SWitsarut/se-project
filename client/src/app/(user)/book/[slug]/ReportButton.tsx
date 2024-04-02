@@ -71,7 +71,9 @@ export default function ReportButton({ isbn, userId, isOwned, bookTitle }: Repor
         ):(
           <>
             <Text size="sm" fw={500}>You have to own this book to report it.</Text>
-            <Button onClick={close} className="mt-4" color="gray">Close</Button>
+            <div className="flex justify-end">
+              <Button onClick={close} className="mt-4" color="gray">Close</Button>
+            </div>
           </>
         )}
       </Modal>

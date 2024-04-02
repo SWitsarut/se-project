@@ -55,16 +55,17 @@ export default function BookItem({ book }: BookItemProps) {
             <Button
               disabled={disableAddToCart(book.isbn)}
               onClick={session ? () => addToCart(book.isbn) : () => open()}
+              classNames={{ root: "px-1" }}
               fullWidth
             >
-              <Text truncate classNames={{ root: "text-sm" }}>฿ {book.price}</Text>
+              <Text truncate classNames={{ root: "text-sm" }}>฿ {book.price.toFixed(2)}</Text>
             </Button>
 
             {!session && (
               <Modal classNames={{ title: "font-bold" }} centered opened={opened} onClose={close} title="can't add book to cart">
                 <div className="flex flex-col gap-4">
                   <Text>You must have login to add book into cart</Text>
-                  <Button className="mx-auto" onClick={() => router.push("/login")}>Go to login</Button>
+                  <Button className="mx-auto" onClick={() => router.push("/login")}>Login</Button>
                 </div>
               </Modal>
             )}

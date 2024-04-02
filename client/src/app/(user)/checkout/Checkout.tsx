@@ -57,7 +57,7 @@ export default function Checkout() {
     
     fetchPaymentIntentId();
     setIsLoading(false);
-  }, [])
+  }, [router, paymentIntentIdParams])
 
   return (
     <>
