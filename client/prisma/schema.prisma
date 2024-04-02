@@ -162,6 +162,7 @@ model Order {
   userId      String
   book        Book      @relation(name: "OrderBook", fields: [bookIsbn], references: [isbn])
   bookIsbn    String
+  bookTitle   String
   bookPrice   Float
   userOrder   UserOrder @relation(fields: [userOrderId], references: [id], onUpdate: Cascade)
   userOrderId Int

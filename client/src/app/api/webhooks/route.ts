@@ -27,7 +27,8 @@ export const POST = async (req: Request) => {
                 paymentIntentId: paymentIntent.id,
               },
               data: {
-                status: "SUCCEEDED"
+                status: "SUCCEEDED",
+                paidAt: new Date(),
               },
               include: {
                 order: true
