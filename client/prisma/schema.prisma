@@ -20,7 +20,7 @@ model User {
 
   createdAt        DateTime        @default(now())
   publisherId      Int?
-  publisher        Publisher?      @relation("PublisherStaff", fields: [publisherId], references: [id])
+  publisher        Publisher?      @relation("PublisherStaff", fields: [publisherId], references: [id], onDelete: Cascade)
   managedPublisher Publisher?      @relation("PublisherManager")
   ownedBooks       BookOwnership[]
   cart             CartItem[]
@@ -37,9 +37,9 @@ model User {
 
 model ChatMessage {
   id         Int      @id @default(autoincrement())
-  sender     User     @relation(name: "ChatSender", fields: [senderId], references: [id])
+  sender     User     @relation(name: "ChatSender", fields: [senderId], references: [id], onDelete: Cascade)
   senderId   String
-  receiver   User?    @relation(name: "ChatReceiver", fields: [receiverId], references: [id])
+  receiver   User?    @relation(name: "ChatReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
   receiverId String?
   content    String
   timeStamp  DateTime @default(now())
@@ -63,7 +63,7 @@ model Publisher {
 
   book      Book[]
   managerId String? @unique
-  manager   User?   @relation("PublisherManager", fields: [managerId], references: [id])
+  manager   User?   @relation("PublisherManager", fields: [managerId], references: [id], onDelete: Cascade)
   staffs    User[]  @relation("PublisherStaff")
 
   @@index([publisherName])
@@ -82,9 +82,9 @@ model Book {
   updatedAt DateTime @updatedAt
   isSelling Boolean  @default(true)
 
-  publisher   Publisher       @relation(fields: [publisherId], references: [id])
+  publisher   Publisher       @relation(fields: [publisherId], references: [id], onDelete: Cascade)
   publisherId Int
-  category    Category        @relation(fields: [categoryId], references: [id])
+  category    Category        @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId  Int
   genres      Genre[]         @relation(name: "BookGenres")
   authors     Author[]        @relation(name: "BookAuthors")
@@ -100,9 +100,9 @@ model Book {
 }
 
 model Comment {
-  user      User          @relation(fields: [userId], references: [id])
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  book      Book          @relation(fields: [bookIsbn], references: [isbn])
+  book      Book          @relation(fields: [bookIsbn], references: [isbn], onDelete: Cascade)
   bookIsbn  String
   commenter BookOwnership @relation(fields: [userId, bookIsbn], references: [userId, bookIsbn], onDelete: Cascade)
   content   String
@@ -124,9 +124,9 @@ model CartItem {
 }
 
 model Wishlist {
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  book      Book     @relation(fields: [bookIsbn], references: [isbn])
+  book      Book     @relation(fields: [bookIsbn], references: [isbn], onDelete: Cascade)
   bookIsbn  String
   createdAt DateTime @default(now())
 
@@ -135,8 +135,8 @@ model Wishlist {
 }
 
 model BookOwnership {
-  user      User      @relation(fields: [userId], references: [id])
-  book      Book      @relation(fields: [bookIsbn], references: [isbn])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book      Book      @relation(fields: [bookIsbn], references: [isbn], onDelete: Cascade)
   userId    String
   bookIsbn  String
   createdAt DateTime  @default(now())
@@ -158,9 +158,9 @@ model UserOrder {
 
 model Order {
   id          Int       @id @default(autoincrement())
-  user        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
-  book        Book      @relation(name: "OrderBook", fields: [bookIsbn], references: [isbn])
+  book        Book      @relation(name: "OrderBook", fields: [bookIsbn], references: [isbn], onDelete: Cascade)
   bookIsbn    String
   bookTitle   String
   bookPrice   Float
@@ -199,8 +199,8 @@ model Author {
 
 model Report {
   id        Int          @id @default(autoincrement())
-  user      User         @relation(fields: [userId], references: [id])
-  book      Book         @relation(fields: [bookIsbn], references: [isbn])
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book      Book         @relation(fields: [bookIsbn], references: [isbn], onDelete: Cascade)
   userId    String
   bookIsbn  String
   reason    String

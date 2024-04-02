@@ -126,6 +126,7 @@ export default function PublisherRegisterForm() {
 
       {/* Successful Alert */}
       <Modal
+        zIndex={1000}
         centered
         opened={successOpened}
         onClose={navigateOnClose}
@@ -143,6 +144,7 @@ export default function PublisherRegisterForm() {
       
       {/* Error Alert */}
       <Modal
+        zIndex={1000}
         centered
         opened={errorOpened}
         onClose={errorClose}
