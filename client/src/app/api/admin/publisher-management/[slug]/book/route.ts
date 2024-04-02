@@ -63,6 +63,7 @@ export const GET = async (
       createdAt: formatDate(book.createdAt),
       publisher: book.publisher.publisherName,
       rating: book.comment.length > 0 ? book.comment.reduce((acc, cur) => acc + cur.rating, 0) / book.comment.length : 0,
+      ratingCount: book.comment.length
     }))
 
     return NextResponse.json({ books }, { status: 200 });

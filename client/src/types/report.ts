@@ -1,5 +1,3 @@
-import { string } from "zod"
-
 export type Report = {
   id: number
   username: string

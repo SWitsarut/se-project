@@ -34,7 +34,7 @@ export default async function page({ params: { userId } }: AdminChatPageProps) {
         {messages.map((message, index) => (
           <Fragment key={index}>
             <div className={`flex gap-1 flex-col max-w-[50%] ${message.sender.id === userId ? "self-start" : "self-end"}`}>
-              <div className={`flex items-center gap-1 ${message.sender.id === userId ? "justify-start" : "justify-end flex-row-reverse"}`}>
+              <div className={`flex items-center gap-1 ${message.sender.id === userId ? "justify-start" : "flex-row-reverse"}`}>
                 <div className={`flex items-center gap-1 ${message.sender.id === userId ? null : "flex-row-reverse"}`}>
                   <Avatar size="md" src={null} alt="sender" />
                   <Text size="xs">{message.sender.displayName}</Text>

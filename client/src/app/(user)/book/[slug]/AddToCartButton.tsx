@@ -17,8 +17,9 @@ export default function AddToCartButton({ isbn, price }: AddToCartButtonProps) {
         onClick={() => addToCart(isbn)}
         size="lg"
         radius="xl"
+        classNames={{ root: "px-1"}}
       >
-        ฿ {price}
+        ฿ {price.toFixed(2)}
       </Button>
     </>
   );

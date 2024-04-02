@@ -39,7 +39,7 @@ export default function SocketProvider({children}: SocketProviderProps) {
       socket.emit("message", messageData);
       router.refresh();
     } 
-  }, []);
+  }, [router, session]);
 
   useEffect(() => {
     if(session) {

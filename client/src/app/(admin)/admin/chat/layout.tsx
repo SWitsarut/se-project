@@ -20,13 +20,13 @@ export default async function AdminChatLayout({ children }: { children: React.Re
   const filteredUsers = users.filter((user) => user._count.sender > 0);
   
   return (
-    <>
+    <div className="w-full">
       <div className="prose">
         <h1>Chat</h1>
       </div>
 
       <div className="flex max-h-[70vh] min-h-[70vh] w-full">
-        <div className="flex flex-col gap-2 border max-w-80 w-full">
+        <div className="flex flex-col gap-2 border min-w-80 max-w-80">
           {filteredUsers.map((user) => (
             <SelectUser key={user.id} displayName={user.displayName} userId={user.id} />
           ))}
@@ -35,6 +35,6 @@ export default async function AdminChatLayout({ children }: { children: React.Re
           {children}
         </div>
       </div>
-    </>
+    </div>
   )
 }

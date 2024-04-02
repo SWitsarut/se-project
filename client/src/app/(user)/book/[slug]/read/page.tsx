@@ -10,12 +10,16 @@ const getBookData = async (slug: string) => {
   return res.json();
 }
 
-const checkIsOwned = async (slug: string, userId: string) => {
+const checkIsOwned = async (slug: string, userId?: string) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/book/${slug}/${userId}`, {
     cache: "no-store",
   });
 
-  return res.json();
+  const data = await res.json();
+
+  if(!data) {
+    redirect("/")
+  }
 }
 
 export default async function ReadPage({
@@ -24,11 +28,9 @@ export default async function ReadPage({
   params: { slug: string };
 }) {
   const session = await getCurrentSession();
-
-  if(!session) redirect("/");
-  const isOwned = await checkIsOwned(slug, session.user.id);
   
-  if(!isOwned) redirect("/");
+  await checkIsOwned(slug, session?.user.id);
+
   const bookData = await getBookData(slug);
 
   return (
