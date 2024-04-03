@@ -35,6 +35,7 @@ export default function LoginForm() {
     } else {
       setLoginError("");
       router.refresh();
+      router.push("/");
     }
 
     setIsLoading(false);

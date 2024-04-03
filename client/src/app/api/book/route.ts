@@ -16,7 +16,8 @@ export const GET = async (req: Request) => {
           category: true,
           genres: true,
           authors: true,
-          comment: true
+          comment: true,
+          ownedBooks: true
         },
         take: 6,
         orderBy: {
@@ -32,7 +33,8 @@ export const GET = async (req: Request) => {
           category: true,
           genres: true,
           authors: true,
-          comment: true
+          comment: true,
+          ownedBooks: true
         },
         take: 6,
         orderBy: {
@@ -54,6 +56,7 @@ export const GET = async (req: Request) => {
       publisher: book.publisher.publisherName,
       rating: book.comment.length > 0 ? book.comment.reduce((acc, cur) => acc + cur.rating, 0) / book.comment.length : 0,
       ratingCount: book.comment.length,
+      owned: book.ownedBooks.map((data) => data.userId)
     }))
     
     const bestSelling: BookItemType[] = resultBestSelling.map((book) => ({
@@ -67,6 +70,7 @@ export const GET = async (req: Request) => {
       publisher: book.publisher.publisherName,
       rating: book.comment.length > 0 ? book.comment.reduce((acc, cur) => acc + cur.rating, 0) / book.comment.length : 0,
       ratingCount: book.comment.length,
+      owned: book.ownedBooks.map((data) => data.userId)
     }))
 
     return NextResponse.json({ newBooks, bestSelling }, { status: 200 });

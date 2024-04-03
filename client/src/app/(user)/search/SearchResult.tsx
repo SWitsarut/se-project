@@ -1,7 +1,7 @@
 import CustomPagination from "@/app/(admin)/admin/_components/CustomPagination";
 import BookItem from "@/components/BookItem";
 import prisma from "@/libs/prisma";
-import { BookResponse } from "@/types/book";
+import { BookItemType, BookResponse } from "@/types/book";
 
 interface SearchResultProps {
   searchBy: string
@@ -15,7 +15,7 @@ const getSearchResult = async (
   searchQuery: string,
   take: number,
   page: number,
-): Promise<{ data: BookResponse[], totalPage: number }> => {
+): Promise<{ data: BookItemType[], totalPage: number }> => {
   const searchParams = new URLSearchParams({
     "search-by": searchBy,
     "search-query": searchQuery,

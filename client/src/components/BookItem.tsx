@@ -52,14 +52,18 @@ export default function BookItem({ book }: BookItemProps) {
               <Rating readOnly value={book.rating} fractions={2} size="xs"/>
               <Text size="xs">{book.ratingCount > 0 ? `${book.ratingCount} Rating` : `No Rating` }</Text>
             </div>
-            <Button
-              disabled={disableAddToCart(book.isbn)}
-              onClick={session ? () => addToCart(book.isbn) : () => open()}
-              classNames={{ root: "px-1" }}
-              fullWidth
-            >
-              <Text truncate classNames={{ root: "text-sm" }}>฿ {book.price.toFixed(2)}</Text>
-            </Button>
+            {book.owned.some((data) => data === session?.user.id) ? (
+              <Link href={`/book/${book.title}/read`}><Button>Read</Button></Link>
+            ) : (
+              <Button
+                disabled={disableAddToCart(book.isbn) || book.owned.some((data) => data === session?.user.id)}
+                onClick={session ? () => addToCart(book.isbn) : () => open()}
+                classNames={{ root: "px-1" }}
+                fullWidth
+              >
+                <Text truncate classNames={{ root: "text-sm" }}>฿ {book.price.toFixed(2)}</Text>
+              </Button>
+            )}
 
             {!session && (
               <Modal zIndex={1000} classNames={{ title: "font-bold" }} centered opened={opened} onClose={close} title="can't add book to cart">

@@ -35,9 +35,6 @@ export default function Chat() {
     if(session && isOpen && socket) {
       const onReceiveMessage = (messageData: MessageData) => {
         fetchMessages();
-        if(messageData.senderId !== session.user.id) {
-          notifications.show({ title: "New message", message: messageData.content })
-        }
       }
 
       socket.on("receive-message", onReceiveMessage);
@@ -58,7 +55,7 @@ export default function Chat() {
   return (
     <>
       {status !== "loading" && status !== "unauthenticated" && session && session.user.role !== "ADMIN" && (
-        <div className="hidden md:block fixed -bottom-1 right-10 border-2 w-72 z-50 rounded-t-xl overflow-hidden shadow-md">
+        <div className="hidden md:block fixed -bottom-1 right-10 border-2 w-72 z-[998] rounded-t-xl overflow-hidden shadow-md">
           <div
             onClick={() => setIsOpen((prevState) => !prevState)}
             className="bg-primary text-white px-6 py-4 w-full"

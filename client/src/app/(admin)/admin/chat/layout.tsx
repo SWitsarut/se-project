@@ -26,14 +26,13 @@ export default async function AdminChatLayout({ children }: { children: React.Re
       </div>
 
       <div className="flex max-h-[70vh] min-h-[70vh] w-full">
-        <div className="flex flex-col gap-2 border min-w-80 max-w-80">
+        <div className="flex flex-col gap-2 border min-w-80">
           {filteredUsers.map((user) => (
             <SelectUser key={user.id} displayName={user.displayName} userId={user.id} />
           ))}
         </div>
-        <div className="flex border w-full">
-          {children}
-        </div>
+        {children}
+        
       </div>
     </div>
   )

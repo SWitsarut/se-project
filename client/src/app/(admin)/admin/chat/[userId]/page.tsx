@@ -29,8 +29,8 @@ export default async function page({ params: { userId } }: AdminChatPageProps) {
   const messages = await getChatHistory(userId);
 
   return (
-    <div className="flex flex-col w-full p-2">
-      <div className={`w-full h-full flex flex-col-reverse overflow-y-auto p-4 gap-2`}>
+    <div className="flex max-w-[60%] flex-col w-full p-2 border">
+      <div className={`h-full flex flex-col-reverse overflow-y-auto p-4 gap-2`}>
         {messages.map((message, index) => (
           <Fragment key={index}>
             <div className={`flex gap-1 flex-col max-w-[50%] ${message.sender.id === userId ? "self-start" : "self-end"}`}>
@@ -41,8 +41,8 @@ export default async function page({ params: { userId } }: AdminChatPageProps) {
                 </div>
                 <Text c="dimmed" classNames={{ root: "text-[10px]" }}>{new Date(message.timeStamp).toLocaleTimeString()}</Text>
               </div>
-              <div className={`break-words text-wrap border p-2 rounded-lg w-fit ${message.sender.id === userId ? "bg-white text-black self-start" : "bg-primary text-white self-end"}`}>
-                <Text>{message.content}</Text>
+              <div className={`w-full flex ${message.sender.id === userId ? "justify-start" : "justify-end"}`}>
+                <Text className={`break-words w-full max-w-fit flex flex-col text-wrap border p-2 rounded-lg ${message.sender.id === userId ? "bg-white text-black" : "bg-primary text-white" }`}>{message.content}</Text>
               </div>
             </div>
           </Fragment>

@@ -1,5 +1,5 @@
 import prisma from "@/libs/prisma";
-import { BookResponse } from "@/types/book";
+import { BookItemType } from "@/types/book";
 import { formatDate } from "@/utils";
 import { NextResponse } from "next/server"
 
@@ -31,7 +31,8 @@ export const GET = async (req: Request) => {
               genres: true,
               authors: true,
               publisher: true,
-              comment: true
+              comment: true,
+              ownedBooks: true
             },
             take,
             skip: (page - 1) * take
@@ -67,7 +68,8 @@ export const GET = async (req: Request) => {
               genres: true,
               authors: true,
               publisher: true,
-              comment: true
+              comment: true,
+              ownedBooks: true
             },
             take,
             skip: (page - 1) * take
@@ -105,7 +107,8 @@ export const GET = async (req: Request) => {
               genres: true,
               authors: true,
               publisher: true,
-              comment: true
+              comment: true,
+              ownedBooks: true
             },
             take,
             skip: (page - 1) * take
@@ -139,7 +142,8 @@ export const GET = async (req: Request) => {
               genres: true,
               authors: true,
               publisher: true,
-              comment: true
+              comment: true,
+              ownedBooks: true
             },
             take,
             skip: (page - 1) * take
@@ -156,7 +160,7 @@ export const GET = async (req: Request) => {
       }
     }
 
-    const data: BookResponse[] = result.map((book) => ({
+    const data: BookItemType[] = result.map((book) => ({
       isbn: book.isbn,
       title: book.title,
       price: book.price,
@@ -170,7 +174,8 @@ export const GET = async (req: Request) => {
       createdAt: formatDate(book.createdAt),
       publisher: book.publisher.publisherName,
       rating: book.comment.length > 0 ? book.comment.reduce((acc, cur) => acc + cur.rating, 0) / book.comment.length : 0,
-      ratingCount: book.comment.length
+      ratingCount: book.comment.length,
+      owned: book.ownedBooks.map((data) => data.userId)
     }))
     
     const totalPage = Math.ceil(count / take);

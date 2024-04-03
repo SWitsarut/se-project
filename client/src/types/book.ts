@@ -47,6 +47,7 @@ export interface BookItemType {
   publisher: string
   rating: number
   ratingCount: number
+  owned: string[]
 }
 
 export interface BookShelfType {

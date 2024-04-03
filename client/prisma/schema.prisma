@@ -8,15 +8,15 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  username      String    @unique
-  email         String    @unique
+  id            String   @id @default(uuid())
+  username      String   @unique
+  email         String   @unique
   displayName   String
   password      String
   avatar        String?
-  role          Role      @default(USER)
-  isActive      Boolean   @default(true)
-  emailVerified DateTime?
+  role          Role     @default(USER)
+  isActive      Boolean  @default(true)
+  emailVerified DateTime @default(now())
 
   createdAt        DateTime        @default(now())
   publisherId      Int?
@@ -81,7 +81,7 @@ model Book {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isSelling Boolean  @default(true)
-  isBlocked Boolean @default(false)
+  isBlocked Boolean  @default(false)
 
   publisher   Publisher       @relation(fields: [publisherId], references: [id], onDelete: Cascade)
   publisherId Int
