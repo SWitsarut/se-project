@@ -6,24 +6,57 @@ export const dynamic = "force-dynamic";
 
 export const GET = async (req: Request) => {
   try {
-    const result = await prisma.book.findMany({
-      where: {
-        isSelling: true
-      },
-      include: {
-        publisher: true,
-        category: true,
-        genres: true,
-        authors: true,
-        comment: true
-      },
-      take: 6,
-      orderBy: {
-        createdAt: "desc"
-      },
-    });
+    const [resultNew, resultBestSelling] = await Promise.all([
+      await prisma.book.findMany({
+        where: {
+          isSelling: true
+        },
+        include: {
+          publisher: true,
+          category: true,
+          genres: true,
+          authors: true,
+          comment: true
+        },
+        take: 6,
+        orderBy: {
+          createdAt: "desc"
+        },
+      }),
+      await prisma.book.findMany({
+        where: {
+          isSelling: true
+        },
+        include: {
+          publisher: true,
+          category: true,
+          genres: true,
+          authors: true,
+          comment: true
+        },
+        take: 6,
+        orderBy: {
+          ownedBooks: {
+            _count: "asc"
+          }
+        },
+      }),
+    ]);
 
-    const newBooks: BookItemType[] = result.map((book) => ({
+    const newBooks: BookItemType[] = resultNew.map((book) => ({
+      isbn: book.isbn,
+      title: book.title,
+      price: book.price,
+      cover: book.cover,
+      description: book.description,
+      authors: book.authors.map((author) => author.authorName),
+      category: book.category.categoryName,
+      publisher: book.publisher.publisherName,
+      rating: book.comment.length > 0 ? book.comment.reduce((acc, cur) => acc + cur.rating, 0) / book.comment.length : 0,
+      ratingCount: book.comment.length,
+    }))
+    
+    const bestSelling: BookItemType[] = resultBestSelling.map((book) => ({
       isbn: book.isbn,
       title: book.title,
       price: book.price,
@@ -36,7 +69,7 @@ export const GET = async (req: Request) => {
       ratingCount: book.comment.length,
     }))
 
-    return NextResponse.json(newBooks, { status: 200 });
+    return NextResponse.json({ newBooks, bestSelling }, { status: 200 });
   } catch (error) {
     console.log("Error at /api/book GET", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

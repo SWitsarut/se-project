@@ -1,7 +1,5 @@
-import prisma from "@/libs/prisma";
 import { Metadata } from "next";
-import { DonutChart } from "@mantine/charts";
-import { Center, Loader, Paper } from "@mantine/core";
+import { Loader } from "@mantine/core";
 import { Suspense } from "react";
 import ChartSection from "./_component/ChartSection";
 import RecentCommentAndOrder from "./_component/RecentCommentAndOrder";
