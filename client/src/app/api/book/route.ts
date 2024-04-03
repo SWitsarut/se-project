@@ -7,6 +7,9 @@ export const dynamic = "force-dynamic";
 export const GET = async (req: Request) => {
   try {
     const result = await prisma.book.findMany({
+      where: {
+        isSelling: true
+      },
       include: {
         publisher: true,
         category: true,

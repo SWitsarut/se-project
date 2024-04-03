@@ -71,8 +71,8 @@ export default function ReportButton({ isbn, userId, isOwned, bookTitle }: Repor
               value={reason} onChange={(e) => setReason(e.target.value)}
             />
             <div className="flex gap-2 justify-end">
-              <Button loading={isLoading} onClick={close} className="mt-4" color="gray">Cancel</Button>
-              <Button onClick={handleReport} className="mt-4" color="red">Report</Button>
+              <Button onClick={close} className="mt-4" color="gray">Cancel</Button>
+              <Button loading={isLoading} onClick={handleReport} className="mt-4" color="red">Report</Button>
             </div>
           </>
         ):(

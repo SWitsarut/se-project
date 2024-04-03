@@ -1,6 +1,7 @@
-import { Table, TableThead, TableTr, TableTh, TableTbody, TableTd, Text } from "@mantine/core";
+import { Table, TableThead, TableTr, TableTh, TableTbody, TableTd, Text, Avatar } from "@mantine/core";
 import { ReportStatus } from "@prisma/client";
 import Link from "next/link";
+import ActionModal from "./ActionModal";
 
 interface ReportedData {
   id: number
@@ -37,14 +38,15 @@ export default async function ReportedList() {
             <TableTh>Reason</TableTh>
             <TableTh>Status</TableTh>
             <TableTh>Reported at</TableTh>
+            <TableTh>Actions</TableTh>
           </TableTr>
         </TableThead>
         <TableTbody>
           {reportedLists.map((report: ReportedData) => (
             <TableTr key={report.id}>
-              <TableTd>
-                <Text>{report.user.username}</Text>
-                <Text>{}</Text>
+              <TableTd classNames={{ td: "flex flex-col items-center"}}>
+                <Avatar size="sm" src={report.user.avatar}/>
+                <Text size="sm">{report.user.username}</Text>
               </TableTd>
               <TableTd>
                 <Text size="xs">ISBN: {report.book.isbn}</Text>
@@ -53,6 +55,7 @@ export default async function ReportedList() {
               <TableTd>{report.reason}</TableTd>
               <TableTd>{report.status}</TableTd>
               <TableTd>{new Date(report.createAt).toDateString()}</TableTd>
+              <TableTd><ActionModal reportId={report.id} bookIsbn={report.book.isbn} reportStatus={report.status} /></TableTd>
             </TableTr>
           ))}
         </TableTbody>

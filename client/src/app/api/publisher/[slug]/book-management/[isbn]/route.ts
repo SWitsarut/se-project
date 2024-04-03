@@ -34,6 +34,7 @@ export const GET = async (
       genreNames: result.genres.map((genre) => genre.genreName),
       categoryName: result.category.categoryName,
       description: result.description,
+      isBlocked: result.isBlocked
     }
   
     return NextResponse.json({ book }, { status: 200 });

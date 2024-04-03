@@ -12,7 +12,6 @@ import {
 
 export const adminMenu = [
   { label: "Dashboard", link: "/admin/dashboard", icon: IconLayoutDashboard },
-  { label: "Book management", link: "/admin/book-management", icon: IconBook2 },
   { label: "User management", link: "/admin/user-management", icon: IconUser },
   { label: "Publisher management", link: "/admin/publisher-management", icon: IconCopyright },
   { label: "Report", link: "/admin/report", icon: IconReport },

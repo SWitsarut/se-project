@@ -154,8 +154,8 @@ export default function EditBookForm({ publisherName, bookDetail, bookData }: Ed
           onChange={(e) => setForm((prevState) => ({ ...prevState, isSelling: e == "selling" ? true : false }))}
         >
           <Group>
-            <Radio value="selling" label="Selling" c="green" fw={600} />
-            <Radio value="closing" label="Closing" c="red" fw={600} />
+            <Radio disabled={bookData.isBlocked} value="selling" label="Selling" c="green" fw={600} />
+            <Radio disabled={bookData.isBlocked} value="closing" label="Closing" c="red" fw={600} />
           </Group>
         </RadioGroup>
         <TextInput

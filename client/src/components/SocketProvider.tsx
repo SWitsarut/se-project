@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect } from "react";
 import { Socket, io } from "socket.io-client";
 
-const socket = io(`${process.env.NEXT_PUBLIC_CHAT_URL}`, {
+const socket = io(`${process.env.NEXT_PUBLIC_SOCKET_SERVER}`, {
   autoConnect: false,
 });
 

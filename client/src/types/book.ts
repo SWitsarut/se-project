@@ -27,6 +27,7 @@ export interface EditBookData {
   pdfUrl: string
   description: string | null
   isSelling: boolean
+  isBlocked: boolean
 }
 
 export interface BookCart {
