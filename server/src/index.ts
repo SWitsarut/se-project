@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { DisconnectReason, Server } from "socket.io";
 import cors from "cors";
@@ -55,12 +55,12 @@ io.on("connection", (socket) => {
 	});
 });
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
 	res.status(200).send("hello!");
 });
-app.get("*", (_, res) => {
-	res.status(404).send("not found");
-});
+// app.get("*", (_, res) => {
+// 	res.status(404).send("not found");
+// });
 
 server.listen(port, () => {
 	console.log(
